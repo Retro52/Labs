@@ -1,20 +1,30 @@
-# Problem Set 2, hangman.py
-# Name: 
-# Collaborators:
-# Time spent:
+# 6.0001 Problem Set 3
+#
+# The 6.0001 Word Game
+# Created by: Kevin Luu <luuk> and Jenna Wiens <jwiens>
+#
+# Name          : Орленко Антон
+# Collaborators : -
+# Time spent    : дві ночі
+# Не впевнений щодо підрахунку балів, та трохи насторожує не потрібність функції get_frequency_dict у моєму розв'язку
 
-# Hangman Game
-# -----------------------------------
-# Helper code
-# You don't need to understand this helper code,
-# but you will have to know how to use the functions
-# (so be sure to read the docstrings!)
+import math
 import random
-
 import string
 
-WORDLIST_FILENAME = "words.txt"
+VOWELS = 'aeiou'
+CONSONANTS = 'bcdfghjklmnpqrstvwxyz'
+HAND_SIZE = 7
 
+SCRABBLE_LETTER_VALUES = {
+    'a': 1, 'b': 3, 'c': 3, 'd': 2, 'e': 1, 'f': 4, 'g': 2, 'h': 4, 'i': 1, 'j': 8, 'k': 5, 'l': 1, 'm': 3, 'n': 1, 'o': 1, 'p': 3, 'q': 10, 'r': 1, 's': 1, 't': 1, 'u': 1, 'v': 4, 'w': 4, 'x': 8, 'y': 4, 'z': 10
+}
+
+# -----------------------------------
+# Helper code
+# (you don't need to understand this helper code)
+
+WORDLIST_FILENAME = "words.txt"
 
 def load_words():
     """
@@ -23,293 +33,437 @@ def load_words():
     Depending on the size of the word list, this function may
     take a while to finish.
     """
+    
     print("Loading word list from file...")
     # inFile: file
     inFile = open(WORDLIST_FILENAME, 'r')
-    # line: string
-    line = inFile.readline()
     # wordlist: list of strings
-    wordlist = line.split()
+    wordlist = []
+    for line in inFile:
+        wordlist.append(line.strip().lower())
     print("  ", len(wordlist), "words loaded.")
     return wordlist
 
-
-def choose_word(wordlist):
+def get_frequency_dict(sequence):
     """
-    wordlist (list): list of words (strings)
+    Returns a dictionary where the keys are elements of the sequence
+    and the values are integer counts, for the number of times that
+    an element is repeated in the sequence.
+
+    sequence: string or list
+    return: dictionary
+    """
     
-    Returns a word from wordlist at random
-    """
-    return random.choice(wordlist)
+    # freqs: dictionary (element_type -> int)
+    freq = {}
+    for x in sequence:
+        freq[x] = freq.get(x,0) + 1
+    return freq
 
 
-# end of helper code
-
+# (end of helper code)
 # -----------------------------------
 
-# Load the list of words into the variable wordlist
-# so that it can be accessed from anywhere in the program
-
-
-wordlist = load_words()
-
-
-def is_word_guessed(secret_word, letters_guessed):
+#
+# Problem #1: Scoring a word
+#
+def get_word_score(word, n):
     """
-    secret_word: string, the word the user is guessing; assumes all letters are
-      lowercase
-    letters_guessed: list (of letters), which letters have been guessed so far;
-      assumes that all letters are lowercase
-    returns: boolean, True if all the letters of secret_word are in letters_guessed;
-      False otherwise
+    Returns the score for a word. Assumes the word is a
+    valid word.
+
+    You may assume that the input word is always either a string of letters, 
+    or the empty string "". You may not assume that the string will only contain 
+    lowercase letters, so you will have to handle uppercase and mixed case strings 
+    appropriately. 
+
+	The score for a word is the product of two components:
+
+	The first component is the sum of the points for letters in the word.
+	The second component is the larger of:
+            1, or
+            7*wordlen - 3*(n-wordlen), where wordlen is the length of the word
+            and n is the hand length when the word was played
+
+	Letters are scored as in Scrabble; A is worth 1, B is
+	worth 3, C is worth 3, D is worth 2, E is worth 1, and so on.
+
+    word: string
+    n: int >= 0
+    returns: int >= 0
     """
-    # FILL IN YOUR CODE HERE AND DELETE "pass"
-    return set(list(secret_word)) == set(list(letters_guessed))
+    word_score_1 = 0
+    word_score_2 = 7*len(word) - 3*(n - len(word))
+    word = word.lower()
+    if word_score_2 < 1:
+        word_score_2 = 1
+    for letter in word:
+        if letter != '*':
+            word_score_1 += SCRABBLE_LETTER_VALUES[letter]
+    return word_score_1 * word_score_2
 
-
-def get_guessed_word(secret_word, letters_guessed):
+#
+# Make sure you understand how this function works and what it does!
+#
+def display_hand(hand):
     """
-    secret_word: string, the word the user is guessing
-    letters_guessed: list (of letters), which letters have been guessed so far
-    returns: string, comprised of letters, underscores (_), and spaces that represents
-      which letters in secret_word have been guessed so far.
+    Displays the letters currently in the hand.
+
+    For example:
+       display_hand({'a':1, 'x':2, 'l':3, 'e':1})
+    Should print out something like:
+       a x x l l l e
+    The order of the letters is unimportant.
+
+    hand: dictionary (string -> int)
     """
-    # FILL IN YOUR CODE HERE AND DELETE "pass"
-    is_in_word = [item if item in letters_guessed else '_ ' for number in range(0, len(secret_word))
-                  for item in secret_word[number]]
-    return ''.join(is_in_word)
+    print('Current hand:', end=' ')
+    for letter in hand.keys():
+        for j in range(hand[letter]):
+             print(letter, end=' ')      # print all on the same line
+    print()                              # print an empty line
 
-
-def get_available_letters(letters_guessed):
+#
+# Make sure you understand how this function works and what it does!
+# You will need to modify this for Problem #4.
+#
+def deal_hand(n):
     """
-    letters_guessed: list (of letters), which letters have been guessed so far
-    returns: string (of letters), comprised of letters that represents which letters have not
-      yet been guessed.
+    Returns a random hand containing n lowercase letters.
+    ceil(n/3) letters in the hand should be VOWELS (note,
+    ceil(n/3) means the smallest integer not less than n/3).
+
+    Hands are represented as dictionaries. The keys are
+    letters and the values are the number of times the
+    particular letter is repeated in that hand.
+
+    n: int >= 0
+    returns: dictionary (string -> int)
     """
-    # FILL IN YOUR CODE HERE AND DELETE "pass"
-    return ''.join([item for item in list(string.ascii_lowercase) if item not in letters_guessed])
+    
+    hand={'*': 1}
+    num_vowels = int(math.ceil(n / 3))
 
+    for i in range(num_vowels - 1):
+        x = random.choice(VOWELS)
+        hand[x] = hand.get(x, 0) + 1
+    
+    for i in range(num_vowels, n):    
+        x = random.choice(CONSONANTS)
+        hand[x] = hand.get(x, 0) + 1
+    
+    return hand
 
-def hangman(secret_word):
+#
+# Problem #2: Update a hand by removing letters
+#
+def update_hand(hand, word):
     """
-    secret_word: string, the secret word to guess.
+    Does NOT assume that hand contains every letter in word at least as
+    many times as the letter appears in word. Letters in word that don't
+    appear in hand should be ignored. Letters that appear in word more times
+    than in hand should never result in a negative count; instead, set the
+    count in the returned hand to 0 (or remove the letter from the
+    dictionary, depending on how your code is structured). 
 
-    Starts up an interactive game of Hangman.
+    Updates the hand: uses up the letters in the given word
+    and returns the new hand, without those letters in it.
 
-    * At the start of the game, let the user know how many
-      letters the secret_word contains and how many guesses s/he starts with.
+    Has no side effects: does not modify hand.
 
-    * The user should start with 6 guesses
-
-    * Before each round, you should display to the user how many guesses
-      s/he has left and the letters that the user has not yet guessed.
-
-    * Ask the user to supply one guess per round. Remember to make
-      sure that the user puts in a letter!
-
-    * The user should receive feedback immediately after each guess
-      about whether their guess appears in the computer's word.
-
-    * After each guess, you should display to the user the
-      partially guessed word so far.
-
-    Follows the other limitations detailed in the problem write-up.
+    word: string
+    hand: dictionary (string -> int)    
+    returns: dictionary (string -> int)
     """
-    # FILL IN YOUR CODE HERE AND DELETE "pass"
-    warnings_remaining = 3
-    guesses_remaining = 6
-    letters_guessed = []
-    user_input = set()
+    new_hand = hand.copy()
+    word = word.lower()
+    for key in hand.keys():
+        for x in range(hand[key]):
+            if key in word:
+                idx = word.find(key)
+                word = word[0:idx:] + word[idx + 1::]
+                new_hand[key] -= 1
+    return new_hand
 
-    print(f'Welcome to the game Hangman!\nI am thinking of a word that is {len(secret_word)} letters long.')
-    print(f'You have {warnings_remaining} warnings left.')
-
-    while guesses_remaining > 0 and not is_word_guessed(secret_word, letters_guessed):
-        print('-------------\n'
-              f'You have {guesses_remaining} guesses left.\n'
-              f'Available letters: {get_available_letters(letters_guessed)}')
-        letter = input('Please guess a letter: ').lower()
-
-        if letter not in list(string.ascii_lowercase):
-            if warnings_remaining > 0:
-                warnings_remaining -= 1
-            else:
-                guesses_remaining -= 1
-            print(f'Oops! That is not a valid letter. You have {warnings_remaining} '
-                  f'warnings left: {get_guessed_word(secret_word, letters_guessed)}')
-        else:
-            if letter in user_input:
-                if warnings_remaining > 0:
-                    warnings_remaining -= 1
-                else:
-                    guesses_remaining -= 1
-                print(f"Oops! You've already guessed that letter. You have {warnings_remaining} warnings left: "
-                      f"{get_guessed_word(secret_word, letters_guessed)}")
-            elif letter in secret_word:
-                letters_guessed.append(letter)
-                print(f'Good guess: {get_guessed_word(secret_word, letters_guessed)}')
-            else:
-                print(f'Oops! That letter is not in my word: {get_guessed_word(secret_word, letters_guessed)}')
-                guesses_remaining -= 2 if letter in 'aeiou' else 1
-            user_input.add(letter)
-
-    print('-------------')
-    if is_word_guessed(secret_word, letters_guessed):
-        print(f'Congratulations, you won! '
-              f'Your total score for this game is: {guesses_remaining * len(set(list(secret_word)))}')
-    else:
-        print(f'Sorry, you ran out of guesses. The word was {secret_word}')
-
-
-# When you've completed your hangman function, scroll down to the bottom
-# of the file and uncomment the first two lines to test
-# (hint: you might want to pick your own
-# secret_word while you're doing your own testing)
-
-
-# -----------------------------------
-
-
-def match_with_gaps(my_word, other_word):
+#
+# Problem #3: Test word validity
+#
+def is_valid_word(word, hand, word_list):
     """
-    my_word: string with _ characters, current guess of secret word
-    other_word: string, regular English word
-    returns: boolean, True if all the actual letters of my_word match the
-        corresponding letters of other_word, or the letter is the special symbol
-        _ , and my_word and other_word are of the same length;
-        False otherwise:
+    Returns True if word is in the word_list and is entirely
+    composed of letters in the hand. Otherwise, returns False.
+    Does not mutate hand or word_list.
+   
+    word: string
+    hand: dictionary (string -> int)
+    word_list: list of lowercase strings
+    returns: boolean
     """
-    # FILL IN YOUR CODE HERE AND DELETE "pass"
-    my_word = my_word.replace(' ', '')
-    if len(my_word) != len(other_word):
-        return False
-
-    pos = 0
-    letters = set()
-
-    while pos < len(my_word):
-        if my_word[pos] == '_':
-            letters.add(other_word[pos])
-        elif my_word[pos] != other_word[pos]:
+    letters_list = list()
+    word = word.lower()
+    word_copy = word
+    word_copy_local = ''
+    if '*' not in word:
+        for letter in hand.keys():
+            for x in range(hand[letter]):
+                if letter in word_copy:
+                    letters_list.append(letter)
+                    idx = word.find(letter)
+                    word_copy = word[0:idx:] + word[idx + 1::]
+        if word not in word_list:
             return False
-        pos += 1
-
-    if len(letters & set(my_word)) > 0:
-        return False
-
-    return True
-
-
-def show_possible_matches(my_word):
-    """
-    my_word: string with _ characters, current guess of secret word
-    returns: nothing, but should print out every word in wordlist that matches my_word
-             Keep in mind that in hangman when a letter is guessed, all the positions
-             at which that letter occurs in the secret word are revealed.
-             Therefore, the hidden letter(_ ) cannot be one of the letters in the word
-             that has already been revealed.
-
-    """
-    # FILL IN YOUR CODE HERE AND DELETE "pass"
-    return ' '.join([word for word in wordlist if match_with_gaps(my_word, word)])
-
-
-def hangman_with_hints(secret_word):
-    """
-    secret_word: string, the secret word to guess.
-
-    Starts up an interactive game of Hangman.
-
-    * At the start of the game, let the user know how many
-      letters the secret_word contains and how many guesses s/he starts with.
-
-    * The user should start with 6 guesses
-
-    * Before each round, you should display to the user how many guesses
-      s/he has left and the letters that the user has not yet guessed.
-
-    * Ask the user to supply one guess per round. Make sure to check that the user guesses a letter
-
-    * The user should receive feedback immediately after each guess
-      about whether their guess appears in the computer's word.
-
-    * After each guess, you should display to the user the
-      partially guessed word so far.
-
-    * If the guess is the symbol *, print out all words in wordlist that
-      matches the current guessed word.
-
-    Follows the other limitations detailed in the problem write-up.
-    """
-    # FILL IN YOUR CODE HERE AND DELETE "pass"
-    warnings_remaining = 3
-    guesses_remaining = 6
-    letters_guessed = []
-    user_input = set()
-
-    print(f'Welcome to the game Hangman!\nI am thinking of a word that is {len(secret_word)} letters long.')
-    print(f'You have {warnings_remaining} warnings left.')
-
-    while guesses_remaining > 0 and not is_word_guessed(secret_word, letters_guessed):
-        print('-------------\n'
-              f'You have {guesses_remaining} guesses left.\n'
-              f'Available letters: {get_available_letters(letters_guessed)}')
-        letter = input('Please guess a letter: ').lower()
-
-        if letter == '*':
-            possible_words = show_possible_matches(get_guessed_word(secret_word, letters_guessed))
-            print(possible_words)
-
-        elif letter not in list(string.ascii_lowercase):
-            if warnings_remaining > 0:
-                warnings_remaining -= 1
-            else:
-                guesses_remaining -= 1
-            print(f'Oops! That is not a valid letter. You have {warnings_remaining} '
-                  f'warnings left: {get_guessed_word(secret_word, letters_guessed)}')
+        elif sorted(letters_list) != sorted(list(word)):
+            return False
         else:
-            if letter in user_input:
-                if warnings_remaining > 0:
-                    warnings_remaining -= 1
-                else:
-                    guesses_remaining -= 1
-                print(f"Oops! You've already guessed that letter. You have {warnings_remaining} warnings left: "
-                      f"{get_guessed_word(secret_word, letters_guessed)}")
-            elif letter in secret_word:
-                letters_guessed.append(letter)
-                print(f'Good guess: {get_guessed_word(secret_word, letters_guessed)}')
-            else:
-                print(f'Oops! That letter is not in my word: {get_guessed_word(secret_word, letters_guessed)}')
-                guesses_remaining -= 2 if letter in 'aeiou' else 1
-            user_input.add(letter)
-
-    print('-------------')
-    if is_word_guessed(secret_word, letters_guessed):
-        print(f'Congratulations, you won! '
-              f'Your total score for this game is: {guesses_remaining * len(set(list(secret_word)))}')
+            return True
     else:
-        print(f'Sorry, you ran out of guesses. The word was {secret_word}')
+        for vowel in VOWELS:
+            word_copy_local = word_copy.replace('*', vowel)
+            if word_copy_local in word_list:
+                word_copy_local = word_copy.replace('*', '')
+                word_copy = word_copy.replace('*', '')
+                for letter in hand.keys():
+                    for x in range(hand[letter]):
+                        if letter in word_copy:
+                            letters_list.append(letter)
+                            idx = word_copy.find(letter)
+                            word_copy = word_copy[0:idx:] + word_copy[idx + 1::]
+                if sorted(letters_list) != sorted(list(word_copy_local)):
+                    return False
+                else:
+                    return True
 
 
-# When you've completed your hangman_with_hint function, comment the two similar
-# lines above that were used to run the hangman function, and then uncomment
-# these two lines and run this file to test!
-# Hint: You might want to pick your own secret_word while you're testing.
 
 
-if __name__ == "__main__":
-    pass
+#
+# Problem #5: Playing a hand
+#
+def calculate_handlen(hand):
+    """ 
+    Returns the length (number of letters) in the current hand.
+    
+    hand: dictionary (string-> int)
+    returns: integer
+    """
+    result = 0
+    for x in hand.values():
+        result += x
+    return result
 
-    # To test part 2, comment out the pass line above and
-    # uncomment the following two lines.
 
-    # secret_word = choose_word(wordlist)
-    # hangman(secret_word)
+def play_hand(hand, word_list):
 
-###############
+    """
+    Allows the user to play the given hand, as follows:
 
-# To test part 3 re-comment out the above lines and
-# uncomment the following two lines.
+    * The hand is displayed.
+    
+    * The user may input a word.
 
-# secret_word = choose_word(wordlist)
-# hangman_with_hints(secret_word)
+    * When any word is entered (valid or invalid), it uses up letters
+      from the hand.
+
+    * An invalid word is rejected, and a message is displayed asking
+      the user to choose another word.
+
+    * After every valid word: the score for that word is displayed,
+      the remaining letters in the hand are displayed, and the user
+      is asked to input another word.
+
+    * The sum of the word scores is displayed when the hand finishes.
+
+    * The hand finishes when there are no more unused letters.
+      The user can also finish playing the hand by inputing two 
+      exclamation points (the string '!!') instead of a word.
+
+      hand: dictionary (string -> int)
+      word_list: list of lowercase strings
+      returns: the total score for the hand
+      
+    """
+    new_hand = hand.copy()
+    print()
+    display_hand(hand)
+    sub = input('Would you like to substitute a letter? ')
+    if sub == 'yes':
+        let = input('Which letter would you like to replace? ')
+        new_hand = substitute_hand(hand, let)
+    print()
+    display_hand(new_hand)
+    word = input('Enter word, or “!!” to indicate that you are finished: ')
+    total_score = 0
+    if word == '!!':
+        print(f'Total score for this hand: {total_score}')
+        print('--------')
+        replay = input('Would you like to replay the hand? ')
+        if replay == 'yes':
+            play_hand(hand, word_list)
+        return total_score
+    elif is_valid_word(word, hand, word_list):
+        new_hand = update_hand(hand, word)
+        word_score = get_word_score(word, calculate_handlen(hand))
+        total_score += word_score
+        print(f' “{word}” earned {word_score} points.'
+              f' Total: {total_score}')
+    else:
+        new_hand = update_hand(hand, word)
+        print('That is not a valid word. Please choose another word.')
+    while True:
+        if not all(value == 0 for value in new_hand.values()):
+            print()
+            display_hand(new_hand)
+            word = input('Enter word, or “!!” to indicate that you are finished: ')
+            if word == '!!':
+                print(f'Total score for this hand: {total_score}')
+                print('--------')
+                replay = input('Would you like to replay the hand? ')
+                if replay == 'yes':
+                    play_hand(hand, word_list)
+                return total_score
+            elif is_valid_word(word, new_hand, word_list):
+                new_hand = update_hand(new_hand, word)
+                word_score = get_word_score(word, calculate_handlen(new_hand))
+                total_score += word_score
+                print(f' “{word}” earned {word_score} points.'
+                      f'Total: {total_score}')
+            else:
+                new_hand = update_hand(new_hand, word)
+                print('That is not a valid word. Please choose another word.')
+                print()
+        else:
+            print(f'Ran out of letters')
+            print(f'Total score for this hand: {total_score}')
+            print('--------')
+            replay = input('Would you like to replay the hand? ')
+            if replay == 'yes':
+                return play_hand(hand, word_list)
+            return total_score
+
+
+    # BEGIN PSEUDOCODE <-- Remove this comment when you implement this function
+    # Keep track of the total score
+    
+    # As long as there are still letters left in the hand:
+    
+        # Display the hand
+        
+        # Ask user for input
+        
+        # If the input is two exclamation points:
+        
+            # End the game (break out of the loop)
+
+            
+        # Otherwise (the input is not two exclamation points):
+
+            # If the word is valid:
+
+                # Tell the user how many points the word earned,
+                # and the updated total score
+
+            # Otherwise (the word is not valid):
+                # Reject invalid word (print a message)
+                
+            # update the user's hand by removing the letters of their inputted word
+            
+
+    # Game is over (user entered '!!' or ran out of letters),
+    # so tell user the total score
+
+    # Return the total score as result of function
+
+
+
+#
+# Problem #6: Playing a game
+# 
+
+
+#
+# procedure you will use to substitute a letter in a hand
+#
+
+def substitute_hand(hand, letter):
+    """ 
+    Allow the user to replace all copies of one letter in the hand (chosen by user)
+    with a new letter chosen from the VOWELS and CONSONANTS at random. The new letter
+    should be different from user's choice, and should not be any of the letters
+    already in the hand.
+
+    If user provide a letter not in the hand, the hand should be the same.
+
+    Has no side effects: does not mutate hand.
+
+    For example:
+        substitute_hand({'h':1, 'e':1, 'l':2, 'o':1}, 'l')
+    might return:
+        {'h':1, 'e':1, 'o':1, 'x':2} -> if the new letter is 'x'
+    The new letter should not be 'h', 'e', 'l', or 'o' since those letters were
+    already in the hand.
+    
+    hand: dictionary (string -> int)
+    letter: string
+    returns: dictionary (string -> int)
+    """
+    new_hand = hand.copy()
+    if letter not in hand.keys():
+        return hand
+    else:
+        if letter in CONSONANTS:
+            new_letter = random.choice(CONSONANTS)
+            new_hand[new_letter] = new_hand.pop(letter)
+        elif letter in VOWELS:
+            new_letter = random.choice(VOWELS)
+            new_hand[new_letter] = new_hand.pop(letter)
+    return new_hand
+
+    
+def play_game(word_list):
+    """
+    Allow the user to play a series of hands
+
+    * Asks the user to input a total number of hands
+
+    * Accumulates the score for each hand into a total score for the 
+      entire series
+ 
+    * For each hand, before playing, ask the user if they want to substitute
+      one letter for another. If the user inputs 'yes', prompt them for their
+      desired letter. This can only be done once during the game. Once the
+      substitue option is used, the user should not be asked if they want to
+      substitute letters in the future.
+
+    * For each hand, ask the user if they would like to replay the hand.
+      If the user inputs 'yes', they will replay the hand and keep 
+      the better of the two scores for that hand.  This can only be done once 
+      during the game. Once the replay option is used, the user should not
+      be asked if they want to replay future hands. Replaying the hand does
+      not count as one of the total number of hands the user initially
+      wanted to play.
+
+            * Note: if you replay a hand, you do not get the option to substitute
+                    a letter - you must play whatever hand you just had.
+      
+    * Returns the total score for the series of hands
+
+    word_list: list of lowercase strings
+    """
+    cyck_num = int(input('Enter total number of hands: '))
+    score = 0
+    for x in range(cyck_num):
+        score += play_hand(deal_hand(HAND_SIZE), word_list)
+    print(f'Total score over all hands: {score}')
+
+
+
+#
+# Build data structures used for entire session and play game
+# Do not remove the "if __name__ == '__main__':" line - this code is executed
+# when the program is run directly, instead of through an import statement
+#
+if __name__ == '__main__':
+    word_list = load_words()
+    play_game(word_list)
+
+

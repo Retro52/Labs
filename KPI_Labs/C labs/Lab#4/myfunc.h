@@ -10,8 +10,8 @@
 //Defining macros
 //
 
-//Array will be able to fill up to 2 gigs of RAM, can be changed
-#define MAX_ALLOC_ARR_SIZE 268435456
+//Array will be able to fill up to 2 gigs of RAM with 268435456, can be changed (now set to 100)
+#define MAX_ALLOC_ARR_SIZE 100
 
 //Matrix will be able to fill up to 8 gigs of RAM (32768x32768 elements), can be changed
 #define MAX_ALLOC_MATRIX_SIZE 32768
@@ -45,7 +45,7 @@ double pow2(int degree);
 void quicksort(double *arr, int first, int last);
 
 //allocated dynamic array, func return pointer to array
-double *create_array(int count);
+double *create_array(int count, int idx);
 
 //filling preallocated static array
 void fill_array(double *arr);
@@ -109,15 +109,15 @@ double input(char *text, double upper_bound, double lower_bound) {
     return res;
 }
 
-double *create_array(int count) {
+double *create_array(int count, int idx) {
     int rand, i;
     if (!count)
-        printf("Enter array size here: ");
+        printf("Enter array #%d size here: ", idx);
         count = input_int("", MAX_ALLOC_ARR_SIZE, 1);
     double *number = malloc((count + 1) * sizeof(double));
     if (!number)
         return NULL;
-    printf("Entered size (floats are automatically converted to integer): %d\n", count);
+    printf("Entered size: %d\n", count);
     number[0] = count;
     rand = input_int("Type:\n 0 - Enter array elements\n 1 - Randomize array elements: ", 1, 0);
     if (rand == 0) {
@@ -137,7 +137,7 @@ double *create_array(int count) {
 void fill_array(double *arr) {
     int rand, i, count;
     count = input_int("Enter array size here: ", MAX_PRERALLOC_ARR_SIZE, 1);
-    printf("Entered size (floats are automatically converted to integer): %d\n", count);
+    printf("Entered size: %d\n", count);
     arr[0] = count;
     rand = input_int("Type:\n 0 - Enter array elements\n 1 - Randomize array elements: ", 1, 0);
     if (rand == 0) {
@@ -169,7 +169,7 @@ double **create_matrix(int rows, int cols) {
     }
     number[0][cols] = rows;
     number[rows][0] = cols;
-    printf("Entered size (floats are automatically converted to integer): %d * %d\n", rows, cols);
+    printf("Entered size: %d * %d\n", rows, cols);
     rand = input_int("Type:\n 0 - Enter matrix elements\n 1 - Randomize matrix elements: ", 1, 0);
     if (rand == 0) {
         for (int i = 0; i < rows; i++) {
@@ -192,7 +192,7 @@ void fill_matrix(double arr[MAX_PRERALLOC_MATRIX_SIZE][MAX_PRERALLOC_MATRIX_SIZE
     int rand, i, rows, cols;
     rows = input_int("Enter rows number here: ", MAX_PRERALLOC_MATRIX_SIZE, 1);
     cols = input_int("Enter cols number here: ", MAX_PRERALLOC_MATRIX_SIZE, 1);
-    printf("Entered size (floats are automatically converted to integer): %d * %d\n", rows, cols);
+    printf("Entered size: %d * %d\n", rows, cols);
     rand = input_int("Type:\n 0 - Enter matrix elements\n 1 - Randomize matrix elements: ", 1, 0);
     if (rand == 0) {
         for (i = 0; i < rows; i++) {

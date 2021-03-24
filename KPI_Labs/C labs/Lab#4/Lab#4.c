@@ -85,8 +85,7 @@ void task_1(void) {
 }
 
 void task_2(void) {
-    printf("This task works only for positive integers because of task limitations (recursion & only "
-           "addition operation)\nMax value input = 32768\n\n");
+    printf("This task works only for integers\nMax value input = 32768\n\n");
     int x = input_int("Enter first number: ", MAX_MULT_INT, -MAX_MULT_INT);
     int y = input_int("Enter second number: ", MAX_MULT_INT, -MAX_MULT_INT);
     int res = recursiveMultiplying(x, y, 0);

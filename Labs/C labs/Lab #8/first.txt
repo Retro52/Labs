@@ -1,0 +1,10 @@
+Hello! This is a first line
+This is a second one
+Next one, contains a word indexed as '33' with most consonants in it (use it to test one of the tasks)
+ThatIsThisWorsWithMostConsonants
+Next lines are for one-word tests
+OneWord
+Two words
+Three words
+OneWordAGain
+Last line with five words

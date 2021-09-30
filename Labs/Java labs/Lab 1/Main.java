@@ -8,127 +8,37 @@ public class Main
 {
     public static void main(String[] argv) throws IOException
     {
-        String FileToOpen = null, FileToWrite = null, delimiter = null, separator = null;
-
-        // first arg - path to file for opening, second - path to file for writing, third one - delimiter, fourth - separator in final file
-        int args = argv.length;
-
-        switch (args)
-        {
-            case 1 -> FileToOpen = argv[0];
-            case 2 ->
-            {
-                FileToOpen = argv[0];
-                FileToWrite = argv[1];
-            }
-            case 3 ->
-            {
-                FileToOpen = argv[0];
-                FileToWrite = argv[1];
-                if (argv[2].length() > 1)
-                {
-                    System.out.println("Given delimiter is longer than one character, delimiters longer than 1 char are not supported");
-                }
-                else
-                {
-                    delimiter = argv[2];
-                }
-            }
-            case 4 ->
-            {
-                FileToOpen = argv[0];
-                FileToWrite = argv[1];
-                if (argv[2].length() > 1)
-                {
-                    System.out.println("Given delimiter is longer than one character, delimiters longer than 1 char are not supported");
-                }
-                else
-                {
-                    delimiter = argv[2];
-                }
-
-                if (argv[3].length() > 1)
-                {
-                    System.out.println("Given separator is longer than one character, delimiters longer than 1 char are not supported");
-                }
-                else
-                {
-                    separator = argv[3];
-                }
-            }
-            default ->
-            {
-            }
-        }
-
-        Scanner scanner = new Scanner(System.in);
-
-        if (FileToOpen == null)
-        {
-            System.out.println("Enter path to *.csv file: ");
-            FileToOpen = scanner.nextLine();
-        }
-
-        if (FileToWrite == null)
-        {
-            System.out.println("Enter path to output file: ");
-            FileToWrite = scanner.nextLine();
-        }
-
-        while (delimiter == null)
-        {
-            System.out.println("Enter delimiter: ");
-            String check = scanner.next();
-            if (check.length() > 1)
-            {
-                System.out.println("Delimiters with more than one character are not supported for now, try again");
-            }
-            else
-            {
-                delimiter = check;
-                break;
-            }
-        }
-
-        while (separator == null)
-        {
-            System.out.println("Enter separator: ");
-            String check = scanner.next();
-            if (check.length() > 1)
-            {
-                System.out.println("Separators with more than one character are not supported for now, try again");
-            }
-            else
-            {
-                separator = check;
-                break;
-            }
-        }
+        CLAHandler cla = new CLAHandler();
+        String[] Args = cla.CheckArguments(argv);
+        cla.ProcessArguments(Args);
 
         FilesReader readfile = new FilesReader();
-        FileInputStream fis = readfile.TryToReadFile(FileToOpen);
+        FileInputStream fis = readfile.TryToReadFile(Args[0]);
         if (fis == null)
         {
-            System.exit(1);
+            return;
         }
 
         FilesWriter writefile = new FilesWriter();
-        FileOutputStream fos = writefile.OpenAndCreateIfNotExists(FileToWrite);
+        FileOutputStream fos = writefile.OpenAndCreateIfNotExists(Args[1]);
         if (fos == null)
         {
-            System.exit(2);
+            return;
         }
 
-        int counter = 0;
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
+        BufferedReader bf = new BufferedReader(new FileReader(Args[0]));
 
         while (true)
         {
-            String result = readfile.ReadFileLines(FileToOpen, delimiter, separator, counter);
+            String result = readfile.ReadFileLines(bf, Args[2], Args[3]);
             if (result != null)
             {
-                writefile.WriteStringToFile(result, bw);
-                counter++;
+                int code = writefile.WriteStringToFile(result, bw);
+                if (code == 1)
+                {
+                    return;
+                }
             }
             else
             {
@@ -216,7 +126,7 @@ class FilesReader
             CurLength++;
         }
 
-        if (s.toCharArray()[s.length() - 1] == '"')
+        if (s.toCharArray()[s.length() - 1] == '"' && InBrackets)
         {
             CurLength--;
         }
@@ -226,21 +136,19 @@ class FilesReader
         return result.toString();
     }
 
-    public String ReadFileLines(String filePath, String delimiter, String separator, int line)
+    public String ReadFileLines(BufferedReader bf, String delimiter, String separator)
     {
         String read = null, result;
-        int counter = 0;
+
         if (Runtime.getRuntime().freeMemory() < 8192)
         {
-            System.out.println("Not enough memory for buffer. Wtf did you do to your computer");
+            System.out.println("Not enough memory for buffer");
             return null;
         }
-        try(BufferedReader bf = new BufferedReader(new FileReader(filePath)))
+
+        try
         {
-            while((read = bf.readLine()) != null && counter != line)
-            {
-                counter++;
-            }
+            read = bf.readLine();
         }
         catch(IOException e)
         {
@@ -260,19 +168,20 @@ class FilesReader
 
 class FilesWriter
 {
-    public void WriteStringToFile(String s, BufferedWriter bw)
+    public int WriteStringToFile(String s, BufferedWriter bw)
     {
         try
         {
             bw.write(s);
             bw.newLine();
             bw.flush();
+            return 0;
         }
         catch (IOException e)
         {
             System.out.println("Error while writing to file");
             System.err.println(e.getMessage());
-            System.exit(3);
+            return 1;
         }
     }
 
@@ -295,6 +204,112 @@ class FilesWriter
         {
             System.out.println("File for writing was not opened for unknown reason. Try to re-run program");
             return null;
+        }
+    }
+}
+
+class CLAHandler
+{
+    public String[] CheckArguments(String[] argv)
+    {
+        String[] result = new String[4];
+
+        int args = argv.length;
+
+        switch (args)
+        {
+            case 1 -> result[0] = argv[0];
+            case 2 ->
+                    {
+                        result[0] = argv[0];
+                        result[1] = argv[1];
+                    }
+            case 3 ->
+                    {
+                        result[0] = argv[0];
+                        result[1] = argv[1];
+                        if (argv[2].length() > 1)
+                        {
+                            System.out.println("Given delimiter is longer than one character, delimiters longer than 1 char are not supported");
+                        }
+                        else
+                        {
+                            result[2] = argv[2];
+                        }
+                    }
+            case 4 ->
+                    {
+                        result[0] = argv[0];
+                        result[1] = argv[1];
+                        if (argv[2].length() > 1)
+                        {
+                            System.out.println("Given delimiter is longer than one character, delimiters longer than 1 char are not supported");
+                        }
+                        else
+                        {
+                            result[2] = argv[2];
+                        }
+
+                        if (argv[3].length() > 1)
+                        {
+                            System.out.println("Given separator is longer than one character, delimiters longer than 1 char are not supported");
+                        }
+                        else
+                        {
+                            result[3] = argv[2];
+                        }
+                    }
+            default ->
+                    {
+                    }
+        }
+        return result;
+    }
+
+    public void ProcessArguments(String[] CheckedArgv)
+    {
+        Scanner scanner = new Scanner(System.in);
+
+        if (CheckedArgv[0] == null)
+        {
+            System.out.println("Enter path to *.csv file: ");
+            CheckedArgv[0] = scanner.nextLine();
+        }
+
+        if (CheckedArgv[1] == null)
+        {
+            System.out.println("Enter path to output file: ");
+            CheckedArgv[1] = scanner.nextLine();
+        }
+
+        while (CheckedArgv[2] == null)
+        {
+            System.out.println("Enter delimiter: ");
+            String check = scanner.next();
+            if (check.length() > 1)
+            {
+                System.out.println("Delimiters with more than one character are not supported for now, try again");
+            }
+            else
+            {
+                CheckedArgv[2] = check;
+                break;
+            }
+        }
+
+        while (CheckedArgv[3] == null)
+        {
+            System.out.println("Enter separator: ");
+            String check = scanner.next();
+            if (check.length() > 1)
+            {
+                System.out.println("Separators with more than one character are not supported for now, try again");
+            }
+            else
+            {
+                CheckedArgv[3] = check;
+                break;
+            }
         }
     }
 }

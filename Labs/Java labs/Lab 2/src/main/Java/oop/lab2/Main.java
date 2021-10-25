@@ -23,7 +23,13 @@ class StringCalculator
         {
             int result = 0;
             List <String> SplitComas = Arrays.stream(numbers.split(",")).toList();
+            List <String> Final = new Vector<>();
             for (String s: SplitComas)
+            {
+                String[] temp = s.split("\n");
+                Final.addAll(Arrays.asList(temp));
+            }
+            for (String s : Final)
             {
                 result += Integer.parseInt(s);
             }

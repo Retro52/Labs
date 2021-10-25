@@ -3,6 +3,7 @@ package oop.lab2;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 class StringCalculator
 {
@@ -13,7 +14,7 @@ class StringCalculator
         {
             if (numbers.charAt(2) == '[')
             {
-                Pattern pattern = Pattern.compile("//\\[.+\n");
+                Pattern pattern = Pattern.compile("//\\[.+]\n", Pattern.DOTALL);
                 Matcher matcher = pattern.matcher(numbers);
                 while (matcher.find())
                 {
@@ -36,15 +37,43 @@ class StringCalculator
         {
 
             int result = 0;
-            delimiter = ProceedDelimiter(delimiter);
-            List <String> SplitComas = Arrays.stream(numbers.split(String.valueOf(delimiter))).toList();
+            List <String> Delimiters = new Vector<>();
             List <String> Final = new Vector<>();
-            List<Integer> negatives = new Vector<>();
-            for (String s: SplitComas)
+
+            if (!delimiter.equals(","))
             {
-                String[] temp = s.split("\n");
-                Final.addAll(Arrays.asList(temp));
+                delimiter = ProceedDelimiter(delimiter);
+                if (delimiter.contains("]["))
+                {
+                    Delimiters = Arrays.stream((delimiter.split("]\\["))).collect(Collectors.toList());
+                }
+                else
+                {
+                    Delimiters.add(delimiter);
+
+                }
             }
+            else
+            {
+                Delimiters.add(",");
+            }
+
+            Delimiters.add("\n");
+            Final.add(numbers);
+
+            int FS = Final.size();
+            for (String delim : Delimiters)
+            {
+                for (int j = 0; j < FS; j++)
+                {
+                    String subs = Final.get(0);
+                    Final.addAll(Arrays.stream(subs.split(delim)).toList());
+                    Final.remove(Final.get(0));
+                }
+                FS = Final.size();
+            }
+
+            List<Integer> negatives = new Vector<>();
             for (String s : Final)
             {
                 int num = Integer.parseInt(s);
@@ -74,7 +103,7 @@ class StringCalculator
         for(int i = 0; i < delimiter.length(); i++)
         {
             char c = delimiter.charAt(i);
-            if (c == '+' || c == '*' || c == '?' || c == '|' || c == '^' || c == '$')
+            if (c == '+' || c == '*' || c == '?' || c == '|' || c == '^' || c == '$' || c == '%')
             {
                 result.append("\\").append(delimiter.charAt(i));
             }
@@ -88,10 +117,12 @@ class StringCalculator
     private static String formErrorMessage(List<Integer> negatives)
     {
         StringBuilder message = new StringBuilder("Negatives not allowed [");
+        negatives.sort(Collections.reverseOrder());
         ListIterator<Integer> iterator = negatives.listIterator();
         message.append(iterator.next());
         while (iterator.hasNext()) message.append("; ").append(iterator.next());
         message.append(']');
         return message.toString();
     }
+
 }

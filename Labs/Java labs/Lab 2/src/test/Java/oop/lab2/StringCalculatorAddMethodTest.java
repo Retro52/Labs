@@ -72,4 +72,18 @@ public class StringCalculatorAddMethodTest
         Assert.assertEquals(StringCalculator.Add("//[+++]\n10"), 10);
         Assert.assertEquals(StringCalculator.Add("//[+++]\n"), 0);
     }
+
+    @Test
+    public void TestStepEight()
+    {
+        Assert.assertEquals(StringCalculator.Add("//[+][*][&][%]\n5+10*15&20%25"), 75);
+        Assert.assertEquals(StringCalculator.Add("//[+][*][&][%]\n23"), 23);
+        Assert.assertEquals(StringCalculator.Add("//[+][*][&][%]\n"), 0);
+    }
+
+    @Test
+    public void TestStepNine()
+    {
+        Assert.assertEquals(StringCalculator.Add("//[+++][***][**][+]\n1+++2***3+4**5"), 15);
+    }
 }

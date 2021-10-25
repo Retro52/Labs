@@ -28,4 +28,12 @@ public class StringCalculatorAddMethodTest
         Assert.assertEquals(StringCalculator.Add("1\n2\n3"), 6);
         Assert.assertEquals(StringCalculator.Add("1\n3,5"), 9);
     }
+
+    @Test
+    public void TestStepFour()
+    {
+        Assert.assertEquals(StringCalculator.Add("//;\n1;2;3"), 6);
+        Assert.assertEquals(StringCalculator.Add("//;\n123"), 123);
+        Assert.assertEquals(StringCalculator.Add("//;\n"),0);
+    }
 }

@@ -36,4 +36,24 @@ public class StringCalculatorAddMethodTest
         Assert.assertEquals(StringCalculator.Add("//;\n123"), 123);
         Assert.assertEquals(StringCalculator.Add("//;\n"),0);
     }
+
+    @Test
+    public void TestStepFive()
+    {
+        Exception exception;
+        exception = Assert.assertThrows(IllegalArgumentException.class, () -> StringCalculator.Add("-1"));
+        Assert.assertEquals("Negatives not allowed [-1]", exception.getMessage());
+
+        exception = Assert.assertThrows(IllegalArgumentException.class, () -> StringCalculator.Add("-1,-5"));
+        Assert.assertEquals("Negatives not allowed [-1; -5]", exception.getMessage());
+
+        exception = Assert.assertThrows(IllegalArgumentException.class, () -> StringCalculator.Add("-1\n-5"));
+        Assert.assertEquals("Negatives not allowed [-1; -5]", exception.getMessage());
+
+        exception = Assert.assertThrows(IllegalArgumentException.class, () -> StringCalculator.Add("//;\n-1;-5"));
+        Assert.assertEquals("Negatives not allowed [-1; -5]", exception.getMessage());
+
+        exception = Assert.assertThrows(IllegalArgumentException.class, () -> StringCalculator.Add("//;\n-1;-5;-7"));
+        Assert.assertEquals("Negatives not allowed [-1; -5; -7]", exception.getMessage());
+    }
 }

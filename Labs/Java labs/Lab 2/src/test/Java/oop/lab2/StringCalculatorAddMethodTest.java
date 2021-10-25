@@ -56,4 +56,12 @@ public class StringCalculatorAddMethodTest
         exception = Assert.assertThrows(IllegalArgumentException.class, () -> StringCalculator.Add("//;\n-1;-5;-7"));
         Assert.assertEquals("Negatives not allowed [-1; -5; -7]", exception.getMessage());
     }
+
+    @Test
+    public void TestStepSix()
+    {
+        Assert.assertEquals(StringCalculator.Add("1001"), 0);
+        Assert.assertEquals(StringCalculator.Add("1001,3000"), 0);
+        Assert.assertEquals(StringCalculator.Add("1001,3000,15"), 15);
+    }
 }

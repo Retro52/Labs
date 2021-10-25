@@ -39,11 +39,14 @@ class StringCalculator
             for (String s : Final)
             {
                 int num = Integer.parseInt(s);
+                num = (num > 1000) ? 0 : num;
                 if (num < 0)
                 {
                     negatives.add(num);
                 }
+
                 result += num;
+
             }
             if (negatives.size() > 0)
             {

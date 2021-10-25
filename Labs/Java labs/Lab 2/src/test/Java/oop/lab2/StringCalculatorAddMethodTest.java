@@ -64,4 +64,12 @@ public class StringCalculatorAddMethodTest
         Assert.assertEquals(StringCalculator.Add("1001,3000"), 0);
         Assert.assertEquals(StringCalculator.Add("1001,3000,15"), 15);
     }
+
+    @Test
+    public void TestStepSeven()
+    {
+        Assert.assertEquals(StringCalculator.Add("//[+++]\n1+++2+++3+++4"), 10);
+        Assert.assertEquals(StringCalculator.Add("//[+++]\n10"), 10);
+        Assert.assertEquals(StringCalculator.Add("//[+++]\n"), 0);
+    }
 }

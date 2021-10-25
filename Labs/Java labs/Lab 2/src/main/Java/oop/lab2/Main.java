@@ -1,5 +1,7 @@
 package oop.lab2;
 
+import java.util.*;
+
 public class Main
 {
     public static void main(String[] args)
@@ -19,21 +21,12 @@ class StringCalculator
 
         else
         {
-            int result = 0, i = 0;
-            while(i < numbers.length())
+            int result = 0;
+            List <String> SplitComas = Arrays.stream(numbers.split(",")).toList();
+            for (String s: SplitComas)
             {
-                if (numbers.charAt(i) == ',')
-                {
-                    break;
-                }
-                else
-                {
-                    i++;
-                }
+                result += Integer.parseInt(s);
             }
-
-            result += Integer.parseInt(numbers.substring(0, i));
-            if (i < numbers.length() - 1) result += Integer.parseInt(numbers.substring(i + 1));
             return result;
         }
     }

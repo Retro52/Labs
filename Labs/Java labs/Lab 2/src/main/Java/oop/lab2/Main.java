@@ -4,17 +4,9 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Main
-{
-    public static void main(String[] args)
-    {
-	// write your code here
-    }
-}
-
 class StringCalculator
 {
-    public static int Add(String numbers)
+    public static int Add(String numbers) throws IllegalArgumentException
     {
         char delimiter = ',';
         if (numbers.startsWith("//"))
@@ -38,6 +30,7 @@ class StringCalculator
             int result = 0;
             List <String> SplitComas = Arrays.stream(numbers.split(String.valueOf(delimiter))).toList();
             List <String> Final = new Vector<>();
+            List<Integer> negatives = new Vector<>();
             for (String s: SplitComas)
             {
                 String[] temp = s.split("\n");
@@ -45,9 +38,31 @@ class StringCalculator
             }
             for (String s : Final)
             {
-                result += Integer.parseInt(s);
+                int num = Integer.parseInt(s);
+                if (num < 0)
+                {
+                    negatives.add(num);
+                }
+                result += num;
             }
-            return result;
+            if (negatives.size() > 0)
+            {
+                throw new IllegalArgumentException(formErrorMessage(negatives));
+            }
+            else
+            {
+                return result;
+            }
         }
+    }
+
+    private static String formErrorMessage(List<Integer> negatives)
+    {
+        StringBuilder message = new StringBuilder("Negatives not allowed [");
+        ListIterator<Integer> iterator = negatives.listIterator();
+        message.append(iterator.next());
+        while (iterator.hasNext()) message.append("; ").append(iterator.next());
+        message.append(']');
+        return message.toString();
     }
 }

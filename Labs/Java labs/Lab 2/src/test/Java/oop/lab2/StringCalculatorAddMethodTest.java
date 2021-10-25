@@ -20,4 +20,12 @@ public class StringCalculatorAddMethodTest
         Assert.assertEquals(StringCalculator.Add("12,5,300"), 317);
         Assert.assertEquals(StringCalculator.Add("96,69,96,69,96,69,96,69"), 660);
     }
+
+    @Test
+    public void TestStepThree()
+    {
+        Assert.assertEquals(StringCalculator.Add("1,2"), 3);
+        Assert.assertEquals(StringCalculator.Add("1\n2\n3"), 6);
+        Assert.assertEquals(StringCalculator.Add("1\n3,5"), 9);
+    }
 }

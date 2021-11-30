@@ -84,6 +84,11 @@ def EditImage(pts, bg=(255, 255, 255, 1)):
             draw.line(pts[i] + pts[0], fill=(0, 26, 191, 1))
         else:
             draw.line(pts[i] + pts[i + 1], fill=(0, 26, 191, 1))
+        cross_size = 3
+        for x in range(-cross_size, cross_size):
+            for y in range(-cross_size, cross_size):
+                if abs(x) == 0 or abs(y) == 0:
+                    draw.point([pts[i][0] + x, pts[i][1]+y], fill=(0, 255, 0, 1))
     return Ds6_image
 
 

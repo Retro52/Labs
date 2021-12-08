@@ -1,9 +1,6 @@
 package org.fpm.di.example;
 
-import org.fpm.di.example.tests.Example;
-import org.fpm.di.example.tests.TestExceptions;
-import org.fpm.di.example.tests.TestImmutableContainer;
-import org.fpm.di.example.tests.TestMutableExceptions;
+import org.fpm.di.example.tests.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -11,5 +8,6 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({Example.class,
         TestExceptions.class,
         TestImmutableContainer.class,
-        TestMutableExceptions.class})
+        TestMutableExceptions.class,
+        TestAnnotation.class})
 public class RunAllTests {}

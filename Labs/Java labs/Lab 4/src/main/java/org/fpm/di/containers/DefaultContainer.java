@@ -115,23 +115,28 @@ public abstract class DefaultContainer implements Container
     {
         private final ArrayList<Constructor<?>> injectionConstructors;
 
-        private void insertConstructor(Constructor<?> constructor)
+        private boolean insertConstructor(Constructor<?> constructor)
         {
             if (constructor.canAccess(null))
             {
                 injectionConstructors.add(constructor);
+                return true;
             }
             else if(constructor.isAnnotationPresent(IgnoreAccessModifiers.class))
             {
                 if (constructor.trySetAccessible())
                 {
                     injectionConstructors.add(constructor);
+                    return true;
                 }
+                return false;
             }
             else if(!constructor.canAccess(null))
             {
                 System.err.println("Warning: @Inject annotation found on Constructor " + constructor + ", which does not have @IgnoreAccessModifiers annotation on it");
+                return false;
             }
+            return false;
         }
 
         DefaultReturnType()
@@ -142,8 +147,14 @@ public abstract class DefaultContainer implements Container
         DefaultReturnType(Class<?> clazz)
         {
             injectionConstructors = new ArrayList<>();
-            Constructor<?>[] constructors = clazz.getConstructors();
-            if (constructors.length == 1) insertConstructor(constructors[0]);
+            Constructor<?>[] constructors = clazz.getDeclaredConstructors();
+            if (constructors.length == 1)
+            {
+                if(!insertConstructor(constructors[0]))
+                {
+                    throw new ContainerHasNoAccessibleConstructorsException(clazz);
+                }
+            }
             else
             {
                 for (Constructor<?> constructor : constructors)

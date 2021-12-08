@@ -5,7 +5,7 @@ import org.fpm.di.containers.DefaultContainer;
 import org.fpm.di.containers.MutableContainer;
 import org.fpm.di.example.classes.A;
 import org.fpm.di.example.classes.ClassWithConstructorException;
-import org.fpm.di.example.classes.ClassWithNoPublicContainers;
+import org.fpm.di.example.classes.ClassWithNoPublicConstructors;
 import org.fpm.di.example.classes.UseA;
 import org.fpm.di.exceptions.ClassConstructorsHaveIllegalArguments;
 import org.fpm.di.exceptions.ContainerHasNoAccessibleConstructorsException;
@@ -23,12 +23,12 @@ public class TestExceptions
     }
 
     @Test(expected = ContainerHasNoAccessibleConstructorsException.class)
-    public void ShouldThrowNoAccessibleConstructorException()
+    public void ShouldThrowContainerHasNoAccessibleConstructorsException()
     {
         DefaultBinder binder = new DefaultBinder();
-        binder.bind(ClassWithNoPublicContainers.class);
+        binder.bind(ClassWithNoPublicConstructors.class);
         MutableContainer container = new MutableContainer(binder);
-        container.getComponent(ClassWithNoPublicContainers.class);
+        container.getComponent(ClassWithNoPublicConstructors.class);
     }
 
     @Test(expected = ContainerReturnNotRegisteredException.class)
@@ -48,7 +48,7 @@ public class TestExceptions
     }
 
     @Test(expected = ClassConstructorsHaveIllegalArguments.class)
-    public void test()
+    public void CheckNotRegisteredConstructorParams()
     {
         DefaultBinder binder = new DefaultBinder();
         binder.bind(UseA.class);
@@ -58,7 +58,6 @@ public class TestExceptions
         binder = new DefaultBinder();
         binder.bind(A.class);
         DefaultContainer child = new MutableContainer(binder);
-
         UseA obj = parent.getComponent(UseA.class);
     }
 

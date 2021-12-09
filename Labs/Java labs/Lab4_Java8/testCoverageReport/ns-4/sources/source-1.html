@@ -1,0 +1,84 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > IgnoreAccessModifiers</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/highlight-idea.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.pack.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.fpm.di.annotations</a>
+</div>
+
+<h1>Coverage Summary for Class: IgnoreAccessModifiers (org.fpm.di.annotations)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">IgnoreAccessModifiers</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<div class="sourceCode" id="sourceCode"><i class="no-highlight">1</i>&nbsp;package org.fpm.di.annotations;
+<i class="no-highlight">2</i>&nbsp;
+<i class="no-highlight">3</i>&nbsp;import javax.inject.Scope;
+<i class="no-highlight">4</i>&nbsp;import java.lang.annotation.ElementType;
+<i class="no-highlight">5</i>&nbsp;import java.lang.annotation.Retention;
+<i class="no-highlight">6</i>&nbsp;import java.lang.annotation.Target;
+<i class="no-highlight">7</i>&nbsp;
+<i class="no-highlight">8</i>&nbsp;import static java.lang.annotation.RetentionPolicy.RUNTIME;
+<i class="no-highlight">9</i>&nbsp;
+<i class="no-highlight">10</i>&nbsp;@Scope
+<i class="no-highlight">11</i>&nbsp;@Target(ElementType.CONSTRUCTOR)
+<i class="no-highlight">12</i>&nbsp;@Retention(RUNTIME)
+<i class="no-highlight">13</i>&nbsp;/* Adding this annotation to constructor makes container ignore constructor access modifiers inject it anyway
+<i class="no-highlight">14</i>&nbsp;* Of course, you still need to add @Inject annotation to this constructor */
+<i class="no-highlight">15</i>&nbsp;public @interface IgnoreAccessModifiers {}
+</div>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+        var codeBlock = document.getElementById('sourceCode');
+
+        if (codeBlock) {
+            hljs.highlightBlock(codeBlock);
+        }
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2021-12-09 22:25</div>
+</div>
+</body>
+</html>

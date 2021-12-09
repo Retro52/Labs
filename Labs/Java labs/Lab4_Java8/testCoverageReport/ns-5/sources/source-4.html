@@ -4,7 +4,7 @@
 <!DOCTYPE html>
 <html id="htmlId">
 <head>
-  <title>Coverage Report > Configuration</title>
+  <title>Coverage Report > Container</title>
   <style type="text/css">
     @import "../../css/coverage.css";
     @import "../../css/highlight-idea.css";
@@ -20,14 +20,14 @@ Current scope:     <a href="../../index.html">all classes</a>
     <a href="../index.html">org.fpm.di</a>
 </div>
 
-<h1>Coverage Summary for Class: Configuration (org.fpm.di)</h1>
+<h1>Coverage Summary for Class: Container (org.fpm.di)</h1>
 
 <table class="coverageStats">
 <tr>
   <th class="name">Class</th>
 </tr>
 <tr>
-  <td class="name">Configuration</td>
+  <td class="name">Container</td>
 </tr>
 
 </table>
@@ -39,9 +39,9 @@ Current scope:     <a href="../../index.html">all classes</a>
 <pre>
 <div class="sourceCode" id="sourceCode"><i class="no-highlight">1</i>&nbsp;package org.fpm.di;
 <i class="no-highlight">2</i>&nbsp;
-<i class="no-highlight">3</i>&nbsp;public interface Configuration
+<i class="no-highlight">3</i>&nbsp;public interface Container
 <i class="no-highlight">4</i>&nbsp;{
-<i class="no-highlight">5</i>&nbsp;    void configure(Binder binder);
+<i class="no-highlight">5</i>&nbsp;    &lt;T&gt; T getComponent(Class&lt;T&gt; clazz);
 <i class="no-highlight">6</i>&nbsp;}
 </div>
 </pre>
@@ -69,7 +69,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2021-12-09 22:25</div>
+    <div style="float:right;">generated on 2021-12-10 00:13</div>
 </div>
 </body>
 </html>

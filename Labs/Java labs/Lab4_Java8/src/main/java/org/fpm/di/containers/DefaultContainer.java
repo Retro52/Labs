@@ -10,6 +10,7 @@ import org.fpm.di.exceptions.ContainerReturnNotRegisteredException;
 import javax.inject.Inject;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
 import java.util.*;
 
 
@@ -117,26 +118,23 @@ public abstract class DefaultContainer implements Container
 
         private boolean insertConstructor(Constructor<?> constructor)
         {
-            if (constructor.canAccess(null))
+
+            if (constructor.getModifiers() == Modifier.PUBLIC)
             {
                 injectionConstructors.add(constructor);
                 return true;
             }
             else if(constructor.isAnnotationPresent(IgnoreAccessModifiers.class))
             {
-                if (constructor.trySetAccessible())
-                {
-                    injectionConstructors.add(constructor);
-                    return true;
-                }
-                return false;
+                constructor.setAccessible(true);
+                injectionConstructors.add(constructor);
+                return true;
             }
-            else if(!constructor.canAccess(null))
+            else
             {
                 System.err.println("Warning: @Inject annotation found on Constructor " + constructor + ", which does not have @IgnoreAccessModifiers annotation on it");
                 return false;
             }
-            return false;
         }
 
         DefaultReturnType()

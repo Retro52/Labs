@@ -18,7 +18,7 @@ link_directories(src/OpenGL/lib/PNG)
 
 include_directories(include)
 
-add_executable(Graphics src/main.cpp src/general/Window.cpp src/general/Window.h src/general/EventsHandler.cpp src/general/EventsHandler.h src/general/EventsHandlerFields.h src/general/Camera.cpp src/general/Camera.h src/draw/Shader.cpp src/draw/Shader.h src/draw/Mesh.cpp src/draw/Mesh.h src/draw/Texture.cpp src/draw/Texture.h src/loaders/objLoader.cpp src/loaders/objLoader.h)
+add_executable(Graphics src/main.cpp src/general/Window.cpp src/general/Window.h src/general/EventsHandler.cpp src/general/EventsHandler.h src/general/EventsHandlerFields.h src/general/Camera.cpp src/general/Camera.h src/draw/Shader.cpp src/draw/Shader.h src/draw/Mesh.cpp src/draw/Mesh.h src/draw/Texture.cpp src/draw/Texture.h src/loaders/pngLoader.cpp src/loaders/pngLoader.h src/draw/Vertex.h src/general/Structures.h src/loaders/objModel.cpp src/loaders/objModel.h)
 
 set(CMAKE_C_FLAGS -m32)
 set(CMAKE_CXX_FLAGS -m32)

@@ -6,17 +6,21 @@
 #define GRAPHICS_MESH_H
 
 #include <cstdlib>
+#include <vector>
+#include <freeglut.h>
+#include "../OpenGL/include/glm/glm.hpp"
+#include "Vertex.h"
 
 class Mesh
 {
-private:
-    unsigned int vao, vbo, id;
-    size_t vertices, vertexSize;
+    unsigned int vao;
+    unsigned int vbo;
+    size_t vertices;
 public:
-    Mesh(const float *buffer, size_t vertices, const int *attrs, unsigned int meshID);
+    Mesh(const float* buffer, size_t vertices, const int* attrs);
+    Mesh(const std::vector<float>& buffer, size_t vertices, const int* attrs);
     ~Mesh();
 
-    void reload(const float* buffer, size_t verts);
     void draw(unsigned int primitive) const;
 };
 

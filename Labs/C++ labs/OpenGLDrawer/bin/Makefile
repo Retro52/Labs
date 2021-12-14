@@ -142,6 +142,87 @@ Graphics/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\Graphics.dir\build.make CMakeFiles/Graphics.dir/build
 .PHONY : Graphics/fast
 
+src/draw/Mesh.obj: src/draw/Mesh.cpp.obj
+
+.PHONY : src/draw/Mesh.obj
+
+# target to build an object file
+src/draw/Mesh.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Graphics.dir\build.make CMakeFiles/Graphics.dir/src/draw/Mesh.cpp.obj
+.PHONY : src/draw/Mesh.cpp.obj
+
+src/draw/Mesh.i: src/draw/Mesh.cpp.i
+
+.PHONY : src/draw/Mesh.i
+
+# target to preprocess a source file
+src/draw/Mesh.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Graphics.dir\build.make CMakeFiles/Graphics.dir/src/draw/Mesh.cpp.i
+.PHONY : src/draw/Mesh.cpp.i
+
+src/draw/Mesh.s: src/draw/Mesh.cpp.s
+
+.PHONY : src/draw/Mesh.s
+
+# target to generate assembly for a file
+src/draw/Mesh.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Graphics.dir\build.make CMakeFiles/Graphics.dir/src/draw/Mesh.cpp.s
+.PHONY : src/draw/Mesh.cpp.s
+
+src/draw/Shader.obj: src/draw/Shader.cpp.obj
+
+.PHONY : src/draw/Shader.obj
+
+# target to build an object file
+src/draw/Shader.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Graphics.dir\build.make CMakeFiles/Graphics.dir/src/draw/Shader.cpp.obj
+.PHONY : src/draw/Shader.cpp.obj
+
+src/draw/Shader.i: src/draw/Shader.cpp.i
+
+.PHONY : src/draw/Shader.i
+
+# target to preprocess a source file
+src/draw/Shader.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Graphics.dir\build.make CMakeFiles/Graphics.dir/src/draw/Shader.cpp.i
+.PHONY : src/draw/Shader.cpp.i
+
+src/draw/Shader.s: src/draw/Shader.cpp.s
+
+.PHONY : src/draw/Shader.s
+
+# target to generate assembly for a file
+src/draw/Shader.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Graphics.dir\build.make CMakeFiles/Graphics.dir/src/draw/Shader.cpp.s
+.PHONY : src/draw/Shader.cpp.s
+
+src/draw/Texture.obj: src/draw/Texture.cpp.obj
+
+.PHONY : src/draw/Texture.obj
+
+# target to build an object file
+src/draw/Texture.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Graphics.dir\build.make CMakeFiles/Graphics.dir/src/draw/Texture.cpp.obj
+.PHONY : src/draw/Texture.cpp.obj
+
+src/draw/Texture.i: src/draw/Texture.cpp.i
+
+.PHONY : src/draw/Texture.i
+
+# target to preprocess a source file
+src/draw/Texture.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Graphics.dir\build.make CMakeFiles/Graphics.dir/src/draw/Texture.cpp.i
+.PHONY : src/draw/Texture.cpp.i
+
+src/draw/Texture.s: src/draw/Texture.cpp.s
+
+.PHONY : src/draw/Texture.s
+
+# target to generate assembly for a file
+src/draw/Texture.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Graphics.dir\build.make CMakeFiles/Graphics.dir/src/draw/Texture.cpp.s
+.PHONY : src/draw/Texture.cpp.s
+
 src/general/Camera.obj: src/general/Camera.cpp.obj
 
 .PHONY : src/general/Camera.obj
@@ -223,6 +304,60 @@ src/general/Window.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\Graphics.dir\build.make CMakeFiles/Graphics.dir/src/general/Window.cpp.s
 .PHONY : src/general/Window.cpp.s
 
+src/loaders/objModel.obj: src/loaders/objModel.cpp.obj
+
+.PHONY : src/loaders/objModel.obj
+
+# target to build an object file
+src/loaders/objModel.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Graphics.dir\build.make CMakeFiles/Graphics.dir/src/loaders/objModel.cpp.obj
+.PHONY : src/loaders/objModel.cpp.obj
+
+src/loaders/objModel.i: src/loaders/objModel.cpp.i
+
+.PHONY : src/loaders/objModel.i
+
+# target to preprocess a source file
+src/loaders/objModel.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Graphics.dir\build.make CMakeFiles/Graphics.dir/src/loaders/objModel.cpp.i
+.PHONY : src/loaders/objModel.cpp.i
+
+src/loaders/objModel.s: src/loaders/objModel.cpp.s
+
+.PHONY : src/loaders/objModel.s
+
+# target to generate assembly for a file
+src/loaders/objModel.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Graphics.dir\build.make CMakeFiles/Graphics.dir/src/loaders/objModel.cpp.s
+.PHONY : src/loaders/objModel.cpp.s
+
+src/loaders/pngLoader.obj: src/loaders/pngLoader.cpp.obj
+
+.PHONY : src/loaders/pngLoader.obj
+
+# target to build an object file
+src/loaders/pngLoader.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Graphics.dir\build.make CMakeFiles/Graphics.dir/src/loaders/pngLoader.cpp.obj
+.PHONY : src/loaders/pngLoader.cpp.obj
+
+src/loaders/pngLoader.i: src/loaders/pngLoader.cpp.i
+
+.PHONY : src/loaders/pngLoader.i
+
+# target to preprocess a source file
+src/loaders/pngLoader.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Graphics.dir\build.make CMakeFiles/Graphics.dir/src/loaders/pngLoader.cpp.i
+.PHONY : src/loaders/pngLoader.cpp.i
+
+src/loaders/pngLoader.s: src/loaders/pngLoader.cpp.s
+
+.PHONY : src/loaders/pngLoader.s
+
+# target to generate assembly for a file
+src/loaders/pngLoader.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Graphics.dir\build.make CMakeFiles/Graphics.dir/src/loaders/pngLoader.cpp.s
+.PHONY : src/loaders/pngLoader.cpp.s
+
 src/main.obj: src/main.cpp.obj
 
 .PHONY : src/main.obj
@@ -259,6 +394,15 @@ help:
 	@echo ... edit_cache
 	@echo ... rebuild_cache
 	@echo ... Graphics
+	@echo ... src/draw/Mesh.obj
+	@echo ... src/draw/Mesh.i
+	@echo ... src/draw/Mesh.s
+	@echo ... src/draw/Shader.obj
+	@echo ... src/draw/Shader.i
+	@echo ... src/draw/Shader.s
+	@echo ... src/draw/Texture.obj
+	@echo ... src/draw/Texture.i
+	@echo ... src/draw/Texture.s
 	@echo ... src/general/Camera.obj
 	@echo ... src/general/Camera.i
 	@echo ... src/general/Camera.s
@@ -268,6 +412,12 @@ help:
 	@echo ... src/general/Window.obj
 	@echo ... src/general/Window.i
 	@echo ... src/general/Window.s
+	@echo ... src/loaders/objModel.obj
+	@echo ... src/loaders/objModel.i
+	@echo ... src/loaders/objModel.s
+	@echo ... src/loaders/pngLoader.obj
+	@echo ... src/loaders/pngLoader.i
+	@echo ... src/loaders/pngLoader.s
 	@echo ... src/main.obj
 	@echo ... src/main.i
 	@echo ... src/main.s

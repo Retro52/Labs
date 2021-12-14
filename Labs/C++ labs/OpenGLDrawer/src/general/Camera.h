@@ -10,13 +10,14 @@
 class Camera
 {
 private:
-    glm::vec3 front, up, right, dir, position;
-    glm::mat4 rotation;
-
-    float fov, zoom;
     void Update();
 
 public:
+    glm::mat4 rotation;
+
+    glm::vec3 front, up, right, dir, position;
+
+    float fov, zoom;
 
     Camera(const glm::vec3& position, float fov);
 

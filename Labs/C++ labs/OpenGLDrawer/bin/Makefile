@@ -304,32 +304,32 @@ src/general/Window.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\Graphics.dir\build.make CMakeFiles/Graphics.dir/src/general/Window.cpp.s
 .PHONY : src/general/Window.cpp.s
 
-src/loaders/objModel.obj: src/loaders/objModel.cpp.obj
+src/loaders/objLoader.obj: src/loaders/objLoader.cpp.obj
 
-.PHONY : src/loaders/objModel.obj
+.PHONY : src/loaders/objLoader.obj
 
 # target to build an object file
-src/loaders/objModel.cpp.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\Graphics.dir\build.make CMakeFiles/Graphics.dir/src/loaders/objModel.cpp.obj
-.PHONY : src/loaders/objModel.cpp.obj
+src/loaders/objLoader.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Graphics.dir\build.make CMakeFiles/Graphics.dir/src/loaders/objLoader.cpp.obj
+.PHONY : src/loaders/objLoader.cpp.obj
 
-src/loaders/objModel.i: src/loaders/objModel.cpp.i
+src/loaders/objLoader.i: src/loaders/objLoader.cpp.i
 
-.PHONY : src/loaders/objModel.i
+.PHONY : src/loaders/objLoader.i
 
 # target to preprocess a source file
-src/loaders/objModel.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\Graphics.dir\build.make CMakeFiles/Graphics.dir/src/loaders/objModel.cpp.i
-.PHONY : src/loaders/objModel.cpp.i
+src/loaders/objLoader.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Graphics.dir\build.make CMakeFiles/Graphics.dir/src/loaders/objLoader.cpp.i
+.PHONY : src/loaders/objLoader.cpp.i
 
-src/loaders/objModel.s: src/loaders/objModel.cpp.s
+src/loaders/objLoader.s: src/loaders/objLoader.cpp.s
 
-.PHONY : src/loaders/objModel.s
+.PHONY : src/loaders/objLoader.s
 
 # target to generate assembly for a file
-src/loaders/objModel.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\Graphics.dir\build.make CMakeFiles/Graphics.dir/src/loaders/objModel.cpp.s
-.PHONY : src/loaders/objModel.cpp.s
+src/loaders/objLoader.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Graphics.dir\build.make CMakeFiles/Graphics.dir/src/loaders/objLoader.cpp.s
+.PHONY : src/loaders/objLoader.cpp.s
 
 src/loaders/pngLoader.obj: src/loaders/pngLoader.cpp.obj
 
@@ -412,9 +412,9 @@ help:
 	@echo ... src/general/Window.obj
 	@echo ... src/general/Window.i
 	@echo ... src/general/Window.s
-	@echo ... src/loaders/objModel.obj
-	@echo ... src/loaders/objModel.i
-	@echo ... src/loaders/objModel.s
+	@echo ... src/loaders/objLoader.obj
+	@echo ... src/loaders/objLoader.i
+	@echo ... src/loaders/objLoader.s
 	@echo ... src/loaders/pngLoader.obj
 	@echo ... src/loaders/pngLoader.i
 	@echo ... src/loaders/pngLoader.s

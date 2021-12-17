@@ -7,21 +7,29 @@
 
 #include <cstdlib>
 #include <vector>
+#include <memory>
 #include <freeglut.h>
 #include "../OpenGL/include/glm/glm.hpp"
 #include "Vertex.h"
+#include "Shader.h"
+#include "Texture.h"
 
 class Mesh
 {
-    unsigned int vao;
-    unsigned int vbo;
+    unsigned int vao{}, vbo{};
     size_t vertices;
+    glm::mat4 model;
+    std::shared_ptr<Texture> texture;
 public:
-    Mesh(const float* buffer, size_t vertices, const int* attrs);
-    Mesh(const std::vector<float>& buffer, size_t vertices, const int* attrs);
+    glm::vec3 pos;
+    void rotate(const glm::vec3& axisRotation, float angle);
+    void scale(const glm::vec3& deltaScale);
+    void translate(const glm::vec3& deltaMove);
+    Mesh(const float *buffer, size_t vertices, const int *attrs);
+    Mesh(const float *buffer, size_t vertices, const int *attrs, std::shared_ptr<Texture> &texture);
     ~Mesh();
 
-    void draw(unsigned int primitive) const;
+    void draw(unsigned int primitive, const std::unique_ptr<Shader> &shader, const glm::mat4& project_view) const;
 };
 
 

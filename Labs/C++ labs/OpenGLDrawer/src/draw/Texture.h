@@ -7,6 +7,7 @@
 
 
 #include <string>
+#include <memory>
 
 class Texture
 {
@@ -14,6 +15,7 @@ public:
     unsigned int id;
     int width;
     int height;
+    Texture() = default;
     Texture(unsigned int id, int width, int height);
     Texture(unsigned char* data, int width, int height);
     ~Texture();
@@ -22,7 +24,7 @@ public:
     void reload(unsigned char* data);
 };
 
-extern Texture* load_texture(const std::string& filename);
+extern void load_texture(const std::string &filename, std::shared_ptr<Texture> &target);
 
 
 #endif //GRAPHICS_TEXTURE_H

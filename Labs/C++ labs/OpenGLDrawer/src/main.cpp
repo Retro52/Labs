@@ -3,7 +3,7 @@
 /* Default libs */
 #include <iostream>
 #include <memory>
-#include <string>
+#include <thread>
 
 /* GL libs */
 #include "OpenGL/include/GLEW/glew.h"
@@ -14,109 +14,170 @@
 #include "general/Camera.h"
 #include "general/Window.h"
 #include "general/EventsHandler.h"
-//#include "loaders/objLoader.h"
 #include "draw/Mesh.h"
-#include "draw/Shader.h"
-#include "draw/Texture.h"
-#include "loaders/objModel.h"
+#include "loaders/objLoader.h"
 
-float vertices[] = {
-        // x    y     z     u     v
-        -1.0f,-1.0f, 0.0f, 0.0f, 0.0f,
-        1.0f,-1.0f, 0.0f, 1.0f, 0.0f,
-        -1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-
-        1.0f,-1.0f, 0.0f, 1.0f, 0.0f,
-        1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
-        -1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-};
-
-int attrs[] = {
-        3,2,0 //null terminator
-};
-
-GLuint VAO, VBO;
-
-void debug()
+/* Attributes array */
+int attrs[] =
 {
-    // Create VAO
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
+        /* Creates to support texture attributes to load into shader */
+        /* 3: defines position - x, y, z */
+        /* 2: stands for u, v - texture coordinates*/
+        /* 3: stands for normal vector*/
+        /* 0 is for terminating "for" loop (stupid, but works) */
+        3,2,3,0
+};
 
-    glBindVertexArray(VAO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-    // position
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(0 * sizeof(GLfloat)));
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
-    glEnableVertexAttribArray(1);
+/* Axis enum class */
+enum AXIS
+{
+    OX = 0,
+    OY = 1,
+    OZ = 2
+};
 
-    glBindVertexArray(0);
+/* Namespace for global variables into main.cpp file */
+namespace var
+{
+    /* Shaders */
+    std::unique_ptr<Shader> shader;
+    std::unique_ptr<Shader> ligts;
+
+    /* Textures */
+    std::shared_ptr<Texture> faceTexture;
+    std::shared_ptr<Texture> hairTexture;
+
+    /* Meshes vertex arrays */
+    std::vector<float> faceArray;
+    std::vector<float> hairArray;
+    std::vector<float> cubeArray;
 }
 
-int main(int argc, char** argv)
+/***
+ * Function for loading all the shaders
+***/
+void loadShaders()
+{
+    /* Load shader for drawing */
+    std::cout << "Compiling shaders" << std::endl;
+    load_shader("../res/mainv.glsl", "../res/mainf.glsl", var::shader);
+    load_shader("../res/lightv.glsl", "../res/lightf.glsl", var::ligts);
+    std::cout << "Shaders compiled" << std::endl;
+}
+/***
+ * Function for loading all the textures
+***/
+void loadTextures()
+{
+    std::cout << "Loading textures" << std::endl;
+    load_texture("../res/Claire/Face/face.png", var::faceTexture);
+    load_texture("../res/Claire/Hair/hair.png", var::hairTexture);
+    std::cout << "Textures loaded" << std::endl;
+}
+
+/***
+ * Function for loading hair mesh
+***/
+void loadMeshHair()
+{
+    std::cout << "Loading Hair mesh" << std::endl;
+    objLoader::loadObjModel("../res/Claire/Hair/hairTotal.obj", var::hairArray);
+    std::cout << "Hair mesh loaded" << std::endl;
+}
+
+/***
+ * Function for loading face mesh
+***/
+void loadMeshFace()
+{
+    std::cout << "Loading Face mesh" << std::endl;
+    objLoader::loadObjModel("../res/Claire/Face/faceTotal.obj", var::faceArray);
+    std::cout << "Face mesh loaded" << std::endl;
+}
+
+/***
+ * Function for loading sphere mesh
+***/
+void loadMeshSphere()
+{
+    std::cout << "Loading Sphere mesh" << std::endl;
+    objLoader::loadObjModel("../res/Basics/sphere.obj", var::cubeArray);
+    std::cout << "Sphere mesh loaded" << std::endl;
+}
+
+
+int main(int argc, char ** argv)
 {
     /* Program initialization */
     Window::init(1920, 1080, "Lab 4");
+    std::cout << "Window initialized" << std::endl;
     EventsHandler::init();
+    std::cout << "Events handler initialized" << std::endl;
 
     /* Creating main camera */
     std::unique_ptr<Camera> camera = std::make_unique<Camera>(glm::vec3(0,0,1), glm::radians(90.0f));
+    std::cout << "Camera created" << std::endl;
 
-    /* Load shader for drawing (recommended, but actually not required, you CAN display things without shader, but you better not to) */
-    /*TODO: use smart pointer instead of dangerous C-styled one, check for errors*/
-    Shader * shader = load_shader("../res/mainv.glsl", "../res/mainf.glsl");
-    if (shader == nullptr)
+    /* TODO: remake project to use smart pointers only, add multiple lights support */
+    loadShaders();
+    loadTextures();
+
+    if (var::shader == nullptr || var::ligts == nullptr)
     {
-        std::cerr << "failed to load shader" << std::endl;
+        std::cerr << "[ERROR]::MAIN Failed to load shaders" << std::endl;
+        Window::terminate();
+        return 1;
+    }
+    if (var::faceTexture == nullptr || var::hairTexture == nullptr)
+    {
+        std::cerr << "[ERROR]::MAIN Failed to load textures" << std::endl;
         Window::terminate();
         return 1;
     }
 
-    /* TODO: use smart pointers & check for errors */
+    /***
+     * Loading models vertex arrays in multithreading for better performance
+     * Interesting comparison:
+     * without multithreading it takes 6.4 seconds to launch the program, with multithreading - 3.1
+     * ***/
+    std::thread t1(loadMeshHair); std::thread t2(loadMeshFace); std::thread t3(loadMeshSphere);
 
-    Texture * texture = load_texture("../res/img.png");
-    if (texture == nullptr)
-    {
-        Window::terminate();
-        return 2;
-    }
+    /* All the threads join main thread here */
+    t1.join(); t2.join(); t3.join();
 
-    /* Loading default mesh */
+    /* Creating meshes*/
+    std::unique_ptr<Mesh> faceMesh = std::make_unique<Mesh>(var::faceArray.data(), var::faceArray.size() / 8, attrs, var::faceTexture);
+    std::unique_ptr<Mesh> hairMesh = std::make_unique<Mesh>(var::hairArray.data(), var::hairArray.size() / 8, attrs, var::hairTexture);
+    std::unique_ptr<Mesh> lightMesh = std::make_unique<Mesh>(var::cubeArray.data(), var::cubeArray.size() / 8, attrs);
 
-    auto * objmodel = new objModel();
-    std::vector<float> test = objmodel->loadObjModel("example.obj");
-    std::vector<float> test2 = objmodel->loadObjModel("../res/cylinder.obj");
-    std::vector<float> test3 = objmodel->loadObjModel("../res/doubleCube.obj");
-    if (test3.empty())
-    {
-        std::cerr << "test2 is empty!" << std::endl;
-        exit(1);
-    }
-    std::cout << test.size() << std::endl;
     /* Camera world default values positions */
     float camX = 0.0f;
     float camY = 0.0f;
 
-    /* World delta time settings */
-    auto lastTime = (float ) glfwGetTime();
-    float delta, speed = 4.0F, mouseSensitivity = 1200.0F;
-
+    /* World settings */
+    auto lastTime = (float) glfwGetTime();
+    float delta, speed, mouseSensitivity = 1200.0F, rotationSpeed = 0.01f;
     long frame = 0;
+    bool rotate = false;
+
+    std::cout << var::faceArray.size() << std::endl;
     glfwSwapInterval(0);
 
-
-    glClearColor(0.6f,0.62f,0.65f,1);
-
+    /* Hide mouse cursor */
     EventsHandler::toggleCursor();
 
-    glm::mat4 model(1.0f);
+    /* Setting meshes default positions */     /*       x           z           y      */
+    lightMesh->translate(glm::vec3(-23.1508, 115.151, 146.096));
+    faceMesh->scale(glm::vec3(100, 100, 100));
+    hairMesh->scale(glm::vec3(100, 100, 100));
 
-    Mesh * mesh = new Mesh(test.data(), test.size() / 5, attrs);
-    Mesh * mesh2 = new Mesh(vertices, 6, attrs);
-    Mesh * mesh3 = new Mesh(test2.data(), test2.size() / 5, attrs);
-    Mesh * mesh4 = new Mesh(test3.data(), test3.size() / 5, attrs);
+
+    glm::vec3 rotationAxisX(1, 0, 0), rotationAxisY(0, 0, 1),
+    rotationAxisZ(0, 1, 0), currentRotationAxis(0, 1, 0), lightColor(1, 1, 1);
+    int curAxis = OZ;
+    std::cout << "Program loaded" << std::endl;
+
+    /* Tick event */
     while (!Window::isShouldClose())
     {
         /* Global tick events */
@@ -155,6 +216,20 @@ int main(int argc, char** argv)
             camera->rotate(camY, camX, 0);
         }
 
+        /* Camera and meshes speed settings */
+        if(EventsHandler::pressed(GLFW_KEY_LEFT_SHIFT))
+        {
+            speed = 200;
+        }
+        else if (EventsHandler::pressed(GLFW_KEY_LEFT_CONTROL))
+        {
+            speed = 1;
+        }
+        else
+        {
+            speed = 5;
+        }
+
         /* Camera world position */
         if (EventsHandler::pressed(GLFW_KEY_W))
         {
@@ -172,27 +247,116 @@ int main(int argc, char** argv)
         {
             camera->position -= camera->right * delta * speed;
         }
+        if (EventsHandler::pressed(GLFW_KEY_Y))
+        {
+            lightMesh->translate(glm::vec3(0, delta * speed, 0));
+        }
+        if (EventsHandler::pressed(GLFW_KEY_I))
+        {
+            lightMesh->translate(glm::vec3(0, -delta * speed, 0));
+        }
+        if (EventsHandler::pressed(GLFW_KEY_J))
+        {
+            lightMesh->translate(glm::vec3(0, 0, - delta * speed));
+        }
+        if (EventsHandler::pressed(GLFW_KEY_H))
+        {
+            lightMesh->translate(glm::vec3(-delta * speed, 0, 0));
+        }
+        if (EventsHandler::pressed(GLFW_KEY_K))
+        {
+            lightMesh->translate(glm::vec3(delta * speed, 0, 0));
+        }
+        if (EventsHandler::pressed(GLFW_KEY_U))
+        {
+            lightMesh->translate(glm::vec3(0, 0, delta * speed));
+        }
+        if (EventsHandler::pressed(GLFW_KEY_UP))
+        {
+            rotationSpeed *= 1.01F;
+        }
+        if (EventsHandler::pressed(GLFW_KEY_DOWN))
+        {
+            rotationSpeed *= .99F;
+        }
+        if (EventsHandler::pressed(GLFW_KEY_KP_ADD))
+        {
+            faceMesh->scale(glm::vec3(1.01, 1.01, 1.01));
+            hairMesh->scale(glm::vec3(1.01, 1.01, 1.01));
+        }
+        if (EventsHandler::pressed(GLFW_KEY_KP_SUBTRACT))
+        {
+            faceMesh->scale(glm::vec3(.99, .99, .99));
+            hairMesh->scale(glm::vec3(.99, .99, .99));
+        }
+        if (EventsHandler::justPressed(GLFW_KEY_SPACE))
+        {
+            switch (curAxis)
+            {
+                case OX:
+                    currentRotationAxis = rotationAxisY;
+                    curAxis = OY;
+                    break;
+                case OY:
+                    currentRotationAxis = rotationAxisZ;
+                    curAxis = OZ;
+                    break;
+                case OZ:
+                    currentRotationAxis = rotationAxisX;
+                    curAxis = OX;
+                    break;
+                default:
+                    break;
+            }
+        }
 
+        /* Model rotation */
+        if (EventsHandler::justClicked(GLFW_MOUSE_BUTTON_2))
+        {
+            rotate = !rotate;
+        }
+        if (rotate)
+        {
+            faceMesh->rotate(currentRotationAxis, delta * rotationSpeed);
+            hairMesh->rotate(currentRotationAxis, delta * rotationSpeed);
+        }
 
-        /* Shaders and texture */
-        shader->use();
-        shader->uniformMatrix("model", model);
-        shader->uniformMatrix("project_view", camera->getProjection()*camera->getView());
-        texture->bind();
+        /* Change color */
+        if (EventsHandler::clicked(GLFW_MOUSE_BUTTON_1))
+        {
+            if(lightColor.z > 0.1F)
+            {
+                lightColor.z -= delta;
+            }
+            else
+            {
+                lightColor.z = 1.0F;
+            }
+        }
+
+        /* Camera projection view */
+        glm::mat4 proj_view = camera->getProjection() * camera->getView();
 
         /* World draw */
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glClearColor(0.8f,0.4f,0.2f,1);
+        glClearColor(0.05f,0.05f,0.1f,1);
 
-        /* Updating matrix */
-        model = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0));
+        /* Apply lighting data to shader */
+        var::shader->use();
+        var::shader->uniform3f("proj_pos", camera->position.x, camera->position.y, camera->position.z);
+        var::shader->uniform3f("light_pos", lightMesh->pos.x, lightMesh->pos.y, lightMesh->pos.z);
+        var::shader->uniform3f("light_color", lightColor.r, lightColor.g, lightColor.b);
 
-        /* debug mesh draw*/
-        mesh->draw(GL_TRIANGLES);
-//        mesh2->draw(GL_TRIANGLES);
-//        mesh3->draw(GL_TRIANGLE_FAN);
-//        mesh4->draw(GL_TRIANGLE_STRIP);
+        /* Debug faceMesh draw*/
+        faceMesh->draw(GL_TRIANGLES, var::shader, proj_view);
+        hairMesh->draw(GL_TRIANGLES, var::shader, proj_view);
+
+        /* Update light mesh color to match light color */
+        var::ligts->use();
+        var::ligts->uniform3f("v_color", lightColor.r, lightColor.g, lightColor.b);
+        lightMesh->draw(GL_TRIANGLES, var::ligts, proj_view);
         Window::swapBuffers();
         EventsHandler::pullEvents();
     }
+    Window::terminate();
 }

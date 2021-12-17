@@ -39,7 +39,7 @@
 /* #pragma may not be supported by some compilers.
  * Discussion by FreeGLUT developers suggests that
  * Visual C++ specific code involving pragmas may
- * need to move to a separate header.  24th Dec 2003
+ * need to translate to a separate header.  24th Dec 2003
  */
 
 /* Define FREEGLUT_LIB_PRAGMAS to 1 to include library

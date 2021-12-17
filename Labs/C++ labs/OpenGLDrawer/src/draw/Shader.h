@@ -6,6 +6,7 @@
 #define GRAPHICS_SHADER_H
 
 #include <string>
+#include <memory>
 #include "../OpenGL/include/glm/glm.hpp"
 
 class Shader
@@ -24,6 +25,7 @@ public:
     ~Shader();
 };
 
-extern Shader * load_shader(const std::string& vertexFile, const std::string& fragmentFile);
+extern void
+load_shader(const std::string &vertexFile, const std::string &fragmentFile, std::unique_ptr<Shader> &target);
 
 #endif //GRAPHICS_SHADER_H

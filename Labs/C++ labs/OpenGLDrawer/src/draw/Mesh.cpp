@@ -4,25 +4,27 @@
 
 #define GLEW_STATIC
 
-#define GLEW_STATIC
 #include <iostream>
+
 #include "../OpenGL/include/GLEW/glew.h"
+#include "../OpenGL/include/glm/glm.hpp"
+#include "../OpenGL/include/glm/gtc/matrix_transform.hpp"
+
 #include "Mesh.h"
-#include "Vertex.h"
 
 
-Mesh::Mesh(const float* buffer, size_t vertices, const int* attrs) : vertices(vertices)
+Mesh::Mesh(const float *buffer, size_t vertices, const int * attrs, std::shared_ptr<Texture> &texture) : vertices(vertices), texture(texture)
 {
+    model = glm::mat4(1.0f);
+    pos = glm::vec3(0.0f);
+
     /* vector with data length */
     int vertex_size = 0;
     for (int i = 0; attrs[i]; i++)
     {
         vertex_size += attrs[i];
     }
-    for (int i = 0; i < vertices * vertex_size; ++i)
-    {
-        std::cout << buffer[i] << std::endl;
-    }
+
 
     glGenVertexArrays(1, &vao);
     glGenBuffers(1, &vbo);
@@ -50,23 +52,41 @@ Mesh::~Mesh()
     glDeleteBuffers(1, &vbo);
 }
 
-//void Mesh::reload(const float* buffer, size_t verts)
-//{
-//    glBindVertexArray(vao);
-//    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-//    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertexSize * verts, buffer, GL_STATIC_DRAW);
-//    this->vertices = verts;
-//}
-
-void Mesh::draw(unsigned int primitive) const
+void Mesh::draw(unsigned int primitive, const std::unique_ptr<Shader> &shader, const glm::mat4& project_view) const
 {
+    shader->use();
+    shader->uniformMatrix("model", model);
+    shader->uniformMatrix("project_view", project_view);
+    if (texture)
+    {
+        texture->bind();
+    }
     glBindVertexArray(vao);
     glDrawArrays(primitive, 0, vertices);
     glBindVertexArray(0);
 }
 
-Mesh::Mesh(const std::vector<float>& buffer, size_t vertices, const int *attrs)
+void Mesh::rotate(const glm::vec3& axisRotation, float angle)
 {
+    model = glm::rotate(model, angle, axisRotation);
+}
+
+void Mesh::scale(const glm::vec3& deltaScale)
+{
+    model = glm::scale(model, deltaScale);
+}
+
+void Mesh::translate(const glm::vec3& deltaMove)
+{
+    pos += deltaMove;
+    model = glm::translate(model, deltaMove);
+}
+
+Mesh::Mesh(const float *buffer, size_t vertices, const int *attrs) : vertices(vertices)
+{
+    model = glm::mat4(1.0f);
+    pos = glm::vec3(0.0f);
+
     /* vector with data length */
     int vertex_size = 0;
     for (int i = 0; attrs[i]; i++)
@@ -74,12 +94,13 @@ Mesh::Mesh(const std::vector<float>& buffer, size_t vertices, const int *attrs)
         vertex_size += attrs[i];
     }
 
+
     glGenVertexArrays(1, &vao);
     glGenBuffers(1, &vbo);
 
     glBindVertexArray(vao);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertex_size * vertices, &buffer.front(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertex_size * vertices, buffer, GL_STATIC_DRAW);
 
     // attributes
     int offset = 0;

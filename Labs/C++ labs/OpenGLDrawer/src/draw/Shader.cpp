@@ -9,12 +9,15 @@
 #include <exception>
 #include <fstream>
 #include <iostream>
+#include <memory>
 #include <sstream>
 
 #include "../OpenGL/include/GLEW/glew.h"
 #include "../OpenGL/include/glm/gtc/type_ptr.hpp"
 
-Shader::Shader(unsigned int id) : id(id){
+Shader::Shader(unsigned int id) : id(id)
+{
+
 }
 
 Shader::~Shader(){
@@ -56,9 +59,7 @@ void Shader::uniform3f(const std::string&   name, float x, float y, float z) con
     glUniform3f(transformLoc, x,y,z);
 }
 
-
-
-Shader* load_shader(const std::string& vertexFile, const std::string& fragmentFile)
+void load_shader(const std::string &vertexFile, const std::string &fragmentFile, std::unique_ptr<Shader> &target)
 {
     // Reading Files
     std::string vertexCode;
@@ -88,8 +89,8 @@ Shader* load_shader(const std::string& vertexFile, const std::string& fragmentFi
     }
     catch(std::ifstream::failure& e)
     {
-        std::cerr << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ" << std::endl;
-        return nullptr;
+        std::cerr << "[ERROR]::SHADER::FILE_NOT_SUCCESSFULLY_READ" << std::endl;
+        return;
     }
     const GLchar* vShaderCode = vertexCode.c_str();
     const GLchar* fShaderCode = fragmentCode.c_str();
@@ -106,9 +107,9 @@ Shader* load_shader(const std::string& vertexFile, const std::string& fragmentFi
     if (!success)
     {
         glGetShaderInfoLog(vertex, 512, nullptr, infoLog);
-        std::cerr << "SHADER::VERTEX: compilation failed" << std::endl;
+        std::cerr << "[ERROR]::SHADER::VERTEX: compilation failed" << std::endl;
         std::cerr << infoLog << std::endl;
-        return nullptr;
+        return;
     }
 
     // Fragment Shader
@@ -119,9 +120,9 @@ Shader* load_shader(const std::string& vertexFile, const std::string& fragmentFi
     if (!success)
     {
         glGetShaderInfoLog(fragment, 512, nullptr, infoLog);
-        std::cerr << "SHADER::FRAGMENT: compilation failed" << std::endl;
+        std::cerr << "[ERROR]::SHADER::FRAGMENT: compilation failed" << std::endl;
         std::cerr << infoLog << std::endl;
-        return nullptr;
+        return;
     }
 
     // Shader Program
@@ -134,16 +135,16 @@ Shader* load_shader(const std::string& vertexFile, const std::string& fragmentFi
     if (!success)
     {
         glGetProgramInfoLog(id, 512, nullptr, infoLog);
-        std::cerr << "SHADER::PROGRAM: linking failed" << std::endl;
+        std::cerr << "[ERROR]::SHADER::PROGRAM: linking failed" << std::endl;
         std::cerr << infoLog << std::endl;
 
         glDeleteShader(vertex);
         glDeleteShader(fragment);
-        return nullptr;
+        return;
     }
 
     glDeleteShader(vertex);
     glDeleteShader(fragment);
 
-    return new Shader(id);
+    target = std::move(std::make_unique<Shader>(id));
 }

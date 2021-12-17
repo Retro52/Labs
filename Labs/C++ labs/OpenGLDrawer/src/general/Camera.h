@@ -24,7 +24,7 @@ public:
     void rotate(float x, float y, float z);
 
     glm::mat4 getProjection() const;
-    glm::mat4 getView();
+    glm::mat4 getView() const;
 };
 
 #endif //GRAPHICS_CAMERA_H

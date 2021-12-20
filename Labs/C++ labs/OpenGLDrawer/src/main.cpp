@@ -4,6 +4,8 @@
 #include <iostream>
 #include <memory>
 #include <thread>
+#include <mutex>
+#include <future>
 
 /* GL libs */
 #include "OpenGL/include/GLEW/glew.h"
@@ -14,13 +16,14 @@
 #include "general/Camera.h"
 #include "general/Window.h"
 #include "general/EventsHandler.h"
+#include "general/ThreadSafeQueue.h"
 #include "draw/Mesh.h"
 #include "loaders/objLoader.h"
 
 /* Attributes array */
 int attrs[] =
 {
-        /* Creates to support texture attributes to load into shader */
+        /* Creates to support texture attributes to load into mainShader */
         /* 3: defines position - x, y, z */
         /* 2: stands for u, v - texture coordinates*/
         /* 3: stands for normal vector*/
@@ -40,8 +43,8 @@ enum AXIS
 namespace var
 {
     /* Shaders */
-    std::unique_ptr<Shader> shader;
-    std::unique_ptr<Shader> ligts;
+    std::unique_ptr<Shader> mainShader;
+    std::unique_ptr<Shader> lightShader;
 
     /* Textures */
     std::shared_ptr<Texture> faceTexture;
@@ -51,17 +54,42 @@ namespace var
     std::vector<float> faceArray;
     std::vector<float> hairArray;
     std::vector<float> cubeArray;
+    std::vector<float> tempArray;
+
+    /* Default texture for any object */
+    std::shared_ptr<Texture> defaultTexture;
 }
 
+/***
+ * Draw meshes
+***/
+void drawMeshes(glm::mat4 &proj_view)
+{
+    for(auto &m : ThreadSafeQueue::getMeshes(MESH))
+    {
+        m->draw(GL_TRIANGLES, var::mainShader, proj_view);
+    }
+}
+
+/***
+ * Draw meshes
+***/
+void drawLights(glm::mat4 &proj_view)
+{
+    for(auto &m : ThreadSafeQueue::getMeshes(LIGHT))
+    {
+        m->draw(GL_TRIANGLES, var::lightShader, proj_view);
+    }
+}
 /***
  * Function for loading all the shaders
 ***/
 void loadShaders()
 {
-    /* Load shader for drawing */
+    /* Load mainShader for drawing */
     std::cout << "Compiling shaders" << std::endl;
-    load_shader("../res/mainv.glsl", "../res/mainf.glsl", var::shader);
-    load_shader("../res/lightv.glsl", "../res/lightf.glsl", var::ligts);
+    load_shader("../res/mainv.glsl", "../res/mainf.glsl", var::mainShader);
+    load_shader("../res/lightv.glsl", "../res/lightf.glsl", var::lightShader);
     std::cout << "Shaders compiled" << std::endl;
 }
 /***
@@ -72,6 +100,7 @@ void loadTextures()
     std::cout << "Loading textures" << std::endl;
     load_texture("../res/Claire/Face/face.png", var::faceTexture);
     load_texture("../res/Claire/Hair/hair.png", var::hairTexture);
+    load_texture("../res/img.png", var::defaultTexture);
     std::cout << "Textures loaded" << std::endl;
 }
 
@@ -105,6 +134,31 @@ void loadMeshSphere()
     std::cout << "Sphere mesh loaded" << std::endl;
 }
 
+/***
+ * Separate function for mesh loading, so we can (theoretically) do this parallel to main program
+***/
+void loadMeshData(std::string& path, std::vector<float>& verticesArray)
+{
+    objLoader::loadObjModel(path.c_str(), verticesArray);
+}
+
+/***
+ * User can enter path to new file he would like to load (and only that so far)
+***/
+void listen()
+{
+    std::string path;
+    while (!Window::isShouldClose())
+    {
+        std::cin >> path;
+        /* Execution */
+        std::cout << path << std::endl;
+        std::cout << "Start loading mesh " << path << std::endl;
+        std::thread loader(loadMeshData, std::ref(path), std::ref(var::tempArray));
+        loader.join();
+        std::cout << "Mesh " << path << "was loaded with vertex size :" << var::tempArray.size() << std::endl;
+    }
+}
 
 int main(int argc, char ** argv)
 {
@@ -122,7 +176,7 @@ int main(int argc, char ** argv)
     loadShaders();
     loadTextures();
 
-    if (var::shader == nullptr || var::ligts == nullptr)
+    if (var::mainShader == nullptr || var::lightShader == nullptr)
     {
         std::cerr << "[ERROR]::MAIN Failed to load shaders" << std::endl;
         Window::terminate();
@@ -146,9 +200,9 @@ int main(int argc, char ** argv)
     t1.join(); t2.join(); t3.join();
 
     /* Creating meshes*/
-    std::unique_ptr<Mesh> faceMesh = std::make_unique<Mesh>(var::faceArray.data(), var::faceArray.size() / 8, attrs, var::faceTexture);
-    std::unique_ptr<Mesh> hairMesh = std::make_unique<Mesh>(var::hairArray.data(), var::hairArray.size() / 8, attrs, var::hairTexture);
-    std::unique_ptr<Mesh> lightMesh = std::make_unique<Mesh>(var::cubeArray.data(), var::cubeArray.size() / 8, attrs);
+    std::shared_ptr<Mesh> faceMesh = std::make_shared<Mesh>(var::faceArray.data(), var::faceArray.size() / 8, attrs, var::faceTexture);
+    std::shared_ptr<Mesh> hairMesh = std::make_shared<Mesh>(var::hairArray.data(), var::hairArray.size() / 8, attrs, var::hairTexture);
+    std::shared_ptr<Mesh> lightMesh = std::make_shared<Mesh>(var::cubeArray.data(), var::cubeArray.size() / 8, attrs);
 
     /* Camera world default values positions */
     float camX = 0.0f;
@@ -156,7 +210,7 @@ int main(int argc, char ** argv)
 
     /* World settings */
     auto lastTime = (float) glfwGetTime();
-    float delta, speed, mouseSensitivity = 1200.0F, rotationSpeed = 0.01f;
+    float delta, speed, mouseSensitivity = 600.0F, rotationSpeed = 0.01f;
     long frame = 0;
     bool rotate = false;
 
@@ -171,15 +225,30 @@ int main(int argc, char ** argv)
     faceMesh->scale(glm::vec3(100, 100, 100));
     hairMesh->scale(glm::vec3(100, 100, 100));
 
-
+    /* Rotation set up */
     glm::vec3 rotationAxisX(1, 0, 0), rotationAxisY(0, 0, 1),
     rotationAxisZ(0, 1, 0), currentRotationAxis(0, 1, 0), lightColor(1, 1, 1);
     int curAxis = OZ;
+
+
+    /* Appending meshes vector */
+    ThreadSafeQueue::push(faceMesh, MESH);
+    ThreadSafeQueue::push(hairMesh, MESH);
+    ThreadSafeQueue::push(lightMesh, LIGHT);
+
+//    var::meshes.push_back(faceMesh);
+//    var::meshes.push_back(hairMesh);
+//    var::lights.push_back(lightMesh);
+
+    /* Creating thread to listen for user console commands */
+    std::thread commandListener(listen); commandListener.detach();
     std::cout << "Program loaded" << std::endl;
 
     /* Tick event */
     while (!Window::isShouldClose())
     {
+        auto start = std::chrono::high_resolution_clock::now();
+
         /* Global tick events */
         frame++;
         auto currentTime = (float) glfwGetTime();
@@ -191,7 +260,7 @@ int main(int argc, char ** argv)
         {
             Window::setShouldClose(true);
         }
-
+        /* Show/hide cursor */
         if (EventsHandler::justPressed(GLFW_KEY_TAB))
         {
             EventsHandler::toggleCursor();
@@ -334,6 +403,13 @@ int main(int argc, char ** argv)
             }
         }
 
+
+        if (!var::tempArray.empty())
+        {
+            ThreadSafeQueue::push(std::make_shared<Mesh>(var::tempArray.data(), var::tempArray.size() / 8, attrs, var::defaultTexture), MESH);
+            var::tempArray.clear();
+        }
+
         /* Camera projection view */
         glm::mat4 proj_view = camera->getProjection() * camera->getView();
 
@@ -341,20 +417,21 @@ int main(int argc, char ** argv)
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glClearColor(0.05f,0.05f,0.1f,1);
 
-        /* Apply lighting data to shader */
-        var::shader->use();
-        var::shader->uniform3f("proj_pos", camera->position.x, camera->position.y, camera->position.z);
-        var::shader->uniform3f("light_pos", lightMesh->pos.x, lightMesh->pos.y, lightMesh->pos.z);
-        var::shader->uniform3f("light_color", lightColor.r, lightColor.g, lightColor.b);
+        /* Apply lighting data to mainShader */
+        var::mainShader->use();
+        var::mainShader->uniform3f("proj_pos", camera->position.x, camera->position.y, camera->position.z);
+        var::mainShader->uniform3f("light_pos", lightMesh->pos.x, lightMesh->pos.y, lightMesh->pos.z);
+        var::mainShader->uniform3f("light_color", lightColor.r, lightColor.g, lightColor.b);
 
-        /* Debug faceMesh draw*/
-        faceMesh->draw(GL_TRIANGLES, var::shader, proj_view);
-        hairMesh->draw(GL_TRIANGLES, var::shader, proj_view);
+        /* Draw meshes draw*/
+        drawMeshes(proj_view);
 
         /* Update light mesh color to match light color */
-        var::ligts->use();
-        var::ligts->uniform3f("v_color", lightColor.r, lightColor.g, lightColor.b);
-        lightMesh->draw(GL_TRIANGLES, var::ligts, proj_view);
+        var::lightShader->use();
+        var::lightShader->uniform3f("v_color", lightColor.r, lightColor.g, lightColor.b);
+        drawLights(proj_view);
+
+        /* Swapping buffers and pulling user inputs */
         Window::swapBuffers();
         EventsHandler::pullEvents();
     }

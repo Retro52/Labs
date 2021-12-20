@@ -17,11 +17,9 @@ public:
     int height;
     Texture() = default;
     Texture(unsigned int id, int width, int height);
-    Texture(unsigned char* data, int width, int height);
     ~Texture();
 
     void bind() const;
-    void reload(unsigned char* data);
 };
 
 extern void load_texture(const std::string &filename, std::shared_ptr<Texture> &target);

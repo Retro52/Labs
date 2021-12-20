@@ -10,7 +10,7 @@ Camera::Camera(const glm::vec3& position, float fov) : position(position), fov(f
 {
     Update();
 }
-/* TODO: Find math formulas for this */
+
 void Camera::Update()
 {
     front = glm::vec3(rotation * glm::vec4(0,0,-1,1));
@@ -18,8 +18,6 @@ void Camera::Update()
     up = glm::vec3(rotation * glm::vec4(0,1,0,1));
     dir = glm::vec3(rotation * glm::vec4(0,0,-1,1));
 
-    /* TODO: Consider understanding wtf is that and why we are setting y direction to 0
-     * (except we always wanna this vector to be parallel to an horizon vector)*/
     dir.y = 0;
 
     float len = length(dir);

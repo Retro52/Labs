@@ -15,6 +15,7 @@
 
 Mesh::Mesh(const float *buffer, size_t vertices, const int * attrs, std::shared_ptr<Texture> &texture) : vertices(vertices), texture(texture)
 {
+    std::cout << "Mesh constructor called" << std::endl;
     model = glm::mat4(1.0f);
     pos = glm::vec3(0.0f);
 
@@ -44,6 +45,9 @@ Mesh::Mesh(const float *buffer, size_t vertices, const int * attrs, std::shared_
     }
 
     glBindVertexArray(0);
+
+    std::cout << "Mesh constructor finished" << std::endl;
+
 }
 
 Mesh::~Mesh()

@@ -277,6 +277,33 @@ src/general/EventsHandler.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\Graphics.dir\build.make CMakeFiles/Graphics.dir/src/general/EventsHandler.cpp.s
 .PHONY : src/general/EventsHandler.cpp.s
 
+src/general/ThreadSafeQueue.obj: src/general/ThreadSafeQueue.cpp.obj
+
+.PHONY : src/general/ThreadSafeQueue.obj
+
+# target to build an object file
+src/general/ThreadSafeQueue.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Graphics.dir\build.make CMakeFiles/Graphics.dir/src/general/ThreadSafeQueue.cpp.obj
+.PHONY : src/general/ThreadSafeQueue.cpp.obj
+
+src/general/ThreadSafeQueue.i: src/general/ThreadSafeQueue.cpp.i
+
+.PHONY : src/general/ThreadSafeQueue.i
+
+# target to preprocess a source file
+src/general/ThreadSafeQueue.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Graphics.dir\build.make CMakeFiles/Graphics.dir/src/general/ThreadSafeQueue.cpp.i
+.PHONY : src/general/ThreadSafeQueue.cpp.i
+
+src/general/ThreadSafeQueue.s: src/general/ThreadSafeQueue.cpp.s
+
+.PHONY : src/general/ThreadSafeQueue.s
+
+# target to generate assembly for a file
+src/general/ThreadSafeQueue.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Graphics.dir\build.make CMakeFiles/Graphics.dir/src/general/ThreadSafeQueue.cpp.s
+.PHONY : src/general/ThreadSafeQueue.cpp.s
+
 src/general/Window.obj: src/general/Window.cpp.obj
 
 .PHONY : src/general/Window.obj
@@ -409,6 +436,9 @@ help:
 	@echo ... src/general/EventsHandler.obj
 	@echo ... src/general/EventsHandler.i
 	@echo ... src/general/EventsHandler.s
+	@echo ... src/general/ThreadSafeQueue.obj
+	@echo ... src/general/ThreadSafeQueue.i
+	@echo ... src/general/ThreadSafeQueue.s
 	@echo ... src/general/Window.obj
 	@echo ... src/general/Window.i
 	@echo ... src/general/Window.s

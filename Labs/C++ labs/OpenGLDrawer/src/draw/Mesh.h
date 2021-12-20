@@ -10,7 +10,6 @@
 #include <memory>
 #include <freeglut.h>
 #include "../OpenGL/include/glm/glm.hpp"
-#include "Vertex.h"
 #include "Shader.h"
 #include "Texture.h"
 

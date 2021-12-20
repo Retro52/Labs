@@ -6,8 +6,6 @@
 #include "EventsHandlerFields.h"
 #include "Window.h"
 #include <memory>
-#include <string>
-#include <iostream>
 #include <cstring>
 
 void cursor_position_callback(GLFWwindow* window, double xpos, double ypos)

@@ -8,7 +8,7 @@
 
 struct Float3
 {
-    float Data [3]; // Структура трех элементов float для хранения данных
+    float Data [3];
     void display(const std::string& name)
     {
         std::cout << name << " data:" << std::endl;
@@ -22,7 +22,7 @@ struct Float3
 
 struct Face
 {
-    int vertex [3] [3]; // Три точки образуют поверхность, каждая точка имеет три индекса информации
+    int vertex [3] [3];
     void display()
     {
         std::cout << "Face" << std::endl;
@@ -39,16 +39,17 @@ struct Face
     }
 };
 
-class List // операция связанного списка
+class List
 {
 public:
     List() :mNext(nullptr) {}
-    void * mNext; // Следующий узел
+    void * mNext;
     template<typename T>
-    T * Next () // Получить следующий узел
+    T * Next ()
     {
         return(T*) mNext;
     }
+
     void PushBack(List* node)
     {
         List * mNode = this;
@@ -58,8 +59,7 @@ public:
         }
         mNode->mNext = node;
 
-    }// Вставить узел в конец связанного списка
-
+    }
 };
 
 #endif //GRAPHICS_STRUCTURES_H

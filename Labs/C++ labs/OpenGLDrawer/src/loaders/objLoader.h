@@ -14,6 +14,7 @@ class objLoader : public List
 public:
     objLoader() = default;
     static void loadObjModel(const char *objFileName, std::vector<float> &array);
+    static  std::vector<float> loadObjModel(const char *objFileName);
 public:
     std::vector <Float3> normal, texcoord, position;
     std::vector <Face> face;

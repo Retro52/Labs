@@ -17,9 +17,9 @@
 #include "general/Window.h"
 #include "general/EventsHandler.h"
 #include "general/ThreadSafeQueue.h"
-#include "draw/Mesh.h"
 #include "loaders/objLoader.h"
 
+/*TODO: replace with vector; move to variables namespace*/
 /* Attributes array */
 int attrs[] =
 {
@@ -34,9 +34,7 @@ int attrs[] =
 /* Axis enum class */
 enum AXIS
 {
-    OX = 0,
-    OY = 1,
-    OZ = 2
+    OX, OY, OZ
 };
 
 /* Namespace for global variables into main.cpp file */
@@ -49,15 +47,13 @@ namespace var
     /* Textures */
     std::shared_ptr<Texture> faceTexture;
     std::shared_ptr<Texture> hairTexture;
+    std::shared_ptr<Texture> defaultTexture;
 
     /* Meshes vertex arrays */
     std::vector<float> faceArray;
     std::vector<float> hairArray;
     std::vector<float> cubeArray;
     std::vector<float> tempArray;
-
-    /* Default texture for any object */
-    std::shared_ptr<Texture> defaultTexture;
 }
 
 /***
@@ -81,6 +77,7 @@ void drawLights(glm::mat4 &proj_view)
         m->draw(GL_TRIANGLES, var::lightShader, proj_view);
     }
 }
+
 /***
  * Function for loading all the shaders
 ***/
@@ -92,6 +89,7 @@ void loadShaders()
     load_shader("../res/lightv.glsl", "../res/lightf.glsl", var::lightShader);
     std::cout << "Shaders compiled" << std::endl;
 }
+
 /***
  * Function for loading all the textures
 ***/
@@ -135,7 +133,7 @@ void loadMeshSphere()
 }
 
 /***
- * Separate function for mesh loading, so we can (theoretically) do this parallel to main program
+ * Separate function for mesh loading, so we can do this parallel to main thread
 ***/
 void loadMeshData(std::string& path, std::vector<float>& verticesArray)
 {
@@ -151,7 +149,6 @@ void listen()
     while (!Window::isShouldClose())
     {
         std::cin >> path;
-        /* Execution */
         std::cout << path << std::endl;
         std::cout << "Start loading mesh " << path << std::endl;
         std::thread loader(loadMeshData, std::ref(path), std::ref(var::tempArray));
@@ -172,7 +169,7 @@ int main(int argc, char ** argv)
     std::unique_ptr<Camera> camera = std::make_unique<Camera>(glm::vec3(0,0,1), glm::radians(90.0f));
     std::cout << "Camera created" << std::endl;
 
-    /* TODO: remake project to use smart pointers only, add multiple lights support */
+    /* Loading shaders and textures for default model render */
     loadShaders();
     loadTextures();
 
@@ -200,6 +197,7 @@ int main(int argc, char ** argv)
     t1.join(); t2.join(); t3.join();
 
     /* Creating meshes*/
+    /* TODO: replace with pushing models into thread safe queue */
     std::shared_ptr<Mesh> faceMesh = std::make_shared<Mesh>(var::faceArray.data(), var::faceArray.size() / 8, attrs, var::faceTexture);
     std::shared_ptr<Mesh> hairMesh = std::make_shared<Mesh>(var::hairArray.data(), var::hairArray.size() / 8, attrs, var::hairTexture);
     std::shared_ptr<Mesh> lightMesh = std::make_shared<Mesh>(var::cubeArray.data(), var::cubeArray.size() / 8, attrs);

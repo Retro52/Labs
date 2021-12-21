@@ -17,6 +17,7 @@ int Window::init(int w, int h, const std::string &name)
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
+    glfwWindowHint(GLFW_SAMPLES, 4);
 
     Window::window = glfwCreateWindow(w, h, name.c_str(), nullptr, nullptr);
 
@@ -42,6 +43,7 @@ int Window::init(int w, int h, const std::string &name)
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
     glEnable(GL_BLEND);
+    glEnable(GL_MULTISAMPLE);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     Window::width = w;
     Window::height = h;

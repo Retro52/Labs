@@ -12,11 +12,14 @@
 void objLoader::loadObjModel(const char *objFileName, std::vector<float> &array)
 {
     std::ifstream ifs(objFileName);
-
+    if(!ifs.is_open())
+    {
+        std::cerr << "Could`t open open file " << objFileName << std::endl;
+        return;
+    }
     auto * tempModel = new objLoader;
     std::stringstream ssFileContent;
-    std::string temp;
-    std::string line;
+    std::string temp, line;
     std::vector<float> result;
     while (std::getline(ifs, line))
     {
@@ -95,5 +98,6 @@ void objLoader::loadObjModel(const char *objFileName, std::vector<float> &array)
         }
     }
     delete tempModel;
-    array = std::vector<float>(result);
+    ifs.close();
+    array = std::move(std::vector<float>(result));
 }

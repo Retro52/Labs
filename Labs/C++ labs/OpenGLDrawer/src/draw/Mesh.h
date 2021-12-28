@@ -10,7 +10,6 @@
 #include <memory>
 #include <freeglut.h>
 #include "../OpenGL/include/glm/glm.hpp"
-#include "Vertex.h"
 #include "Shader.h"
 #include "Texture.h"
 
@@ -21,10 +20,11 @@ class Mesh
     glm::mat4 model;
     std::shared_ptr<Texture> texture;
 public:
-    glm::vec3 pos;
+    glm::vec3 pos, sc, rot;
     void rotate(const glm::vec3& axisRotation, float angle);
-    void scale(const glm::vec3& deltaScale);
     void translate(const glm::vec3& deltaMove);
+    void scale(const glm::vec3& deltaScale);
+    void moveTo(const glm::vec3& location);
     Mesh(const float *buffer, size_t vertices, const int *attrs);
     Mesh(const float *buffer, size_t vertices, const int *attrs, std::shared_ptr<Texture> &texture);
     ~Mesh();

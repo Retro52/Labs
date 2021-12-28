@@ -7,6 +7,8 @@
 
 #include "ThreadSafeQueue.h"
 
+std::vector<std::shared_ptr<Mesh>> ThreadSafeQueue::all;
+std::vector<std::shared_ptr<Mesh>> ThreadSafeQueue::axis;
 std::vector<std::shared_ptr<Mesh>> ThreadSafeQueue::meshes;
 std::vector<std::shared_ptr<Mesh>> ThreadSafeQueue::lights;
 std::mutex ThreadSafeQueue::m;

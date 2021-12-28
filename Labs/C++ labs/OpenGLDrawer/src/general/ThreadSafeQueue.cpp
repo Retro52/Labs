@@ -17,6 +17,17 @@ std::vector<std::shared_ptr<Mesh>> &ThreadSafeQueue::getMeshes(meshType id)
         {
             return ThreadSafeQueue::lights;
         }
+        else if (id == AXIS)
+        {
+            return ThreadSafeQueue::axis;
+        }
+        else if(id == ALL)
+        {
+            all.reserve(lights.size() + meshes.size());
+            all.insert(all.end(), lights.begin(), lights.end());
+            all.insert(all.end(), meshes.begin(), meshes.end());
+            return all;
+        }
     }
 }
 
@@ -33,6 +44,12 @@ void ThreadSafeQueue::push(const std::shared_ptr<Mesh>& mesh, meshType id)
     {
         ThreadSafeQueue::m.lock();
         ThreadSafeQueue::lights.push_back(mesh);
+        ThreadSafeQueue::m.unlock();
+    }
+    else if (id == AXIS)
+    {
+        ThreadSafeQueue::m.lock();
+        ThreadSafeQueue::axis.push_back(mesh);
         ThreadSafeQueue::m.unlock();
     }
     std::cout << "Mesh was successfully added to active mesh pool" << std::endl;

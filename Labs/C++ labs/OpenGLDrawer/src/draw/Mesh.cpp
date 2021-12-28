@@ -9,6 +9,7 @@
 #include "../OpenGL/include/GLEW/glew.h"
 #include "../OpenGL/include/glm/glm.hpp"
 #include "../OpenGL/include/glm/gtc/matrix_transform.hpp"
+#include "../OpenGL/include/glm/gtx/transform.hpp"
 
 #include "Mesh.h"
 
@@ -18,6 +19,8 @@ Mesh::Mesh(const float *buffer, size_t vertices, const int * attrs, std::shared_
     std::cout << "Mesh constructor called" << std::endl;
     model = glm::mat4(1.0f);
     pos = glm::vec3(0.0f);
+    rot = glm::vec3(0.0f);
+    sc = glm::vec3(1.0f);
 
     /* vector with data length */
     int vertex_size = 0;
@@ -77,19 +80,29 @@ void Mesh::rotate(const glm::vec3& axisRotation, float angle)
 
 void Mesh::scale(const glm::vec3& deltaScale)
 {
+    sc *= deltaScale;
     model = glm::scale(model, deltaScale);
 }
 
 void Mesh::translate(const glm::vec3& deltaMove)
 {
     pos += deltaMove;
-    model = glm::translate(model, deltaMove);
+    model = glm::translate(model, deltaMove / sc);
 }
 
+
+void Mesh::moveTo(const glm::vec3 &location)
+{
+    pos = location;
+    model = glm::translate(location);
+    model = glm::scale(model, sc);
+}
 Mesh::Mesh(const float *buffer, size_t vertices, const int *attrs) : vertices(vertices)
 {
     model = glm::mat4(1.0f);
     pos = glm::vec3(0.0f);
+    rot = glm::vec3(0.0f);
+    sc = glm::vec3(1.0f);
 
     /* vector with data length */
     int vertex_size = 0;
@@ -118,3 +131,4 @@ Mesh::Mesh(const float *buffer, size_t vertices, const int *attrs) : vertices(ve
 
     glBindVertexArray(0);
 }
+

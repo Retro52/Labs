@@ -12,7 +12,7 @@
 
 enum meshType
 {
-    MESH, LIGHT
+    MESH, LIGHT, AXIS, ALL
 };
 class ThreadSafeQueue;
 
@@ -22,6 +22,8 @@ public:
 
     static std::vector<std::shared_ptr<Mesh>> meshes;
     static std::vector<std::shared_ptr<Mesh>> lights;
+    static std::vector<std::shared_ptr<Mesh>> axis;
+    static std::vector<std::shared_ptr<Mesh>> all;
     static std::mutex m;
 
     static std::vector<std::shared_ptr<Mesh>>& getMeshes(meshType id);

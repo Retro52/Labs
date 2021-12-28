@@ -45,6 +45,8 @@ int Window::init(int w, int h, const std::string &name)
     glEnable(GL_BLEND);
     glEnable(GL_MULTISAMPLE);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_STENCIL_TEST);
+    glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
     Window::width = w;
     Window::height = h;
     return 0;

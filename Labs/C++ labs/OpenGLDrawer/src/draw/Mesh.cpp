@@ -14,14 +14,8 @@
 #include "Mesh.h"
 
 
-Mesh::Mesh(const float *buffer, size_t vertices, const int * attrs, std::shared_ptr<Texture> &texture) : vertices(vertices), texture(texture)
+Mesh::Mesh(const float *buffer, size_t vertices, const int * attrs, std::shared_ptr<Texture> &texture) : vertices(vertices), rotation(0.0f), position(0.0f), model(1.0f), scale(1.0f), texture(texture)
 {
-    std::cout << "Mesh constructor called" << std::endl;
-    model = glm::mat4(1.0f);
-    pos = glm::vec3(0.0f);
-    rot = glm::vec3(0.0f);
-    sc = glm::vec3(1.0f);
-
     /* vector with data length */
     int vertex_size = 0;
     for (int i = 0; attrs[i]; i++)
@@ -48,9 +42,6 @@ Mesh::Mesh(const float *buffer, size_t vertices, const int * attrs, std::shared_
     }
 
     glBindVertexArray(0);
-
-    std::cout << "Mesh constructor finished" << std::endl;
-
 }
 
 Mesh::~Mesh()
@@ -59,8 +50,9 @@ Mesh::~Mesh()
     glDeleteBuffers(1, &vbo);
 }
 
-void Mesh::draw(unsigned int primitive, const std::unique_ptr<Shader> &shader, const glm::mat4& project_view) const
+void Mesh::draw(unsigned int primitive, const std::unique_ptr<Shader> &shader, const glm::mat4& project_view)
 {
+    Update();
     shader->use();
     shader->uniformMatrix("model", model);
     shader->uniformMatrix("project_view", project_view);
@@ -73,36 +65,35 @@ void Mesh::draw(unsigned int primitive, const std::unique_ptr<Shader> &shader, c
     glBindVertexArray(0);
 }
 
-void Mesh::rotate(const glm::vec3& axisRotation, float angle)
+void Mesh::Rotate(const glm::vec3 &deltaRotation)
 {
-    model = glm::rotate(model, angle, axisRotation);
+    rotation += deltaRotation;
 }
 
-void Mesh::scale(const glm::vec3& deltaScale)
+void Mesh::Scale(const glm::vec3& deltaScale)
 {
-    sc *= deltaScale;
-    model = glm::scale(model, deltaScale);
+    scale *= deltaScale;
 }
 
-void Mesh::translate(const glm::vec3& deltaMove)
+void Mesh::Translate(const glm::vec3& deltaMove)
 {
-    pos += deltaMove;
-    model = glm::translate(model, deltaMove / sc);
+    position += deltaMove;
 }
 
 
-void Mesh::moveTo(const glm::vec3 &location)
+void Mesh::MoveTo(const glm::vec3 &newLocation)
 {
-    pos = location;
-    model = glm::translate(location);
-    model = glm::scale(model, sc);
+    position = newLocation;
 }
-Mesh::Mesh(const float *buffer, size_t vertices, const int *attrs) : vertices(vertices)
+
+
+void Mesh::ScaleTo(const glm::vec3 &newScale)
 {
-    model = glm::mat4(1.0f);
-    pos = glm::vec3(0.0f);
-    rot = glm::vec3(0.0f);
-    sc = glm::vec3(1.0f);
+    scale = newScale;
+}
+
+Mesh::Mesh(const float *buffer, size_t vertices, const int *attrs) : vertices(vertices), rotation(0.0f), position(0.0f), model(1.0f), scale(1.0f)
+{
 
     /* vector with data length */
     int vertex_size = 0;
@@ -131,4 +122,15 @@ Mesh::Mesh(const float *buffer, size_t vertices, const int *attrs) : vertices(ve
 
     glBindVertexArray(0);
 }
+
+/* Reset matrices */
+void Mesh::Update()
+{
+    model = glm::translate(position);
+    model = glm::scale(model, scale);
+    model = glm::rotate(model, rotation.x, glm::vec3(1, 0, 0));
+    model = glm::rotate(model, rotation.y, glm::vec3(0, 1, 0));
+    model = glm::rotate(model, rotation.z, glm::vec3(0, 0, 1));
+}
+
 

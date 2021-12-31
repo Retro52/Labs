@@ -20,7 +20,7 @@ void Camera::Update()
 
     dir.y = 0;
 
-    float len = length(dir);
+    float len = glm::length(dir);
 
     if (len > 0.0f)
     {

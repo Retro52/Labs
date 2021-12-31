@@ -27,6 +27,7 @@ public:
     static std::mutex m;
 
     static std::vector<std::shared_ptr<Mesh>>& getMeshes(meshType id);
+    static void remove(const std::shared_ptr<Mesh>& ref);
 
     static void push(const std::shared_ptr<Mesh>& mesh, meshType id);
 };

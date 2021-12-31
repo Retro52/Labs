@@ -15,21 +15,28 @@
 
 class Mesh
 {
+private:
     unsigned int vao{}, vbo{};
     size_t vertices;
     glm::mat4 model;
+
     std::shared_ptr<Texture> texture;
+    void Update();
 public:
-    glm::vec3 pos, sc, rot;
-    void rotate(const glm::vec3& axisRotation, float angle);
-    void translate(const glm::vec3& deltaMove);
-    void scale(const glm::vec3& deltaScale);
-    void moveTo(const glm::vec3& location);
+
+    glm::vec3 front, up, right, dir, position, scale, rotation;
+
+    void Rotate(const glm::vec3 &deltaRotation);
+    void Translate(const glm::vec3& deltaMove);
+    void Scale(const glm::vec3& deltaScale);
+    void RotateTo(glm::vec3& newRotation);
+    void MoveTo(const glm::vec3& newLocation);
+    void ScaleTo(const glm::vec3& newScale);
     Mesh(const float *buffer, size_t vertices, const int *attrs);
     Mesh(const float *buffer, size_t vertices, const int *attrs, std::shared_ptr<Texture> &texture);
     ~Mesh();
 
-    void draw(unsigned int primitive, const std::unique_ptr<Shader> &shader, const glm::mat4& project_view) const;
+    void draw(unsigned int primitive, const std::unique_ptr<Shader> &shader, const glm::mat4& project_view);
 };
 
 

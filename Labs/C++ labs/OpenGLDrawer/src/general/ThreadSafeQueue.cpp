@@ -3,6 +3,8 @@
 //
 
 #include <iostream>
+#include <algorithm>
+#include <vector>
 #include "ThreadSafeQueue.h"
 #include "ThreadSafeQueueFields.h"
 
@@ -23,6 +25,7 @@ std::vector<std::shared_ptr<Mesh>> &ThreadSafeQueue::getMeshes(meshType id)
         }
         else if(id == ALL)
         {
+            all.clear();
             all.reserve(lights.size() + meshes.size());
             all.insert(all.end(), lights.begin(), lights.end());
             all.insert(all.end(), meshes.begin(), meshes.end());
@@ -53,4 +56,10 @@ void ThreadSafeQueue::push(const std::shared_ptr<Mesh>& mesh, meshType id)
         ThreadSafeQueue::m.unlock();
     }
     std::cout << "Mesh was successfully added to active mesh pool" << std::endl;
+}
+
+void ThreadSafeQueue::remove(const std::shared_ptr<Mesh>& ref)
+{
+    auto newEnd = std::remove(meshes.begin(), meshes.end(), ref);
+    meshes.erase(newEnd, meshes.end());
 }

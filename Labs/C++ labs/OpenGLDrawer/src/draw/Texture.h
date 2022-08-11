@@ -22,7 +22,4 @@ public:
     void bind() const;
 };
 
-extern void load_texture(const std::string &filename, std::shared_ptr<Texture> &target);
-
-
 #endif //GRAPHICS_TEXTURE_H

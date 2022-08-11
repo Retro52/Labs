@@ -10,7 +10,7 @@
 #include "../OpenGL/include/GLEW/glew.h"
 #include "../OpenGL/include/PNG/png.h"
 
-int _png_load(const char *file, int *width, int *height)
+int pngLoader::_png_load(const char *file, int *width, int *height)
 {
     FILE *f;
     int is_png, bit_depth, color_type, row_bytes;
@@ -124,7 +124,7 @@ int _png_load(const char *file, int *width, int *height)
     return texture;
 }
 
-void load_texture(const std::string &filename, std::shared_ptr<Texture> &target)
+void pngLoader::load_texture(const std::string &filename, std::shared_ptr<Texture> &target)
 {
     int width, height;
     GLuint texture = _png_load(filename.c_str(), &width, &height);

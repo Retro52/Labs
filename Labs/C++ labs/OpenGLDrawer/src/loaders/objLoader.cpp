@@ -9,6 +9,11 @@
 #include <algorithm>
 #include "objLoader.h"
 
+/**
+ * Load .obj model. Important - model needs to be triangulated
+ * @param objFileName path to the file
+ * @param array vertices vector to fill
+ */
 void objLoader::loadObjModel(const char *objFileName, std::vector<float> &array)
 {
     std::ifstream ifs(objFileName);

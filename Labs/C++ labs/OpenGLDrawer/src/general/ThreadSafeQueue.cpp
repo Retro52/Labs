@@ -8,6 +8,11 @@
 #include "ThreadSafeQueue.h"
 #include "ThreadSafeQueueFields.h"
 
+/**
+ * Creates a std:vector containing all meshes registered at the game for selected type (basicly lights or other)
+ * @param id meshType enum id for mesh type: LIGHT for all emissive surfaces and MESH for all the rest
+ * @return std::vector with all necessary meshes
+ */
 std::vector<std::shared_ptr<Mesh>> &ThreadSafeQueue::getMeshes(meshType id)
 {
     {
@@ -34,32 +39,39 @@ std::vector<std::shared_ptr<Mesh>> &ThreadSafeQueue::getMeshes(meshType id)
     }
 }
 
+/**
+ * Adds new mesh to the queue
+ * @param mesh mesh to add
+ * @param id mesh type
+ */
 void ThreadSafeQueue::push(const std::shared_ptr<Mesh>& mesh, meshType id)
 {
     std::cout << "Adding mesh to active mesh pool" << std::endl;
+    ThreadSafeQueue::m.lock();
     if (id == MESH)
     {
-        ThreadSafeQueue::m.lock();
         ThreadSafeQueue::meshes.push_back(mesh);
-        ThreadSafeQueue::m.unlock();
     }
     else if (id == LIGHT)
     {
-        ThreadSafeQueue::m.lock();
         ThreadSafeQueue::lights.push_back(mesh);
-        ThreadSafeQueue::m.unlock();
     }
     else if (id == AXIS)
     {
-        ThreadSafeQueue::m.lock();
         ThreadSafeQueue::axis.push_back(mesh);
-        ThreadSafeQueue::m.unlock();
     }
+    ThreadSafeQueue::m.unlock();
     std::cout << "Mesh was successfully added to active mesh pool" << std::endl;
 }
 
+/**
+ * Deletes mesh from queue
+ * @param ref std::shared_ptr of mesh reference
+ */
 void ThreadSafeQueue::remove(const std::shared_ptr<Mesh>& ref)
 {
+    ThreadSafeQueue::m.lock();
     auto newEnd = std::remove(meshes.begin(), meshes.end(), ref);
     meshes.erase(newEnd, meshes.end());
+    ThreadSafeQueue::m.unlock();
 }

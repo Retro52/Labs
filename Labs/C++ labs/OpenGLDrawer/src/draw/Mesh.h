@@ -20,6 +20,7 @@ private:
     size_t vertices;
     glm::mat4 model;
 
+    std::shared_ptr<Shader> shader;
     std::shared_ptr<Texture> texture;
     void Update();
 public:
@@ -32,11 +33,13 @@ public:
     void RotateTo(glm::vec3& newRotation);
     void MoveTo(const glm::vec3& newLocation);
     void ScaleTo(const glm::vec3& newScale);
-    Mesh(const float *buffer, size_t vertices, const int *attrs);
-    Mesh(const float *buffer, size_t vertices, const int *attrs, std::shared_ptr<Texture> &texture);
+    Mesh(const float *buffer, size_t vertices, const int *attrs, std::shared_ptr<Shader> shader);
+    Mesh(const float *buffer, size_t vertices, const int *attrs, std::shared_ptr<Shader> shader, std::shared_ptr<Texture> &texture);
+    Mesh(const float *buffer, size_t vertices, std::vector<int> attrs, std::shared_ptr<Shader> shader);
+    Mesh(const float *buffer, size_t vertices, std::vector<int> attrs, std::shared_ptr<Shader> shader, std::shared_ptr<Texture> &texture);
     ~Mesh();
 
-    void draw(unsigned int primitive, const std::unique_ptr<Shader> &shader, const glm::mat4& project_view);
+    void draw(unsigned int primitive, const glm::mat4& project_view);
 };
 
 

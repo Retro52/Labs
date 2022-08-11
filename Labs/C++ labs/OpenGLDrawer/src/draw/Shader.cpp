@@ -15,51 +15,93 @@
 #include "../OpenGL/include/GLEW/glew.h"
 #include "../OpenGL/include/glm/gtc/type_ptr.hpp"
 
-Shader::Shader(unsigned int id) : id(id)
+/**
+ * Shader constructor
+ * @param id new shader id
+ */
+Shader::Shader(unsigned int id) : id(id) {}
+
+/**
+ * Shader deconstructor, deletes shader from gl memory
+ */
+Shader::~Shader()
 {
-
-}
-
-Shader::~Shader(){
     glDeleteProgram(id);
 }
 
+/**
+ * Set this shader as current for OpenGL
+ */
 void Shader::use() const
 {
     glUseProgram(id);
 }
 
+/**
+ * Send a four dimensional matrix to the shader
+ * @param name value name in shader
+ * @param matrix value to send
+ */
 void Shader::uniformMatrix(const std::string& name, glm::mat4 matrix) const
 {
     GLuint transformLoc = glGetUniformLocation(id, name.c_str());
     glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(matrix));
 }
 
+/**
+ * Send an integer to the shader
+ * @param name value name in shader
+ * @param x value to send
+ */
 void Shader::uniform1i(const std::string& name, int x) const
 {
     GLuint transformLoc = glGetUniformLocation(id, name.c_str());
     glUniform1i(transformLoc, x);
 }
 
+/**
+ * Send a float to the shader
+ * @param name value name in shader
+ * @param x value to send
+ */
 void Shader::uniform1f(const std::string& name, float x) const
 {
     GLuint transformLoc = glGetUniformLocation(id, name.c_str());
     glUniform1f(transformLoc, x);
 }
 
+/**
+ * Send two floats to the shader
+ * @param name values name in shader
+ * @param x first value to send
+ * @param y second value to send
+ */
 void Shader::uniform2f(const std::string& name, float x, float y) const
 {
     GLuint transformLoc = glGetUniformLocation(id, name.c_str());
     glUniform2f(transformLoc, x, y);
 }
 
-void Shader::uniform3f(const std::string&   name, float x, float y, float z) const
+/**
+ * Send three floats to the shader
+ * @param name values name in shader
+ * @param x first value to send
+ * @param y second value to send
+ * @param z third value to send
+ */
+void Shader::uniform3f(const std::string& name, float x, float y, float z) const
 {
     GLuint transformLoc = glGetUniformLocation(id, name.c_str());
     glUniform3f(transformLoc, x,y,z);
 }
 
-void load_shader(const std::string &vertexFile, const std::string &fragmentFile, std::unique_ptr<Shader> &target)
+/**
+ * load and compile shader
+ * @param vertexFile path to the vertex shader file
+ * @param fragmentFile path to the fragment shader file
+ * @param target shared pointer to the shader object, to write data into
+ */
+void Shader::load_shader(const std::string &vertexFile, const std::string &fragmentFile, std::shared_ptr<Shader>& target)
 {
     // Reading Files
     std::string vertexCode;
@@ -146,5 +188,5 @@ void load_shader(const std::string &vertexFile, const std::string &fragmentFile,
     glDeleteShader(vertex);
     glDeleteShader(fragment);
 
-    target = std::move(std::make_unique<Shader>(id));
+    target = std::move(std::make_shared<Shader>(id));
 }

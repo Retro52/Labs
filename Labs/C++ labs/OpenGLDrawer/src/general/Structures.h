@@ -58,7 +58,6 @@ public:
             mNode = mNode->Next<List>();
         }
         mNode->mNext = node;
-
     }
 };
 

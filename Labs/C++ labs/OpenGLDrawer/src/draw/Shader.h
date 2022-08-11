@@ -21,11 +21,13 @@ public:
     void uniform2f(const std::string& name, float x, float y) const;
     void uniform3f(const std::string& name, float x, float y, float z) const;
 
+    static void load_shader(const std::string &vertexFile, const std::string &fragmentFile, std::shared_ptr<Shader>& target);
+
     explicit Shader(unsigned int id);
     ~Shader();
 };
 
-extern void
-load_shader(const std::string &vertexFile, const std::string &fragmentFile, std::unique_ptr<Shader> &target);
+//extern void
+//load_shader(const std::string &vertexFile, const std::string &fragmentFile, std::shared_ptr<Shader>& target);
 
 #endif //GRAPHICS_SHADER_H

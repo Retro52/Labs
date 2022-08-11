@@ -5,19 +5,12 @@
 #ifndef GRAPHICS_FUNCTIONS_H
 #define GRAPHICS_FUNCTIONS_H
 
-/*TODO: replace with vector; move to variables namespace*/
+/* TODO: replace with vector; move to variables namespace */
 #include "loaders/objLoader.h"
+#include "loaders/pngLoader.h"
 
 /* Attributes array */
-int attrs[] =
-        {
-                /* Creates to support texture attributes to load into mainShader */
-                /* 3: defines position - x, y, z */
-                /* 2: stands for u, v - texture coordinates*/
-                /* 3: stands for normal vector*/
-                /* 0 is for terminating "for" loop (stupid, but works) */
-                3,2,3,0
-        };
+std::vector<int> attributes({3, 2, 3, 0});
 
 /* Axis enum class */
 enum AXIS
@@ -29,10 +22,10 @@ enum AXIS
 namespace var
 {
     /* Shaders */
-    std::unique_ptr<Shader> mainShader;
-    std::unique_ptr<Shader> lightShader;
-    std::unique_ptr<Shader> axisShader;
-    std::unique_ptr<Shader> outlineShader;
+    std::shared_ptr<Shader> mainShader;
+    std::shared_ptr<Shader> lightShader;
+    std::shared_ptr<Shader> axisShader;
+    std::shared_ptr<Shader> outlineShader;
 
     /* Textures */
     std::shared_ptr<Texture> faceTexture;
@@ -56,7 +49,7 @@ void drawMeshes(glm::mat4 &proj_view)
 {
     for(auto &m : ThreadSafeQueue::getMeshes(MESH))
     {
-        m->draw(GL_TRIANGLES, var::mainShader, proj_view);
+        m->draw(GL_TRIANGLES, proj_view);
     }
 }
 
@@ -74,7 +67,7 @@ void outlineMesh(glm::mat4 &proj_view)
     var::outlineShader->use();
     glUniform1f(glGetUniformLocation(var::outlineShader->id, "outlining"), 1.004f);
 
-    var::selectedMesh->draw(GL_TRIANGLES, var::outlineShader, proj_view);
+    var::selectedMesh->draw(GL_TRIANGLES, proj_view);
 
     glStencilMask(0xFF);
     glStencilFunc(GL_ALWAYS, 0, 0xFF);
@@ -88,7 +81,7 @@ void drawLights(glm::mat4 &proj_view)
 {
     for(auto &m : ThreadSafeQueue::getMeshes(LIGHT))
     {
-        m->draw(GL_TRIANGLES, var::lightShader, proj_view);
+        m->draw(GL_TRIANGLES, proj_view);
     }
 }
 
@@ -102,7 +95,7 @@ void drawAxes(glm::mat4 &proj_view, const glm::vec3 &location, const glm::vec3 &
     {
         m->MoveTo(location);
         m->ScaleTo(scale);
-        m->draw(GL_TRIANGLES, var::axisShader, proj_view);
+        m->draw(GL_TRIANGLES, proj_view);
     }
     init = true;
 }
@@ -113,10 +106,10 @@ void loadShaders()
 {
     /* Load mainShader for drawing */
     std::cout << "Compiling shaders" << std::endl;
-    load_shader("../res/mainv.glsl", "../res/mainf.glsl", var::mainShader);
-    load_shader("../res/lightv.glsl", "../res/lightf.glsl", var::lightShader);
-    load_shader("../res/axisv.glsl", "../res/axisf.glsl", var::axisShader);
-    load_shader("../res/outlinev.glsl", "../res/outlinef.glsl", var::outlineShader);
+    Shader::load_shader("../res/mainv.glsl", "../res/mainf.glsl", var::mainShader);
+    Shader::load_shader("../res/lightv.glsl", "../res/lightf.glsl", var::lightShader);
+    Shader::load_shader("../res/axisv.glsl", "../res/axisf.glsl", var::axisShader);
+    Shader::load_shader("../res/outlinev.glsl", "../res/outlinef.glsl", var::outlineShader);
     std::cout << "Shaders compiled" << std::endl;
 }
 
@@ -126,9 +119,9 @@ void loadShaders()
 void loadTextures()
 {
     std::cout << "Loading textures" << std::endl;
-    load_texture("../res/Claire/Face/face.png", var::faceTexture);
-    load_texture("../res/Claire/Hair/hair.png", var::hairTexture);
-    load_texture("../res/img.png", var::defaultTexture);
+    pngLoader::load_texture("../res/Claire/Face/face.png", var::faceTexture);
+    pngLoader::load_texture("../res/Claire/Hair/hair.png", var::hairTexture);
+    pngLoader::load_texture("../res/img.png", var::defaultTexture);
     std::cout << "Textures loaded" << std::endl;
 }
 
@@ -197,9 +190,9 @@ void listen()
 
 void setUp()
 {
-    std::shared_ptr<Mesh> ox = std::make_shared<Mesh>(var::oxArr.data(), var::oxArr.size() / 8, attrs);
-    std::shared_ptr<Mesh> oy = std::make_shared<Mesh>(var::oyArr.data(), var::oyArr.size() / 8, attrs);
-    std::shared_ptr<Mesh> oz = std::make_shared<Mesh>(var::ozArr.data(), var::ozArr.size() / 8, attrs);
+    std::shared_ptr<Mesh> ox = std::make_shared<Mesh>(var::oxArr.data(), var::oxArr.size() / 8, attributes, var::axisShader);
+    std::shared_ptr<Mesh> oy = std::make_shared<Mesh>(var::oyArr.data(), var::oyArr.size() / 8, attributes, var::axisShader);
+    std::shared_ptr<Mesh> oz = std::make_shared<Mesh>(var::ozArr.data(), var::ozArr.size() / 8, attributes, var::axisShader);
 
     ox->Scale(glm::vec3(10, 10, 10));
     oy->Scale(glm::vec3(10, 10, 10));
@@ -209,9 +202,9 @@ void setUp()
     ThreadSafeQueue::push(oy, AXIS);
     ThreadSafeQueue::push(oz, AXIS);
 
-    std::shared_ptr<Mesh> faceMesh = std::make_shared<Mesh>(var::faceArray.data(), var::faceArray.size() / 8, attrs, var::faceTexture);
-    std::shared_ptr<Mesh> hairMesh = std::make_shared<Mesh>(var::hairArray.data(), var::hairArray.size() / 8, attrs, var::hairTexture);
-    std::shared_ptr<Mesh> lightMesh = std::make_shared<Mesh>(var::cubeArray.data(), var::cubeArray.size() / 8, attrs);
+    std::shared_ptr<Mesh> faceMesh = std::make_shared<Mesh>(var::faceArray.data(), var::faceArray.size() / 8, attributes, var::mainShader, var::faceTexture);
+    std::shared_ptr<Mesh> hairMesh = std::make_shared<Mesh>(var::hairArray.data(), var::hairArray.size() / 8, attributes, var::mainShader, var::hairTexture);
+    std::shared_ptr<Mesh> lightMesh = std::make_shared<Mesh>(var::cubeArray.data(), var::cubeArray.size() / 8, attributes, var::lightShader);
 
     /* Setting meshes default positions */     /*       x           z           y      */
     lightMesh->MoveTo(glm::vec3(-23.1508, 115.151, 146.096));

@@ -1,5 +1,7 @@
 #define GLEW_STATIC
 
+/* TODO: create a namespace for the project*/
+
 /* Default libs */
 #include <iostream>
 #include <memory>
@@ -13,16 +15,25 @@
 #include "OpenGL/include/glm/ext.hpp"
 
 /* Custom classes */
-#include "general/Camera.h"
+#include "general/PerspectiveCamera.h"
 #include "general/Window.h"
 #include "general/EventsHandler.h"
 #include "general/ThreadSafeQueue.h"
+#include "lights/DirectionalLight.h"
+#include "lights/PointLight.h"
 
 /* Functions for program */
 #include "functions.h"
 
 /* TODO: replace functions with custom class with static methods like Tick(), Events(), etc. */
+/* TODO: add comments doxygen-style */
 
+/**
+ * Program entry point
+ * @param argc command-line arguments count
+ * @param argv command-line arguments
+ * @return exit code
+ */
 int main(int argc, char ** argv)
 {
     /* Program initialization */
@@ -32,8 +43,8 @@ int main(int argc, char ** argv)
     std::cout << "Events handler initialized" << std::endl;
 
     /* Creating main camera */
-    std::unique_ptr<Camera> camera = std::make_unique<Camera>(glm::vec3(0,0,1), glm::radians(90.0f));
-    std::cout << "Camera created" << std::endl;
+    std::unique_ptr<PerspectiveCamera> camera = std::make_unique<PerspectiveCamera>(glm::vec3(0, 0, 150), glm::radians(90.0f));
+    std::cout << "Perspective Camera created" << std::endl;
 
     /* Loading shaders and textures for default model render */
     loadShaders();
@@ -57,10 +68,10 @@ int main(int argc, char ** argv)
      * Interesting comparison:
      * without multithreading it takes 6.4 seconds to launch the program, with multithreading - 3.1
      * ***/
-    std::thread t1(loadMeshHair); std::thread t2(loadMeshFace); std::thread t3(loadMeshSphere); std::thread t4(createAxes);
+    std::thread t2(loadMeshFace); std::thread t3(loadMeshSphere); std::thread t4(createAxes);
 
     /* All the threads join main thread here */
-    t1.join(); t2.join(); t3.join(); t4.join();
+    t2.join(); t3.join(); t4.join();
 
     /* Creating meshes*/
     setUp();
@@ -68,7 +79,7 @@ int main(int argc, char ** argv)
     /* Selecting first mash of array */
     var::selectedMesh = ThreadSafeQueue::getMeshes(ALL)[0];
 
-    /* Camera world default values positions */
+    /* PerspectiveCamera world default values positions */
     float camX = 0.0f;
     float camY = 0.0f;
 
@@ -84,6 +95,7 @@ int main(int argc, char ** argv)
     glm::vec3 rotationAxisX(1, 0, 0), rotationAxisY(0, 0, 1), rotationAxisZ(0, 1, 0), currentRotationAxis(0, 1, 0), lightColor(1, 1, 1);
     int curAxis = OZ;
     int id = 0, min = 0, max;
+
     /* Hide mouse cursor */
     EventsHandler::toggleCursor();
 
@@ -91,9 +103,17 @@ int main(int argc, char ** argv)
     std::thread commandListener(listen); commandListener.detach();
     std::cout << "Program loaded" << std::endl;
 
+    std::shared_ptr<DirectionalLight> dirLight = std::make_shared<DirectionalLight>(
+            glm::vec3(-0.2f, -1.0f, -0.3f),
+            glm::vec3(0.05f, 0.05f, 0.05f),
+            glm::vec3(0.4f, 0.4f, 0.4f),
+            glm::vec3(0.5f, 0.5f, 0.5f));
+
+
     /* Tick event */
     while (!Window::isShouldClose())
     {
+        system("cls");
         /* Update selected mesh id */
         max = (int) ThreadSafeQueue::getMeshes(ALL).size() - 1;
         if (id > max)
@@ -112,6 +132,8 @@ int main(int argc, char ** argv)
         auto currentTime = (float) glfwGetTime();
         delta = currentTime - lastTime;
         lastTime = currentTime;
+        std::cout << "Delta : " << delta << "\n";
+        std::cout << "FPS : " << 1000.0f / delta << "\n";
 
         /* Check if have to close window */
         if (EventsHandler::justPressed(GLFW_KEY_ESCAPE))
@@ -124,7 +146,7 @@ int main(int argc, char ** argv)
             EventsHandler::toggleCursor();
         }
 
-        /* Camera world orientation */
+        /* PerspectiveCamera world orientation */
         if (EventsHandler::_cursor_locked)
         {
             camY += -EventsHandler::deltaY  * delta * mouseSensitivity / (float) Window::getHeight() * 2;
@@ -143,7 +165,7 @@ int main(int argc, char ** argv)
             camera->rotate(camY, camX, 0);
         }
 
-        /* Camera and meshes speed settings */
+        /* PerspectiveCamera and meshes speed settings */
         if(EventsHandler::pressed(GLFW_KEY_LEFT_SHIFT))
         {
             speed = 200;
@@ -157,7 +179,7 @@ int main(int argc, char ** argv)
             speed = 5;
         }
 
-        /* Camera world position */
+        /* PerspectiveCamera world position */
         if (EventsHandler::pressed(GLFW_KEY_W))
         {
             camera->position += camera->front * delta * speed;
@@ -201,15 +223,6 @@ int main(int argc, char ** argv)
             var::selectedMesh->Translate(glm::vec3(0, 0, delta * speed));
         }
 
-        /* Speed up rotation */
-        if (EventsHandler::pressed(GLFW_KEY_UP))
-        {
-            rotationSpeed *= 1.01F;
-        }
-        if (EventsHandler::pressed(GLFW_KEY_DOWN))
-        {
-            rotationSpeed *= .99F;
-        }
 
         if(EventsHandler::justPressed(GLFW_KEY_DELETE))
         {
@@ -230,6 +243,7 @@ int main(int argc, char ** argv)
             var::selectedMesh = ThreadSafeQueue::getMeshes(ALL)[id];
         }
 
+        /* replace with % instead of this */
         if (EventsHandler::justPressed(GLFW_KEY_LEFT))
         {
             if (id == min)
@@ -285,25 +299,29 @@ int main(int argc, char ** argv)
         }
 
         var::selectedMesh = ThreadSafeQueue::getMeshes(ALL)[id];
+        /** @deprecated */
         if (!var::tempArray.empty())
         {
-            std::shared_ptr<Mesh> temp = std::make_shared<Mesh>(var::tempArray.data(), var::tempArray.size() / 8, attrs, var::defaultTexture);
+            std::shared_ptr<Mesh> temp = std::make_shared<Mesh>(var::tempArray.data(), var::tempArray.size() / 8, attributes, var::mainShader, var::defaultTexture);
             temp->Scale(glm::vec3(100, 100, 100));
             ThreadSafeQueue::push(temp, MESH);
             var::selectedMesh = temp;
             var::tempArray.clear();
         }
 
-        /* Camera projection view */
+        /* PerspectiveCamera projection view */
         glm::mat4 proj_view = camera->getProjection() * camera->getView();
 
-        /* World draw */
+        /* TODO: change this */
+        /* World background draw */
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
         glClearColor(0.05f,0.05f,0.1f,1);
         glStencilFunc(GL_ALWAYS, 1, 0xFF);
         glStencilMask(0xFF);
 
         /* FIXME: this is stupid, we need some kind of storage for lights, so we can pull info about light from it, so we can apply shader variables into draw method call, not here */
+        /* TODO: improve either shader or render for ~infinite point light support (current limit is 16)*/
+
         /* Apply lighting data to mainShader */
         var::mainShader->use();
         var::mainShader->uniform3f("proj_pos", camera->position.x, camera->position.y, camera->position.z);
@@ -314,7 +332,33 @@ int main(int argc, char ** argv)
                                    );
         var::mainShader->uniform3f("light_color", lightColor.r, lightColor.g, lightColor.b);
         drawMeshes(proj_view);
+        /* TODO: put it to the separate method of the new static class, Scene or Root, for ex. */
+//        var::mainShader->uniform1i("material.diffuse", 0);
+//        var::mainShader->uniform1i("material.specular", 1);
+        /* 32.0f - magic shininess value taken from OpenGL tutorial, needs replacement */
+//        var::mainShader->uniform1f("material.shininess", 32.0f);
 
+        /** @test directional light to shader transfer */
+        var::mainShader->uniform3f("dirLight.direction", -0.2f, -1.0f, -0.3f);
+//        var::mainShader->uniform3f("dirLight.ambient", 0.05f, 0.05f, 0.05f);
+        var::mainShader->uniform3f("dirLight.ambient", 0.15f, 0.15f, 0.15f);
+        var::mainShader->uniform3f("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
+        var::mainShader->uniform3f("dirLight.specular", 0.5f, 0.5f, 0.5f);
+
+        var::mainShader->uniform1i("NR_POINT_LIGHTS", 1);
+
+        /** @test point light transfer to shader */
+//        var::mainShader->uniform3f("pointLights[0].position", 0.0f, 0.0f, 0.0f);
+        auto temp = ThreadSafeQueue::getMeshes(LIGHT)[0]->position;
+
+        std::cout << temp.x << " : " << temp.y << " : " << temp.z << "\n";
+        var::mainShader->uniform3f("pointLights[0].position", temp.x, temp.y, temp.z);
+        var::mainShader->uniform3f("pointLights[0].ambient", 0.05f, 0.05f, 0.05f);
+        var::mainShader->uniform3f("pointLights[0].diffuse", 0.8f, 0.8f, 0.8f);
+        var::mainShader->uniform3f("pointLights[0].specular", 1.0f, 1.0f, 1.0f);
+        var::mainShader->uniform1f("pointLights[0].constant", 1.0f);
+        var::mainShader->uniform1f("pointLights[0].linear", 0.09f);
+        var::mainShader->uniform1f("pointLights[0].quadratic", 0.032f);
 
         /* Update light mesh color to match light color */
         var::lightShader->use();

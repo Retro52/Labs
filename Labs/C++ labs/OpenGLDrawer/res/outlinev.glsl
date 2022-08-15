@@ -6,10 +6,12 @@ layout (location = 2) in vec3 v_normals;
 
 
 uniform mat4 project_view;
-uniform mat4 model;
 uniform float outlining;
+uniform mat4 model;
 
 void main()
 {
-    gl_Position = project_view * model * vec4(v_position + v_normals * (outlining - 1.0f), 1.0);
+    gl_Position = project_view * model * vec4(v_position + v_normals * (outlining + 0.1f - 1.0f), 1.0);
+//    gl_Position = project_view * model * vec4(v_position, 1.0);
+//    gl_Position = project_view * model * vec4(v_position, 1.0);
 }

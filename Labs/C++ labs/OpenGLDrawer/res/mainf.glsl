@@ -7,8 +7,6 @@ in vec3 a_normal;
 in vec3 a_position;
 in vec3 a_projPos;
 in vec3 FragPos;
-in vec3 lightPos;
-in vec3 lightColor;
 
 out vec4 f_color;
 
@@ -36,16 +34,20 @@ struct PointLight
 
 struct Material
 {
-	sampler2D shininess;
 	sampler2D diffuse;
-	float specular;
+	sampler2D specular;
+	float shininess;
 };
 
 uniform sampler2D u_texture0;
-uniform DirLight dirLight;
+uniform bool shouldCalcLight;
 uniform int NR_POINT_LIGHTS;
+uniform DirLight dirLight;
 uniform PointLight pointLights[16];
 //uniform Material material;
+
+
+vec3 CalcLight(DirLight dirLight, PointLight pointLights[16], vec3 normal, vec3 fragPos, vec3 viewDir);
 
 vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir);
 
@@ -53,33 +55,26 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
 
 void main()
 {
-	/* Object specularity */
-	float specularStrength = 0.5;
-	float ambientStrength = 0.1;
-	vec3 ambient = ambientStrength * lightColor;
 
-	/* Normalizing values */
 	vec3 norm = normalize(a_normal);
-	vec3 lightDir = normalize(lightPos - FragPos);
-
-	/* Diffuse */
-	float diff = max(dot(norm, lightDir), 0.0);
-	vec3 diffuse = diff * lightColor;
-
-	/* Specular */
 	vec3 viewDir = normalize(a_projPos - FragPos);
-	vec3 reflectDir = reflect(- lightDir, norm);
 
-	float spec = pow(max(dot(viewDir, reflectDir), 0.0), 128);
-	vec3 specular = specularStrength * spec * lightColor;
+	vec3 result = CalcLight(dirLight, pointLights, norm, FragPos, viewDir);
 
-	/* Finalizing lights & applying texture */
-//	vec3 result = (ambient + diffuse + specular) * a_color.rgb;
-//	f_color = vec4(result, 1.0f);
-//
-//	f_color = f_color * texture(u_texture0, a_texCoord);
+	if (shouldCalcLight)
+	{
+		vec3 result = CalcLight(dirLight, pointLights, norm, FragPos, viewDir);
+		f_color = vec4(result, 1.0f);
+	}
+	else
+	{
+		f_color = vec4(a_color.rgb, 1.0f) * texture(u_texture0, a_texCoord);
+	}
+}
 
-	// phase 1: Directional lighting
+
+vec3 CalcLight(DirLight dirLight, PointLight pointLights[16], vec3 norm, vec3 FragPos, vec3 viewDir)
+{
 	vec3 result = CalcDirLight(dirLight, norm, viewDir);
 
 	// phase 2: Point lights
@@ -87,15 +82,8 @@ void main()
 	{
 		result += CalcPointLight(pointLights[i], norm, FragPos, viewDir);
 	}
-
-	// phase 3: Spot light
-	//result += CalcSpotLight(spotLight, norm, FragPos, viewDir);
-
-	f_color = vec4(result, 1.0f);
-
-//	f_color = f_color * texture(u_texture0, a_texCoord);
+	return result;
 }
-
 
 vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir)
 {

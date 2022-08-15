@@ -319,7 +319,7 @@
  * the same setjmp.h that was included when libpng was built.  Only define
  * PNG_SKIP_SETJMP_CHECK while building your application, prior to the
  * application's '#include "png.h"'. Don't define PNG_SKIP_SETJMP_CHECK
- * while building a separate libpng library for general use.
+ * while building a separate libpng library for Core use.
  */
 
 #  ifndef PNG_SKIP_SETJMP_CHECK
@@ -1468,7 +1468,7 @@ typedef char            FAR * FAR * FAR * png_charppp;
      /* You don't have or don't want to use snprintf().  Caution: Using
       * sprintf instead of snprintf exposes your application to accidental
       * or malevolent buffer overflows.  If you don't have snprintf()
-      * as a general rule you should provide one (you can get one from
+      * as a Core rule you should provide one (you can get one from
       * Portable OpenSSH). */
 #    define png_snprintf(s1,n,fmt,x1) sprintf(s1,fmt,x1)
 #    define png_snprintf2(s1,n,fmt,x1,x2) sprintf(s1,fmt,x1,x2)

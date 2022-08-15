@@ -1343,8 +1343,8 @@ struct png_struct_def
    png_size_t save_buffer_max;       /* total size of save_buffer */
    png_size_t buffer_size;           /* total amount of available input data */
    png_size_t current_buffer_size;   /* amount of data now in current_buffer */
-   int process_mode;                 /* what push library is currently doing */
-   int cur_palette;                  /* current push library palette index */
+   int process_mode;                 /* what RegisterMesh library is currently doing */
+   int cur_palette;                  /* current RegisterMesh library palette index */
 
 #  if defined(PNG_TEXT_SUPPORTED)
      png_size_t current_text_size;   /* current size of text input data */
@@ -1923,7 +1923,7 @@ extern PNG_EXPORT(void,png_set_filter) PNGARG((png_structp png_ptr, int method,
  * A negative weight or cost indicates the default value is to be used, and
  * values in the range [0.0, 1.0) indicate the value is to remain unchanged.
  * The default values for both weights and costs are currently 1.0, but may
- * change if good general weighting/cost heuristics can be found.  If both
+ * change if good Core weighting/cost heuristics can be found.  If both
  * the weights and costs are set to 1.0, this degenerates the WEIGHTED method
  * to the UNWEIGHTED method, but with added encoding time/computation.
  */
@@ -2057,7 +2057,7 @@ extern PNG_EXPORT(png_voidp,png_get_user_chunk_ptr) PNGARG((png_structp
 #endif
 
 #ifdef PNG_PROGRESSIVE_READ_SUPPORTED
-/* Sets the function callbacks for the push reader, and a pointer to a
+/* Sets the function callbacks for the RegisterMesh reader, and a pointer to a
  * user-defined structure available to the callback functions.
  */
 extern PNG_EXPORT(void,png_set_progressive_read_fn) PNGARG((png_structp png_ptr,
@@ -2065,7 +2065,7 @@ extern PNG_EXPORT(void,png_set_progressive_read_fn) PNGARG((png_structp png_ptr,
    png_progressive_info_ptr info_fn, png_progressive_row_ptr row_fn,
    png_progressive_end_ptr end_fn));
 
-/* returns the user pointer associated with the push read functions */
+/* returns the user pointer associated with the RegisterMesh read functions */
 extern PNG_EXPORT(png_voidp,png_get_progressive_ptr)
    PNGARG((png_structp png_ptr));
 

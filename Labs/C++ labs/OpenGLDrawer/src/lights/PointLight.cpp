@@ -3,6 +3,7 @@
 //
 
 #include "PointLight.h"
+#include "../logging/easylogging++.h"
 
 /**
  * Point light constructor
@@ -15,11 +16,16 @@
  * @param diff
  * @param spec
  */
-PointLight::PointLight(const glm::vec3& pos, float con, float lin, float quad, const glm::vec3& amb, const glm::vec3& diff, const glm::vec3& spec) :
+PointLight::PointLight(const glm::vec3 &pos, const glm::vec3 &amb, const glm::vec3 &diff, const glm::vec3 &spec, float con, float lin, float quad) :
         position(pos), constant(con), linear(lin), quadratic(quad), ambient(amb), diffuse(diff), specular(spec) {}
 
-PointLight::PointLight(const glm::vec3 &pos, float con, float lin, float quad, const glm::vec3 &amb, const glm::vec3 &diff, const glm::vec3 &spec, const std::shared_ptr<Mesh> &m) :
-        PointLight(pos, con, lin, quad, amb, diff, spec)
+void PointLight::Display() const
 {
-    mesh = m;
+    LOG(WARNING) << "\nPosition: " << position.x << "; " << position.y << "; " << position.z << ";" <<
+                 "\nAmbient" << ambient.x << "; " << ambient.y << "; " << ambient.z << ";" <<
+                 "\nDiffuse: " << diffuse.x << "; " << diffuse.y << "; " << diffuse.z << ";" <<
+                 "\nSpecular: " << specular.x << "; " << specular.y << "; " << specular.z << ";" <<
+                 "\nLinear: " << linear <<
+                 "\nQuadratic: " << quadratic <<
+                 "\nConstant" << constant;
 }

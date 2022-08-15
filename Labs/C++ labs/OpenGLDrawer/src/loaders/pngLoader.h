@@ -14,6 +14,6 @@ class pngLoader
 {
 public:
     static int _png_load(const char *file, int *width, int *height);
-    static void load_texture(const std::string &filename, std::shared_ptr<Texture> &target);
+//    static void load_texture(const std::string &filename, std::shared_ptr<Texture> &target);
 };
 #endif //GRAPHICS_PNGLOADER_H

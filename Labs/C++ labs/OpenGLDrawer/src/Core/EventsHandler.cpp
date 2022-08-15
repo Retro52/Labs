@@ -164,7 +164,7 @@ void EventsHandler::toggleCursor()
 }
 
 /**
- * Update all events, called once every frame
+ * UpdateModelMatrix all events, called once every frame
  */
 void EventsHandler::pullEvents()
 {

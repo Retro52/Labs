@@ -20,6 +20,8 @@ public:
     ~Texture();
 
     void bind() const;
+
+    static int load_texture(const std::string &filename, std::shared_ptr<Texture> &target);
 };
 
 #endif //GRAPHICS_TEXTURE_H

@@ -3,6 +3,7 @@
 //
 
 #include "DirectionalLight.h"
+#include "../logging/easylogging++.h"
 
 /**
  *
@@ -13,7 +14,11 @@
  */
 DirectionalLight::DirectionalLight(const glm::vec3& dir, const glm::vec3& amb, const glm::vec3& diff, const glm::vec3& spec) : direction(dir), ambient(amb), diffuse(diff), specular(spec){}
 
-DirectionalLight::DirectionalLight(const glm::vec3 &dir, const glm::vec3 &amb, const glm::vec3 &diff, const glm::vec3 &spec, const std::shared_ptr<Mesh>& m) : DirectionalLight(dir, amb, diff, spec)
+void DirectionalLight::Display() const
 {
-    mesh = m;
+        LOG(WARNING) << "\nDirection: " << direction.x << "; " << direction.y << "; " << direction.z << ";" <<
+                     "\nAmbient: " << ambient.x << "; " << ambient.y << "; " << ambient.z << ";" <<
+                     "\nDiffuse: " << diffuse.x << "; " << diffuse.y << "; " << diffuse.z << ";" <<
+                     "\nSpecular: " << specular.x << "; " << specular.y << "; " << specular.z << ";\n";
 }
+

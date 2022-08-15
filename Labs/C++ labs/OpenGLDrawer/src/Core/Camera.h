@@ -7,16 +7,12 @@
 
 #include "../OpenGL/include/glm/glm.hpp"
 
-class Camera
+class Camera : Actor
 {
 private:
-    void Update();
+    void Update() override;
 
 public:
-    glm::mat4 rotation;
-
-    glm::vec3 front, up, right, dir, position;
-
     float fov, zoom;
 
     Camera(const glm::vec3& position, float fov);

@@ -11,35 +11,28 @@
 #include <freeglut.h>
 #include "../OpenGL/include/glm/glm.hpp"
 #include "Shader.h"
-#include "Texture.h"
+#include "Material.h"
+#include "../Core/Actor.h"
 
-class Mesh
+class Mesh : public Actor
 {
 private:
     unsigned int vao{}, vbo{};
     size_t vertices;
-    glm::mat4 model;
 
     std::shared_ptr<Shader> shader;
-    std::shared_ptr<Texture> texture;
-    void Update();
+    std::shared_ptr<Material> material;
+    void Update() override;
 public:
 
-    glm::vec3 front, up, right, dir, position, scale, rotation;
-
-    void Rotate(const glm::vec3 &deltaRotation);
-    void Translate(const glm::vec3& deltaMove);
-    void Scale(const glm::vec3& deltaScale);
-    void RotateTo(glm::vec3& newRotation);
-    void MoveTo(const glm::vec3& newLocation);
-    void ScaleTo(const glm::vec3& newScale);
     Mesh(const float *buffer, size_t vertices, const int *attrs, std::shared_ptr<Shader> shader);
-    Mesh(const float *buffer, size_t vertices, const int *attrs, std::shared_ptr<Shader> shader, std::shared_ptr<Texture> &texture);
     Mesh(const float *buffer, size_t vertices, std::vector<int> attrs, std::shared_ptr<Shader> shader);
-    Mesh(const float *buffer, size_t vertices, std::vector<int> attrs, std::shared_ptr<Shader> shader, std::shared_ptr<Texture> &texture);
+    Mesh(const float *buffer, size_t vertices, const int *attrs, std::shared_ptr<Shader> shader, std::shared_ptr<Material> &material);
+    Mesh(const float *buffer, size_t vertices, std::vector<int> attrs, std::shared_ptr<Shader> shader, std::shared_ptr<Material> &material);
     ~Mesh();
 
-    void draw(unsigned int primitive, const glm::mat4& project_view);
+    void draw(unsigned int primitive, const glm::mat4 &project_view);
+    void outline(unsigned int primitive, const glm::mat4 &project_view, const std::shared_ptr<Shader> &outline_shader);
 };
 
 

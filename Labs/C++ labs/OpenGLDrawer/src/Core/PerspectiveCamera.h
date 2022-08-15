@@ -6,25 +6,23 @@
 #define GRAPHICS_PERSPECTIVECAMERA_H
 
 #include "../OpenGL/include/glm/glm.hpp"
+#include "Actor.h"
+#include <iostream>
 
-class PerspectiveCamera
+class PerspectiveCamera : public Actor
 {
-private:
-    void Update();
-
 public:
-    glm::mat4 rotation;
-
-    glm::vec3 front, up, right, dir, position;
-
     float fov, zoom;
-
+    double posX, posY;
     PerspectiveCamera(const glm::vec3& position, float fov);
 
     void rotate(float x, float y, float z);
 
-    glm::mat4 getProjection() const;
-    glm::mat4 getView() const;
+    void Update() override;
+    void UpdateControls() override;
+
+    glm::mat4 getProjection();
+    glm::mat4 getView();
 };
 
 #endif //GRAPHICS_PERSPECTIVECAMERA_H

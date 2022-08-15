@@ -11,7 +11,7 @@
 #include "glfw3.h"
 #include "string"
 
-class Window;
+//class Window;
 
 class Window
 {
@@ -35,6 +35,8 @@ public:
 
     static void setWidth(int w);
     static void setHeight(int h);
+
+    static void Tick();
 };
 
 

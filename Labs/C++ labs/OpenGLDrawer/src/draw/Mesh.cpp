@@ -5,14 +5,15 @@
 #define GLEW_STATIC
 
 #include <iostream>
-#include <utility>
 
+#include "../logging/easylogging++.h"
 #include "../OpenGL/include/GLEW/glew.h"
 #include "../OpenGL/include/glm/glm.hpp"
 #include "../OpenGL/include/glm/gtc/matrix_transform.hpp"
 #include "../OpenGL/include/glm/gtx/transform.hpp"
 
 #include "Mesh.h"
+#include "../Core/Global.h"
 
 /**
  * Constructor for Mesh class
@@ -20,10 +21,16 @@
  * @param vertices count of vertices
  * @param attrs list of attributes values, each value represents number of corresponding values at buffer array for every attribute
  * @param shader shader for displaying model
- * @param texture texture for the mesh
+ * @param material texture for the mesh
  */
-Mesh::Mesh(const float *buffer, size_t vertices, const int * attrs, std::shared_ptr<Shader> shader, std::shared_ptr<Texture> &texture) : vertices(vertices), shader(std::move(shader)), rotation(0.0f), position(0.0f), model(1.0f), scale(1.0f), texture(texture)
+Mesh::Mesh(const float *buffer, size_t vertices, const int * attrs, std::shared_ptr<Shader> shader, std::shared_ptr<Material> &material) : vertices(vertices), shader(std::move(shader)), material(material)
 {
+    /* protected fields from parent class */
+    scale = glm::vec3(1.0f);
+    model = glm::mat4(1.0f);
+    position = glm::vec3(0.0f);
+    rotation = glm::vec3(0.0f);
+
     /* vector with data length */
     int vertex_size = 0;
     for (int i = 0; attrs[i]; i++)
@@ -59,8 +66,13 @@ Mesh::Mesh(const float *buffer, size_t vertices, const int * attrs, std::shared_
  * @param attrs list of attributes values, each value represents number of corresponding values at buffer array for every attribute
  * @param shader shader for displaying model
  */
-Mesh::Mesh(const float *buffer, size_t vertices, const int *attrs, std::shared_ptr<Shader> shader) : vertices(vertices), shader(std::move(shader)), rotation(0.0f), position(0.0f), model(1.0f), scale(1.0f)
+Mesh::Mesh(const float *buffer, size_t vertices, const int *attrs, std::shared_ptr<Shader> shader) : vertices(vertices), shader(std::move(shader))
 {
+    /* protected fields from parent class */
+    scale = glm::vec3(1.0f);
+    model = glm::mat4(1.0f);
+    position = glm::vec3(0.0f);
+    rotation = glm::vec3(0.0f);
 
     /* vector with data length */
     int vertex_size = 0;
@@ -107,7 +119,7 @@ Mesh::Mesh(const float *buffer, size_t vertices, std::vector<int> attrs, std::sh
  * @param attrs list of attributes values, each value represents number of corresponding values at buffer array for every attribute
  * @param shader shader for displaying model
  */
-Mesh::Mesh(const float *buffer, size_t vertices, std::vector<int> attrs, std::shared_ptr<Shader> shader, std::shared_ptr<Texture> &texture) : Mesh(buffer, vertices, attrs.data(), shader, texture){}
+Mesh::Mesh(const float *buffer, size_t vertices, std::vector<int> attrs, std::shared_ptr<Shader> shader, std::shared_ptr<Material> &material) : Mesh(buffer, vertices, attrs.data(), std::move(shader), material){}
 
 /**
  * Mesh class destructor, deletes mesh from gl memory
@@ -129,72 +141,40 @@ void Mesh::draw(unsigned int primitive, const glm::mat4& project_view)
     shader->use();
     shader->uniformMatrix("model", model);
     shader->uniformMatrix("project_view", project_view);
-    if (texture)
+    if (material)
     {
-        texture->bind();
+        if (material->diffuse)
+        {
+            material->diffuse->bind();
+        }
+        else
+        {
+            LOG(WARNING) << "Mesh seems to be missing diffuse texture";
+        }
+    }
+    else
+    {
+        LOG(WARNING) << "Mesh seems to be missing material";
     }
     glBindVertexArray(vao);
     glDrawArrays(primitive, 0, vertices);
     glBindVertexArray(0);
 }
 
-/***
- * Rotate mesh on deltaRotation degrees (in radians)
- * @param deltaRotation three dimensional vector of rotation
- */
-void Mesh::Rotate(const glm::vec3 &deltaRotation)
+void Mesh::outline(unsigned int primitive, const glm::mat4 &project_view, const std::shared_ptr<Shader> &outline_shader)
 {
-    rotation += deltaRotation;
+    outline_shader->use();
+    outline_shader->uniformMatrix("model", this->model);
+    outline_shader->uniformMatrix("project_view", project_view);
+    if (material)
+    {
+        material->diffuse->bind();
+    }
+    glBindVertexArray(vao);
+    glDrawArrays(primitive, 0, vertices);
+    glBindVertexArray(0);
 }
 
-/**
- * Change mesh scale
- * @param deltaScale three dimensional vector of scale change at every axis
- */
-void Mesh::Scale(const glm::vec3& deltaScale)
-{
-    scale *= deltaScale;
-}
-
-/**
- * Change mesh position
- * @param deltaMove three dimensional vector of position change at every axis
- */
-void Mesh::Translate(const glm::vec3& deltaMove)
-{
-    position += deltaMove;
-}
-
-/**
- * Change mesh position
- * @param newLocation three dimensional vector of new position at every axis
- */
-void Mesh::MoveTo(const glm::vec3 &newLocation)
-{
-    position = newLocation;
-}
-
-/**
- * Change mesh scale
- * @param newScale three dimensional vector of new scale at every axis
- */
-void Mesh::ScaleTo(const glm::vec3 &newScale)
-{
-    scale = newScale;
-}
-
-/**
- * Change mesh rotation
- * @param newRotation three dimensional vector of new rotation at every axis (in radians)
- */
-void Mesh::RotateTo(glm::vec3 &newRotation)
-{
-    rotation = newRotation;
-}
-
-/**
- * Updates all internal matrices necessary after any scale, position or rotation update
- */
 void Mesh::Update()
 {
     model = glm::translate(position);

@@ -4,9 +4,10 @@
 #define GLEW_STATIC
 
 #include "Window.h"
+#include "EventsHandler.h"
 #include <iostream>
 
-GLFWwindow* Window::window;
+GLFWwindow * Window::window;
 int Window::width = 0;
 int Window::height = 0;
 
@@ -95,7 +96,7 @@ void Window::setShouldClose(bool shouldClose)
 }
 
 /**
- * Update buffers
+ * UpdateModelMatrix buffers
  */
 void Window::swapBuffers()
 {
@@ -151,5 +152,18 @@ void Window::setHeight(int h)
 GLFWwindow * Window::getCurrentWindow()
 {
     return Window::window;
+}
+
+void Window::Tick()
+{
+    if (EventsHandler::justPressed(GLFW_KEY_ESCAPE))
+    {
+        Window::setShouldClose(true);
+    }
+    /* Show/hide cursor */
+    if (EventsHandler::justPressed(GLFW_KEY_TAB))
+    {
+        EventsHandler::toggleCursor();
+    }
 }
 

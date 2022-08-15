@@ -7,7 +7,7 @@
 
 #include <vector>
 #include "../draw/Mesh.h"
-#include "../general/ThreadSafeQueue.h"
+#include "../Core/ThreadSafeQueue.h"
 
 class Scene
 {

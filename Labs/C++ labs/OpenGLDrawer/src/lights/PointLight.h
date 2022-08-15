@@ -6,12 +6,13 @@
 #define GRAPHICS_POINTLIGHT_H
 
 #include "../OpenGL/include/glm/glm.hpp"
-#include "../draw/Mesh.h"
-#include "Light.h"
 
-class PointLight : Light
+class PointLight
 {
+public:
     glm::vec3 position;
+
+    float affectDistance { 500.0f };
 
     float constant;
     float linear;
@@ -21,9 +22,10 @@ class PointLight : Light
     glm::vec3 diffuse;
     glm::vec3 specular;
 
-    PointLight(const glm::vec3& pos, float con, float lin, float quad, const glm::vec3& amb, const glm::vec3& diff, const glm::vec3& spec);
-    PointLight(const glm::vec3& pos, float con, float lin, float quad, const glm::vec3& amb, const glm::vec3& diff, const glm::vec3& spec, const std::shared_ptr<Mesh>& m);
+    PointLight(const glm::vec3 &pos, const glm::vec3 &amb, const glm::vec3 &diff, const glm::vec3 &spec, float con, float lin, float quad);
     ~PointLight() = default;
+
+    void Display() const;
 };
 
 

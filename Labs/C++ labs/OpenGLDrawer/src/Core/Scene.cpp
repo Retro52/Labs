@@ -6,15 +6,15 @@
 
 void Scene::DrawAll(glm::mat4 &proj_view)
 {
-    for (const auto& mesh : ThreadSafeQueue::getMeshes(MESH))
+    for (const auto& mesh : ThreadSafeQueue::GetMeshes(MESH))
     {
         mesh->draw(GL_TRIANGLES, proj_view);
     }
-    for (const auto& mesh : ThreadSafeQueue::getMeshes(LIGHT))
+    for (const auto& mesh : ThreadSafeQueue::GetMeshes(LIGHT))
     {
         mesh->draw(GL_TRIANGLES, proj_view);
     }
-    for (const auto& mesh : ThreadSafeQueue::getMeshes(AXIS))
+    for (const auto& mesh : ThreadSafeQueue::GetMeshes(AXIS))
     {
         mesh->draw(GL_TRIANGLES, proj_view);
     }

@@ -124,14 +124,14 @@ int pngLoader::_png_load(const char *file, int *width, int *height)
     return texture;
 }
 
-void pngLoader::load_texture(const std::string &filename, std::shared_ptr<Texture> &target)
-{
-    int width, height;
-    GLuint texture = _png_load(filename.c_str(), &width, &height);
-    if (texture == 0)
-    {
-        std::cerr << "[ERROR]::TEXTURE Could not load texture: " << filename << std::endl;
-        return;
-    }
-    target = std::move(std::make_shared<Texture>(texture, width, height));
-}
+//void pngLoader::load_texture(const std::string &filename, std::shared_ptr<Texture> &target)
+//{
+//    int width, height;
+//    GLuint texture = _png_load(filename.c_str(), &width, &height);
+//    if (texture == 0)
+//    {
+//        std::cerr << "[ERROR]::TEXTURE Could not load texture: " << filename << std::endl;
+//        return;
+//    }
+//    target = std::move(std::make_shared<Texture>(texture, width, height));
+//}

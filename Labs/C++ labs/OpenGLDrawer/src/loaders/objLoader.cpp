@@ -14,13 +14,13 @@
  * @param objFileName path to the file
  * @param array vertices vector to fill
  */
-void objLoader::loadObjModel(const char *objFileName, std::vector<float> &array)
+int objLoader::loadObjModel(const char *objFileName, std::vector<float> &array)
 {
     std::ifstream ifs(objFileName);
     if(!ifs.is_open())
     {
         std::cerr << "Could`t open open file " << objFileName << std::endl;
-        return;
+        return -1;
     }
     auto * tempModel = new objLoader;
     std::stringstream ssFileContent;
@@ -105,4 +105,5 @@ void objLoader::loadObjModel(const char *objFileName, std::vector<float> &array)
     delete tempModel;
     ifs.close();
     array = std::move(std::vector<float>(result));
+    return 0;
 }

@@ -2,12 +2,9 @@
 // Created by Anton on 12.12.2021.
 //
 
-#include "PerspectiveCamera.h"
-#include "../logging/easylogging++.h"
-#include "../OpenGL/include/glm/ext.hpp"
 #include "Window.h"
-#include "EventsHandler.h"
 #include "Global.h"
+#include "../OpenGL/include/glm/ext.hpp"
 
 /**
  * Creates new perspective camera
@@ -35,31 +32,13 @@ PerspectiveCamera::PerspectiveCamera(const glm::vec3& position, float fov) : fov
 }
 
 /**
- * Rotate camera on x, y, z angles at every dimension, angles in radians
- * @param x rotation angle for X axis, in radians
- * @param y rotation angle for Y axis, in radians
- * @param z rotation angle for Z axis, in radians
- */
-void PerspectiveCamera::rotate(float x, float y, float z)
-{
-    /* Yaw axis rotation */
-    model = glm::rotate(model, z, glm::vec3(0,0,1));
-    /* Pitch axis rotation */
-    model = glm::rotate(model, y, glm::vec3(0,1,0));
-    /* Roll axis rotation */
-    model = glm::rotate(model, x, glm::vec3(1,0,0));
-
-    Update();
-}
-
-/**
  * Get projection matrix of camera
  * @return 4-dimensional projection matrix
  */
 glm::mat4 PerspectiveCamera::getProjection()
 {
     Update();
-    float aspect = (float) Window::getWidth() / (float) Window::getHeight();
+    float aspect = ((float) Window::getWidth()) / (float) Window::getHeight();
     return glm::perspective(fov * zoom, aspect, 0.05f, 1500.0f);
 }
 
@@ -140,7 +119,7 @@ void PerspectiveCamera::UpdateControls()
         Translate(- GetRight() * delta * speed);
     }
 
-    float mouseSensitivity = 400.0f;
+    float mouseSensitivity = 150.0f;
     /* PerspectiveCamera world orientation */
     if (EventsHandler::_cursor_locked)
     {

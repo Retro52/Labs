@@ -2,7 +2,7 @@
 //  Bismillah ar-Rahmaan ar-Raheem
 //
 //  Easylogging++ v9.96.7
-//  Single-header only, cross-platform logging library for C++ applications
+//  Single-header only, cross-platform Logging library for C++ applications
 //
 //  Copyright (c) 2012-2018 Amrayn Web Services
 //  Copyright (c) 2012-2018 @abumusamq
@@ -417,7 +417,7 @@ ELPP_INTERNAL_DEBUGGING_OUT_INFO << ELPP_INTERNAL_DEBUGGING_MSG(internalInfoStre
 #   include <condition_variable>
 #endif  // ELPP_ASYNC_LOGGING
 #if defined(ELPP_STL_LOGGING)
-// For logging STL based templates
+// For Logging STL based templates
 #   include <list>
 #   include <queue>
 #   include <deque>
@@ -432,7 +432,7 @@ ELPP_INTERNAL_DEBUGGING_OUT_INFO << ELPP_INTERNAL_DEBUGGING_MSG(internalInfoStre
 #  endif  // defined(ELPP_UNORDERED_SET)
 #endif  // defined(ELPP_STL_LOGGING)
 #if defined(ELPP_QT_LOGGING)
-// For logging Qt based classes & templates
+// For Logging Qt based classes & templates
 #   include <QString>
 #   include <QByteArray>
 #   include <QVector>
@@ -447,7 +447,7 @@ ELPP_INTERNAL_DEBUGGING_OUT_INFO << ELPP_INTERNAL_DEBUGGING_MSG(internalInfoStre
 #   include <QStack>
 #endif  // defined(ELPP_QT_LOGGING)
 #if defined(ELPP_BOOST_LOGGING)
-// For logging boost based classes & templates
+// For Logging boost based classes & templates
 #   include <boost/container/vector.hpp>
 #   include <boost/container/stable_vector.hpp>
 #   include <boost/container/list.hpp>
@@ -458,7 +458,7 @@ ELPP_INTERNAL_DEBUGGING_OUT_INFO << ELPP_INTERNAL_DEBUGGING_MSG(internalInfoStre
 #   include <boost/container/flat_set.hpp>
 #endif  // defined(ELPP_BOOST_LOGGING)
 #if defined(ELPP_WXWIDGETS_LOGGING)
-// For logging wxWidgets based classes & templates
+// For Logging wxWidgets based classes & templates
 #   include <wx/vector.h>
 #endif  // defined(ELPP_WXWIDGETS_LOGGING)
 #if defined(ELPP_UTC_DATETIME)
@@ -570,10 +570,10 @@ class StaticClass {
   StaticClass& operator=(const StaticClass&);
 };
 }  // namespace base
-/// @brief Represents enumeration for severity level used to determine level of logging
+/// @brief Represents enumeration for severity level used to determine level of Logging
 ///
 /// @detail With Easylogging++, developers may disable or enable any level regardless of
-/// what the severity is. Or they can choose to log using hierarchical logging flag
+/// what the severity is. Or they can choose to log using hierarchical Logging flag
 enum class Level : base::type::EnumType {
   /// @brief Generic level that represents all the levels. Useful when setting global configuration for all levels
   Global = 1,
@@ -587,7 +587,7 @@ enum class Level : base::type::EnumType {
   Error = 16,
   /// @brief Useful when application has potentially harmful situations
   Warning = 32,
-  /// @brief Information that can be highly useful and vary with verbose logging level.
+  /// @brief Information that can be highly useful and vary with verbose Logging level.
   Verbose = 64,
   /// @brief Mainly useful to represent current progress of application
   Info = 128,
@@ -633,9 +633,9 @@ class LevelHelper : base::StaticClass {
   static void forEachLevel(base::type::EnumType* startIndex, const std::function<bool(void)>& fn);
 };
 /// @brief Represents enumeration of ConfigurationType used to configure or access certain aspect
-/// of logging
+/// of Logging
 enum class ConfigurationType : base::type::EnumType {
-  /// @brief Determines whether or not corresponding level and logger of logging is enabled
+  /// @brief Determines whether or not corresponding level and logger of Logging is enabled
   /// You may disable all logs by using el::Level::Global
   Enabled = 1,
   /// @brief Whether or not to write corresponding log to log file
@@ -643,7 +643,7 @@ enum class ConfigurationType : base::type::EnumType {
   /// @brief Whether or not to write corresponding level and logger log to standard output.
   /// By standard output meaning termnal, command prompt etc
   ToStandardOutput = 4,
-  /// @brief Determines format of logging corresponding level and logger.
+  /// @brief Determines format of Logging corresponding level and logger.
   Format = 8,
   /// @brief Determines log file (full path) to write logs to for corresponding level and logger
   Filename = 16,
@@ -699,7 +699,7 @@ enum class LoggingFlag : base::type::EnumType {
   /// @brief Makes sure we have new line for each container log entry
   NewLineForContainer = 1,
   /// @brief Makes sure if -vmodule is used and does not specifies a module, then verbose
-  /// logging is allowed via that module.
+  /// Logging is allowed via that module.
   AllowVerboseIfModuleNotSpecified = 2,
   /// @brief When handling crashes by default, detailed crash reason will be logged as well
   LogDetailedCrashReason = 4,
@@ -711,7 +711,7 @@ enum class LoggingFlag : base::type::EnumType {
   StrictLogFileSizeCheck = 32,
   /// @brief Make terminal output colorful for supported terminals
   ColoredTerminalOutput = 64,
-  /// @brief Supports use of multiple logging in same macro, e.g, CLOG(INFO, "default", "network")
+  /// @brief Supports use of multiple Logging in same macro, e.g, CLOG(INFO, "default", "network")
   MultiLoggerSupport = 128,
   /// @brief Disables comparing performance tracker's checkpoints
   DisablePerformanceTrackingCheckpointComparison = 256,
@@ -719,7 +719,7 @@ enum class LoggingFlag : base::type::EnumType {
   DisableVModules = 512,
   /// @brief Disable VModules extensions
   DisableVModulesExtensions = 1024,
-  /// @brief Enables hierarchical logging
+  /// @brief Enables hierarchical Logging
   HierarchicalLogging = 2048,
   /// @brief Creates logger automatically when not available
   CreateLoggerAutomatically = 4096,
@@ -1586,7 +1586,7 @@ class LogFormat : public Loggable {
   virtual ~LogFormat(void) {}
   bool operator==(const LogFormat& other);
 
-  /// @brief Updates format to be used while logging.
+  /// @brief Updates format to be used while Logging.
   /// @param userFormat User provided format
   void parseFromFormat(const base::type::string_t& userFormat);
 
@@ -2033,7 +2033,7 @@ class TypedConfigurations : public base::threading::ThreadSafe {
     return unsafeValidateFileRolling(level, preRollOutCallback);
   }
 };
-/// @brief Class that keeps record of current line hit for occasional logging
+/// @brief Class that keeps record of current line hit for occasional Logging
 class HitCounter {
  public:
   HitCounter(void) :
@@ -2417,7 +2417,7 @@ class RegisteredLoggers : public base::utils::Registry<Logger, std::string> {
 
   void unsafeFlushAll(void);
 };
-/// @brief Represents registries for verbose logging
+/// @brief Represents registries for verbose Logging
 class VRegistry : base::NoCopy, public base::threading::ThreadSafe {
  public:
   explicit VRegistry(base::type::VerboseLevel level, base::type::EnumType* pFlags);
@@ -3190,7 +3190,7 @@ class NullWriter : base::NoCopy {
     return true;
   }
 };
-/// @brief Main entry point of each logging
+/// @brief Main entry point of each Logging
 class Writer : base::NoCopy {
  public:
   Writer(Level level, const char* file, base::type::LineNumber line,
@@ -3456,7 +3456,7 @@ class PerformanceTrackingData {
   const char* m_file;
   base::type::LineNumber m_line;
   const char* m_func;
-  inline void init(base::PerformanceTracker* performanceTracker, bool firstCheckpoint = false) {
+  inline void Initialize(base::PerformanceTracker* performanceTracker, bool firstCheckpoint = false) {
     m_performanceTracker = performanceTracker;
     m_firstCheckpoint = firstCheckpoint;
   }
@@ -3656,7 +3656,7 @@ class SysLogInitializer {
 /// @brief Static helpers for developers
 class Helpers : base::StaticClass {
  public:
-  /// @brief Shares logging repository (base::Storage)
+  /// @brief Shares Logging repository (base::Storage)
   static inline void setStorage(base::type::StoragePointer storage) {
     ELPP = storage;
   }
@@ -3664,7 +3664,7 @@ class Helpers : base::StaticClass {
   static inline base::type::StoragePointer storage() {
     return ELPP;
   }
-  /// @brief Sets application arguments and figures out whats active for logging and whats not.
+  /// @brief Sets application arguments and figures out whats active for Logging and whats not.
   static inline void setArgs(int argc, char** argv) {
     ELPP->setApplicationArguments(argc, argv);
   }
@@ -3693,7 +3693,7 @@ class Helpers : base::StaticClass {
   /// @param sig Crash signal
   /// @param stackTraceIfAvailable Includes stack trace if available
   /// @param level Logging level
-  /// @param logger Logger to use for logging
+  /// @param logger Logger to use for Logging
   static void logCrashReason(int sig, bool stackTraceIfAvailable = false,
                              Level level = Level::Fatal, const char* logger = base::consts::kDefaultLoggerId);
 #endif // defined(ELPP_FEATURE_ALL) || defined(ELPP_FEATURE_CRASH_LOG)
@@ -3846,11 +3846,11 @@ class Loggers : base::StaticClass {
   static bool configureFromArg(const char* argKey);
   /// @brief Flushes all loggers for all levels - Be careful if you dont know how many loggers are registered
   static void flushAll(void);
-  /// @brief Adds logging flag used internally.
+  /// @brief Adds Logging flag used internally.
   static inline void addFlag(LoggingFlag flag) {
     ELPP->addFlag(flag);
   }
-  /// @brief Removes logging flag used internally.
+  /// @brief Removes Logging flag used internally.
   static inline void removeFlag(LoggingFlag flag) {
     ELPP->removeFlag(flag);
   }
@@ -3882,7 +3882,7 @@ class Loggers : base::StaticClass {
    private:
     LoggingFlag m_flag;
   };
-  /// @brief Sets hierarchy for logging. Needs to enable logging flag (HierarchicalLogging)
+  /// @brief Sets hierarchy for Logging. Needs to enable Logging flag (HierarchicalLogging)
   static void setLoggingLevel(Level level) {
     ELPP->setLoggingLevel(level);
   }
@@ -3905,7 +3905,7 @@ class VersionInfo : base::StaticClass {
 };
 }  // namespace el
 #undef VLOG_IS_ON
-/// @brief Determines whether verbose logging is on for specified level current file.
+/// @brief Determines whether verbose Logging is on for specified level current file.
 #define VLOG_IS_ON(verboseLevel) (ELPP->vRegistry()->allowed(verboseLevel, __FILE__))
 #undef TIMED_BLOCK
 #undef TIMED_SCOPE

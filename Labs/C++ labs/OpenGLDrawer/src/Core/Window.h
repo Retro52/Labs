@@ -20,7 +20,7 @@ private:
     static int width, height;
 public:
 
-    static int init(int w, int h, const std::string& name);
+    static int Initialize(int w, int h, const std::string &name, bool fullScreen);
     static void terminate();
 
     static void setCursorMode(int cursorMode);
@@ -37,6 +37,7 @@ public:
     static void setHeight(int h);
 
     static void Tick();
+    static void Update();
 };
 
 

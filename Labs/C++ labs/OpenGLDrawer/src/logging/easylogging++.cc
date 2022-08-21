@@ -2,7 +2,7 @@
 //  Bismillah ar-Rahmaan ar-Raheem
 //
 //  Easylogging++ v9.96.7
-//  Cross-platform logging library for C++ applications
+//  Cross-platform Logging library for C++ applications
 //
 //  Copyright (c) 2012-2018 Amrayn Web Services
 //  Copyright (c) 2012-2018 @abumusamq
@@ -102,7 +102,7 @@ static const char* kDefaultLogFile                         =      "myeasylog.log
 static const char* kDefaultLogFileParam                    =      "--default-log-file";
 #endif  // !defined(ELPP_DISABLE_LOG_FILE_FROM_ARG)
 #if defined(ELPP_LOGGING_FLAGS_FROM_ARG)
-static const char* kLoggingFlagsParam                      =      "--logging-flags";
+static const char* kLoggingFlagsParam                      =      "--Logging-flags";
 #endif  // defined(ELPP_LOGGING_FLAGS_FROM_ARG)
 static const char* kValidLoggerIdSymbols                   =
   "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._";
@@ -1388,7 +1388,7 @@ namespace threading {
 #  if ELPP_USE_STD_THREADING
 #      if ELPP_ASYNC_LOGGING
 static void msleep(int ms) {
-  // Only when async logging enabled - this is because async is strict on compiler
+  // Only when async Logging enabled - this is because async is strict on compiler
 #         if defined(ELPP_NO_SLEEP_FOR)
   usleep(ms * 1000);
 #         else
@@ -1484,7 +1484,7 @@ bool LogFormat::operator==(const LogFormat& other) {
          m_dateTimeFormat == other.m_dateTimeFormat && m_flags == other.m_flags;
 }
 
-/// @brief Updates format to be used while logging.
+/// @brief Updates format to be used while Logging.
 /// @param userFormat User provided format
 void LogFormat::parseFromFormat(const base::type::string_t& userFormat) {
   // We make copy because we will be changing the format
@@ -1782,7 +1782,7 @@ std::string TypedConfigurations::resolveFilename(const std::string& filename) {
 void TypedConfigurations::insertFile(Level level, const std::string& fullFilename) {
   std::string resolvedFilename = resolveFilename(fullFilename);
   if (resolvedFilename.empty()) {
-    std::cerr << "Could not load empty file for logging, please re-check your configurations for level ["
+    std::cerr << "Could not load empty file for Logging, please re-check your configurations for level ["
               << LevelHelper::convertToString(level) << "]";
   }
   std::string filePath = base::utils::File::extractPathFromFilename(resolvedFilename, base::consts::kFilePathSeparator);

@@ -5,6 +5,7 @@
 #ifndef GRAPHICS_STRUCTURES_H
 #define GRAPHICS_STRUCTURES_H
 #include <iostream>
+#include "../OpenGL/include/glm/glm.hpp"
 
 struct Float3
 {
@@ -61,4 +62,95 @@ public:
     }
 };
 
+struct Point
+{
+    float x, y;
+
+    Point() : x(0), y(0) {};
+    Point(float s) : x(s), y(s) {};
+    Point(float x, float y) : x(x), y(y) {};
+
+    Point operator+(const Point &point)
+    {
+        return {x + point.x, y + point.y };
+    }
+
+    Point operator-(const Point &point)
+    {
+        return {x - point.x, y - point.y };
+    }
+
+    Point operator-() const
+    {
+        return {-x, -y };
+    }
+
+    Point operator*(const Point &point)
+    {
+        return {x * point.x, y * point.y };
+    }
+
+    Point operator*(const float scalar)
+    {
+        return {x * scalar, y * scalar };
+    }
+
+    Point operator/(const Point &point) const
+    {
+        return {x / point.x, y / point.y };
+    }
+
+    Point operator/(const float scalar)
+    {
+        return {x / scalar, y / scalar };
+    }
+
+    Point operator+=(const Point &b)
+    {
+        x += b.x;
+        y += b.y;
+        return {x, y };
+    }
+
+    Point operator-=(const Point &b)
+    {
+        x -= b.x;
+        y -= b.y;
+        return {x, y };
+    }
+
+    Point operator/=(const Point &b)
+    {
+        x /= b.x;
+        y /= b.y;
+        return {x, y };
+    }
+
+    Point operator*=(const Point &b)
+    {
+        x *= b.x;
+        y *= b.y;
+        return {x, y };
+    }
+
+    bool operator>(const Point &b) const
+    {
+        return x > b.x && y > b.y;
+    }
+
+    bool operator>=(const Point &b) const
+    {
+        return x >= b.x && y >= b.y;
+    }
+
+    bool operator<(const Point &b) const
+    {
+        return x < b.x && y < b.y;
+    }
+
+    bool operator<=(const Point &b) const
+    {
+        return x <= b.x && y <= b.y;
+    }
+};
 #endif //GRAPHICS_STRUCTURES_H

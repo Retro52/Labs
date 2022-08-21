@@ -16,7 +16,6 @@ public:
     double posX, posY;
     PerspectiveCamera(const glm::vec3& position, float fov);
 
-    void rotate(float x, float y, float z);
 
     void Update() override;
     void UpdateControls() override;

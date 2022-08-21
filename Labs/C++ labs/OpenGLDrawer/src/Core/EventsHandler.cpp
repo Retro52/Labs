@@ -95,6 +95,7 @@ void window_size_callback(GLFWwindow* window, int width, int height)
     glViewport(0,0, width, height);
     Window::setHeight(height);
     Window::setWidth(width);
+    Window::Update();
 }
 
 /**

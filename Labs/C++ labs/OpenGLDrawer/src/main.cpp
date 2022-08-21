@@ -6,18 +6,14 @@
 #include <future>
 
 /* GL libs */
-#include "OpenGL/include/GLEW/glew.h"
-#include "OpenGL/include/GLFW/glfw3.h"
-#include "OpenGL/include/glm/ext.hpp"
 
 /* Custom classes */
 #include "Core/PerspectiveCamera.h"
 #include "Core/Window.h"
 #include "Core/EventsHandler.h"
-#include "Core/ThreadSafeQueue.h"
+#include "Core/ResourcesManager.h"
 #include "Core/Global.h"
 
-INITIALIZE_EASYLOGGINGPP;
 
 /* TODO: replace functions with custom class with static methods like Tick(), Events(), etc. */
 /* TODO: rework material class */
@@ -25,6 +21,10 @@ INITIALIZE_EASYLOGGINGPP;
 /* TODO: default loading system, maybe files for ex. */
 /* TODO: add comments doxygen-style */
 
+#include <ft2build.h>
+#include FT_FREETYPE_H
+
+INITIALIZE_EASYLOGGINGPP;
 
 /**
  * Program entry point
@@ -36,10 +36,7 @@ int main(int argc, char ** argv)
 {
     /* Program initialization */
     Global::Initialize();
-    LOG(INFO) << "Default successfully initialized";
-
-    /* World settings */
-    long frame = 0;
+    LOG(INFO) << "Default settings successfully initialized";
 
     /* Rotation set up */
     glm::vec3 rotationAxisX(1, 0, 0), rotationAxisY(0, 0, 1), rotationAxisZ(0, 1, 0), currentRotationAxis(0, 1, 0), lightColor(1, 1, 1);
@@ -52,13 +49,13 @@ int main(int argc, char ** argv)
     while (!Window::isShouldClose())
     {
         /* Global tick events */
-        frame++;
         Global::Tick();
 
-        Global::Draw(ThreadSafeQueue::GetPlayerCamera());
+        Global::Draw(ResourcesManager::GetPlayerCamera());
 
         /* Swapping buffers and pulling user inputs */
         Global::EndFrame();
     }
     Window::terminate();
+    LOG(INFO) << "Window terminated, program finished";
 }

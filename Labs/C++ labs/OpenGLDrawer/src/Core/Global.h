@@ -8,24 +8,20 @@
 #include <iostream>
 #include "Window.h"
 #include "EventsHandler.h"
-#include "ThreadSafeQueue.h"
+#include "ResourcesManager.h"
 #include "PerspectiveCamera.h"
-#include "../draw/Shader.h"
-#include "../logging/easylogging++.h"
+#include "../Render/Shader.h"
+#include "../Logging/easylogging++.h"
 #include "../OpenGL/include/glm/glm.hpp"
 
 
 class Global
 {
 private:
-    static double lastTime, deltaTime;
+    static long frame;
+    static double lastTime, deltaTime, elapsedTime;
     static bool shouldDrawMesh, shouldDrawLights, shouldDrawAxis, shouldDrawOutline;
-    static std::shared_ptr<Mesh> cube, sphere;
-    static std::shared_ptr<Material> defaultMaterial;
-    static std::shared_ptr<Shader> mainShader, lightShader, outlineShader, axisShader;
-    static int LoadMeshes();
-    static int LoadShaders();
-    static int LoadMaterials();
+    static int curFPS, drawMode;
 public:
     static void Initialize();
     static void Tick();

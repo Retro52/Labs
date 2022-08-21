@@ -11,23 +11,23 @@ GLFWwindow * Window::window;
 int Window::width = 0;
 int Window::height = 0;
 
-/**
- * Initializes OpenGL libraries and creates a window
- * @param w window width
- * @param h window height
- * @param name window name
- * @return exit status
- */
-int Window::init(int w, int h, const std::string &name)
+
+int Window::Initialize(int w, int h, const std::string &name, bool fullScreen)
 {
     glfwInit();
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
     glfwWindowHint(GLFW_SAMPLES, 4);
-
-    Window::window = glfwCreateWindow(w, h, name.c_str(), nullptr, nullptr);
+    if (fullScreen)
+    {
+        Window::window = glfwCreateWindow(w, h, name.c_str(), glfwGetPrimaryMonitor(), nullptr);
+    }
+    else
+    {
+        Window::window = glfwCreateWindow(w, h, name.c_str(), nullptr, nullptr);
+    }
 
     if (Window::window == nullptr)
     {
@@ -49,82 +49,54 @@ int Window::init(int w, int h, const std::string &name)
     glViewport(0, 0, w, h);
     glClearColor(0.0f,0.0f,0.0f,1);
     glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);
     glEnable(GL_BLEND);
-    glEnable(GL_MULTISAMPLE);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_CULL_FACE);
+    glEnable(GL_MULTISAMPLE);
     glEnable(GL_STENCIL_TEST);
     glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+
+    glfwSwapInterval(0);
     Window::width = w;
     Window::height = h;
     return 0;
 }
 
-/**
- * Terminates a window
- */
 void Window::terminate()
 {
     glfwTerminate();
 }
 
-/**
- * Changes cursor mode
- * @param cursorMode new cursor mode
- */
 void Window::setCursorMode(int cursorMode)
 {
     glfwSetInputMode(Window::window, GLFW_CURSOR, cursorMode);
 }
 
-/**
- * Returns if glfw should close window
- * @return true if glfw should close window, false otherwise
- */
 bool Window::isShouldClose()
 {
     return glfwWindowShouldClose(Window::window);
 }
 
-/**
- * Tell glfw to/not to close window
- * @param shouldClose true if window should be closed
- */
 void Window::setShouldClose(bool shouldClose)
 {
     glfwSetWindowShouldClose(Window::window, shouldClose);
 }
 
-/**
- * UpdateModelMatrix buffers
- */
 void Window::swapBuffers()
 {
     glfwSwapBuffers(Window::window);
 }
 
-/**
- * Get current window width
- * @return window width
- */
 int Window::getWidth()
 {
     return Window::width;
 }
 
-/**
- * Get current window height
- * @return window height
- */
 int Window::getHeight()
 {
     return Window::height;
 }
 
-/**
- * Set new window width
- * @param w new window width in pixels
- */
 void Window::setWidth(int w)
 {
     if (400 < w && w < 3840)
@@ -133,10 +105,6 @@ void Window::setWidth(int w)
     }
 }
 
-/**
- * Set new window height
- * @param h new window height in pixels
- */
 void Window::setHeight(int h)
 {
     if (400 < h && h < 2160)
@@ -145,10 +113,6 @@ void Window::setHeight(int h)
     }
 }
 
-/**
- * Get current glfw window
- * @return
- */
 GLFWwindow * Window::getCurrentWindow()
 {
     return Window::window;
@@ -165,5 +129,10 @@ void Window::Tick()
     {
         EventsHandler::toggleCursor();
     }
+}
+
+void Window::Update()
+{
+    glfwSetWindowSize(window, width, height);
 }
 

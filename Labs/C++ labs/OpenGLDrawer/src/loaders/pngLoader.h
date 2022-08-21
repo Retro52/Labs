@@ -7,7 +7,6 @@
 
 
 #include <string>
-#include "../draw/Texture.h"
 
 
 class pngLoader

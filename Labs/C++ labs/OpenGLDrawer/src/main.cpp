@@ -10,7 +10,6 @@
 /* Custom classes */
 #include "Core/PerspectiveCamera.h"
 #include "Core/Window.h"
-#include "Core/EventsHandler.h"
 #include "Core/ResourcesManager.h"
 #include "Core/Global.h"
 
@@ -34,17 +33,20 @@ INITIALIZE_EASYLOGGINGPP;
  */
 int main(int argc, char ** argv)
 {
+    auto start = std::chrono::high_resolution_clock::now();
+
     /* Program initialization */
-    Global::Initialize();
-    LOG(INFO) << "Default settings successfully initialized";
+    if (!Global::Initialize())
+    {
+        auto stop = std::chrono::high_resolution_clock::now();
+        LOG(INFO) << "Program successfully loaded in " << std::chrono::duration_cast<std::chrono::duration<float, std::milli>>(stop - start).count() / 1000.0f << " seconds";
+    }
+    else
+    {
+        auto stop = std::chrono::high_resolution_clock::now();
+        LOG(FATAL) << "Program failed in " << std::chrono::duration_cast<std::chrono::duration<float, std::milli>>(stop - start).count() / 1000.0f << " seconds";
+    }
 
-    /* Rotation set up */
-    glm::vec3 rotationAxisX(1, 0, 0), rotationAxisY(0, 0, 1), rotationAxisZ(0, 1, 0), currentRotationAxis(0, 1, 0), lightColor(1, 1, 1);
-
-    /* Hide mouse cursor */
-    EventsHandler::toggleCursor();
-
-    LOG(INFO) << "Program successfully loaded";
     /* Tick event */
     while (!Window::isShouldClose())
     {

@@ -11,7 +11,7 @@
 std::map<char, Character> UIHandler::Characters;
 unsigned int UIHandler::VAO, UIHandler::VBO;
 
-int UIHandler::Initialize()
+int UIHandler::Initialize(const std::string& fontPath, int fontSize)
 {
     FT_Library ft;
 
@@ -24,7 +24,7 @@ int UIHandler::Initialize()
 
     // load font as face
     FT_Face face;
-    if (FT_New_Face(ft, "../res/fonts/arial/arial.ttf", 0, &face))
+    if (FT_New_Face(ft, fontPath.c_str(), 0, &face))
     {
         LOG(ERROR) << "ERROR::FREETYPE: Failed to load font";
         return -1;
@@ -32,7 +32,7 @@ int UIHandler::Initialize()
     else
     {
         // set size to load glyphs as
-        FT_Set_Pixel_Sizes(face, 0, 16);
+        FT_Set_Pixel_Sizes(face, 0, fontSize);
 
         // disable byte-alignment restriction
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -103,7 +103,7 @@ void UIHandler::RenderText(Shader shader, const std::string &text, float x, floa
     glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(Window::getWidth()), 0.0f, static_cast<float>(Window::getHeight()));
 
     // activate corresponding render state
-    shader.use();
+    shader.Use();
     shader.setMat4("projection", projection);
     shader.setVec3("textColor", color);
 

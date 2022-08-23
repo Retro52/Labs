@@ -27,6 +27,10 @@ std::string drawModeToString(int drawMode)
             return "Lighting Only";
         case 4:
             return "Normal map lighting test";
+        case 5:
+            return "Directional light only";
+        case 6:
+            return "Point light only";
         default:
             return std::to_string(drawMode);
     }
@@ -35,7 +39,7 @@ std::string drawModeToString(int drawMode)
 /**
  * Initializes OpenGl, creates window and sets settings for events handler
  */
-void Global::Initialize()
+int Global::Initialize()
 {
     lastTime = 0.0;
     deltaTime = 0.0;
@@ -43,14 +47,15 @@ void Global::Initialize()
     curFPS = 0;
 
     LOG(INFO) << "Program initialization started";
-    if (Config::Load("config.ini"))
+
+    if (!Config::Load("config.ini"))
     {
         LOG(INFO) << "Configs were successfully loaded";
     }
     else
     {
-        LOG(ERROR) << "Couldn`t load configs";
-        return;
+        LOG(ERROR) << "Couldn't`t load configs";
+        return -1;
     }
 
 
@@ -58,17 +63,7 @@ void Global::Initialize()
     if (!EventsHandler::init())
     {
         LOG(INFO) << "Events handler initialized" << std::endl;
-    }
-
-
-    if(!UIHandler::Initialize())
-    {
-        LOG(INFO) << "UI handler successfully initialized";
-    }
-    else
-    {
-        LOG(ERROR) << "UI handler was not initialized";
-        return;
+        EventsHandler::toggleCursor();
     }
 
     // registering world camera
@@ -77,12 +72,19 @@ void Global::Initialize()
 
     // setting directional light
     ResourcesManager::RegisterLight(
-            std::make_shared<DirectionalLight>(
                     glm::vec3(-0.2f, -1.0f, -0.3f),
                     glm::vec3(0.5f, 0.5f, 0.5f),
                     glm::vec3(0.5f, 0.5f, 0.5f),
-                    glm::vec3(0.5f, 0.5f, 0.5f)));
+                    glm::vec3(0.5f, 0.5f, 0.5f));
 
+    ResourcesManager::RegisterLight(
+            glm::vec3(0, 0, 3),
+            glm::vec3(0.05f, 0.05f, 0.05f),
+            glm::vec3(0.8f, 0.8f, 0.8f),
+            glm::vec3(1.0f, 1.0f, 1.0f),
+            1.0f, 0.09f, 0.032f
+            );
+    return 0;
 }
 
 /**
@@ -130,6 +132,14 @@ void Global::Tick()
     {
         drawMode = 4;
     }
+    if (EventsHandler::justPressed(GLFW_KEY_5))
+    {
+        drawMode = 5;
+    }
+    if (EventsHandler::justPressed(GLFW_KEY_6))
+    {
+        drawMode = 6;
+    }
 
     /* Update camera controls */
     ResourcesManager::GetPlayerCamera()->UpdateControls();
@@ -151,35 +161,34 @@ double Global::GetWorldDeltaTime()
 void Global::Draw(const std::unique_ptr<PerspectiveCamera> &camera)
 {
     glm::mat4 projView = camera->getProjection() * camera->getView();
-    
-    glm::vec3 lightColor(1, 1, 1);
 
-    // TODO: replace with skybox
     glClearColor(0.203f, 0.76f, 0.938f,1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-//    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-//    glStencilFunc(GL_ALWAYS, 1, 0xFF);
-//    glStencilMask(0xFF);
 
-
-    std::shared_ptr<DirectionalLight> dirLight = ResourcesManager::GetDirectionalLight();
-
-    std::shared_ptr<Shader> lightShader = ResourcesManager::GetShader("lightShader");
-    std::shared_ptr<Shader> mainShader = ResourcesManager::GetShader("mainShader");
-    std::shared_ptr<Shader> uiShader = ResourcesManager::GetShader("uiShader");
+    Shader * lightShader = ResourcesManager::GetShader("lightShader");
+    Shader * mainShader = ResourcesManager::GetShader("mainShader");
+    Shader * uiShader = ResourcesManager::GetShader("uiShader");
 
     for(auto &m : ResourcesManager::GetModels())
     {
         // apply data to main shader
-        mainShader->use();
+
+        mainShader->Use();
         mainShader->setInt("drawMode", drawMode);
         mainShader->setMat4("view", camera->getView());
         mainShader->setMat4("projection", camera->getProjection());
         mainShader->setVec3("ProjPos", camera->GetPosition());
+//        if (drawMode != 6)
+//        {
         mainShader->setDirLight(ResourcesManager::GetDirectionalLight());
+//        }
+//        if (drawMode != 5)
+//        {
         mainShader->setPointLights(ResourcesManager::GetPointLights());
+//        }
 
         m->Draw(* mainShader);
+
     }
 
     UIHandler::RenderText(* uiShader, "FPS: " + std::to_string(curFPS), 0.0f, (float) Window::getHeight() - 24.0f, 1.0, glm::vec3(1.0, 1.0, 1.0));

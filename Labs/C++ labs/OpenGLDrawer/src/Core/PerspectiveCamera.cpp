@@ -17,8 +17,8 @@ PerspectiveCamera::PerspectiveCamera(const glm::vec3& position, float fov) : fov
     model = glm::mat4(1.0f);
     front = glm::vec3(model * glm::vec4(0,0,-1,1));
     right = glm::vec3(model * glm::vec4(1,0,0,1));
-    up = glm::vec3(model * glm::vec4(0,1,0,1));
-    dir = glm::vec3(model * glm::vec4(0,0,-1,1));
+    up    = glm::vec3(model * glm::vec4(0,1,0,1));
+    dir   = glm::vec3(model * glm::vec4(0,0,-1,1));
 
     dir.y = 0;
 

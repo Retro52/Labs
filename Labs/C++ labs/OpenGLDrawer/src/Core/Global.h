@@ -23,7 +23,7 @@ private:
     static bool shouldDrawMesh, shouldDrawLights, shouldDrawAxis, shouldDrawOutline;
     static int curFPS, drawMode;
 public:
-    static void Initialize();
+    static int Initialize();
     static void Tick();
     static void Load(const std::string &path);
     static void Draw(const std::unique_ptr<PerspectiveCamera> &camera);

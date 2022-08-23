@@ -2850,7 +2850,7 @@ extern PNG_EXPORT(void,png_save_uint_16)
 
 #if defined(PNG_INTERNAL)
 
-/* More modes of operation.  Note that after an init, mode is set to
+/* More modes of operation.  Note that after an Initialize, mode is set to
  * zero automatically when the structure is created.
  */
 #define PNG_HAVE_gAMA               0x20

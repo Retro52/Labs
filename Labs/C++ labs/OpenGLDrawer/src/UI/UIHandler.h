@@ -26,18 +26,13 @@ class UIHandler
 private:
     static std::map<char, Character> Characters;
     static unsigned int VAO, VBO;
-//    unsigned int VAO, VBO;
 
 private:
     // render state
 public:
-    static int Initialize();
-//    static void RenderText(const Shader& shader, const std::string &text, float x, float y, float scale, const glm::vec3 &color, unsigned int VAO, unsigned int VBO, std::map<char, Character> Characters);
+    static int Initialize(const std::string& fontPath, int fontSize);
+
     static void RenderText(Shader shader, const std::string &text, float x, float y, float scale, const glm::vec3 &color);
-//    static void RenderText(std::string text, float x, float y, float scale, glm::vec3 color = glm::vec3(1.0f));
-//    static void RenderText(const std::shared_ptr<Shader> &s, const std::string &text, float x, float y, float scale, const glm::vec3 &color = glm::vec3(1.0f));
-    // pre-compiles a list of characters from the given font
-    void Load(std::string font, unsigned int fontSize);
 };
 
 

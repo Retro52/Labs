@@ -11,7 +11,7 @@
 class Config
 {
 public:
-    static bool Load(const std::string& configPath);
+    static int Load(const std::string& configPath);
 };
 
 

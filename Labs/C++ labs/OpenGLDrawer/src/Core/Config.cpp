@@ -8,32 +8,55 @@
 #include "../Loaders/inipp.h"
 #include "../Loaders/json.hpp"
 #include "../Logging/easylogging++.h"
+#include "../UI/UIHandler.h"
 
 
-bool Config::Load(const std::string &configPath)
+int Config::Load(const std::string &configPath)
 {
-    int windowHeight, windowWidth;
+    int windowHeight, windowWidth, defaultFontSize;
     bool windowFullScreen;
-    std::string windowName, meshesConfigPath, shadersConfigPath;
+    std::string windowName, shadersConfigPath, defaultFontPath;
 
     std::ifstream is(configPath);
 
     if (!is.is_open())
     {
         LOG(ERROR) << "Failed to load config, file " << configPath << " not found";
-        return false;
+
+        windowWidth = 600;
+        windowHeight = 400;
+        windowFullScreen = false;
+        windowName = "OpenGL Drawer";
+
+        defaultFontSize = 16;
+        defaultFontPath = "../res/fonts/arial/arial.ttf";
+
+        shadersConfigPath = "config.json";
+    }
+    else
+    {
+        inipp::Ini<char> ini;
+
+        ini.parse(is);
+        ini.default_section(ini.sections["DEFAULT"]);
+        ini.interpolate();
+
+        inipp::get_value(ini.sections["DEFAULT"], "windowName", windowName);
+        inipp::get_value(ini.sections["DEFAULT"], "windowWidth", windowWidth);
+        inipp::get_value(ini.sections["DEFAULT"], "windowHeight", windowHeight);
+        inipp::get_value(ini.sections["DEFAULT"], "windowFullScreen", windowFullScreen);
+        inipp::get_value(ini.sections["DEFAULT"], "defaultFontSize", defaultFontSize);
+        inipp::get_value(ini.sections["DEFAULT"], "defaultFontPath", defaultFontPath);
+
+        windowWidth = windowWidth > 399 ? windowWidth : 400;
+        windowHeight = windowHeight > 399 ? windowHeight : 400;
+
+        inipp::get_value(ini.sections["SHADERS"], "shadersConfigPath", shadersConfigPath);
+
+        is.close();
     }
 
-    inipp::Ini<char> ini;
-
-    ini.parse(is);
-    ini.default_section(ini.sections["DEFAULT"]);
-    ini.interpolate();
-
-    inipp::get_value(ini.sections["DEFAULT"], "windowName", windowName);
-    inipp::get_value(ini.sections["DEFAULT"], "windowWidth", windowWidth);
-    inipp::get_value(ini.sections["DEFAULT"], "windowHeight", windowHeight);
-    inipp::get_value(ini.sections["DEFAULT"], "windowFullScreen", windowFullScreen);
+    std::cerr << windowWidth << "; " << windowHeight << "; "  << windowName << "; "  << windowFullScreen << ";\n";
 
     // creating main window
     if(!Window::Initialize(windowWidth, windowHeight, windowName, windowFullScreen))
@@ -42,19 +65,25 @@ bool Config::Load(const std::string &configPath)
     }
     else
     {
-        LOG(FATAL) << "Error during OpenGL initialization";
-        return false;
+        LOG(ERROR) << "Failure during OpenGL initialization";
+        return -1;
     }
 
-    inipp::get_value(ini.sections["SHADERS"], "shadersConfigPath", shadersConfigPath);
-
-    is.close();
+    if(!UIHandler::Initialize(defaultFontPath, defaultFontSize))
+    {
+        LOG(INFO) << "UI handler successfully initialized";
+    }
+    else
+    {
+        LOG(ERROR) << "UI handler was not initialized";
+        return -2;
+    }
 
     is = std::ifstream (shadersConfigPath);
     if (!is.is_open())
     {
-        LOG(ERROR) << "Failed to load .json config, file " << shadersConfigPath << " not found";
-        return false;
+        LOG(ERROR) << "Failed to open config file '" << shadersConfigPath << "'";
+        return -3;
     }
 
     json data = json::parse(is);
@@ -67,11 +96,13 @@ bool Config::Load(const std::string &configPath)
     /* TODO: add shader validation */
     for (const auto& model : data["Models"].items())
     {
+        std::string path = std::string(model.value());
+        std::string directory = path.substr(0, path.find_last_of('/'));
         LOG(INFO) << "Model data: " << model.key() << "; " << model.value();
         ResourcesManager::RegisterModel(model.key(), model.value());
         LOG(INFO) << "Model " << model.key() << " registered";
     }
     is.close();
     data.clear();
-    return true;
+    return 0;
 }

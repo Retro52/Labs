@@ -1,0 +1,12 @@
+{
+  "Shaders":
+  {
+    "lightShader" : ["../res/shaders/lightv.glsl", "../res/shaders/lightf.glsl"],
+    "mainShader": ["../res/shaders/mainv.glsl", "../res/shaders/mainf.glsl"],
+    "uiShader" : ["../res/shaders/uiv.glsl", "../res/shaders/uif.glsl"]
+  },
+  "Models" :
+  {
+    "Backpack" : "C:/Users/Anton/C++ project/Graphics/res/assets/backpack/backpack.obj"
+  }
+}

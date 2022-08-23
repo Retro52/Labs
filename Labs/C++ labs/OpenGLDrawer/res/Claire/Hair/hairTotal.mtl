@@ -1,0 +1,41 @@
+# Blender MTL File: 'pythonscript.blend'
+# Material Count: 3
+
+newmtl pl1070_Hair2_Mat
+Ns 179.999996
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 3
+map_Bump C:\\Users\\Windows\\system32\\pl1070_Hair_NRMR.dds
+map_Kd C:\\Users\\Windows\\system32\\pl1070_Hair_ALBA.dds
+map_Ks C:\\Users\\Windows\\system32\\pl1070_Hair_ALBA.dds
+
+newmtl pl1070_Hair3_Mat
+Ns 179.999996
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 3
+map_Bump C:\\Users\\Windows\\system32\\pl1070_Hair_NRMR.dds
+map_Kd C:\\Users\\Windows\\system32\\pl1070_Hair_ALBA.dds
+map_Ks C:\\Users\\Windows\\system32\\pl1070_Hair_ALBA.dds
+
+newmtl pl1070_Hair_Mat
+Ns 179.999996
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 3
+map_Bump C:\\Users\\Windows\\system32\\pl1070_Hair_NRMR.dds
+map_Kd C:\\Users\\Windows\\system32\\pl1070_Hair_ALBA.dds
+map_Ks C:\\Users\\Windows\\system32\\pl1070_Hair_ALBA.dds

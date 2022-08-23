@@ -70,7 +70,7 @@ EQUALS = =
 CMAKE_SOURCE_DIR = "C:\Users\Anton\C++ project\Graphics"
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = "C:\Users\Anton\C++ project\Graphics\cmake-build-release"
+CMAKE_BINARY_DIR = "C:\Users\Anton\C++ project\Graphics\cmake-build-debug"
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -99,9 +99,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start "C:\Users\Anton\C++ project\Graphics\cmake-build-release\CMakeFiles" "C:\Users\Anton\C++ project\Graphics\cmake-build-release\CMakeFiles\progress.marks"
+	$(CMAKE_COMMAND) -E cmake_progress_start "C:\Users\Anton\C++ project\Graphics\cmake-build-debug\CMakeFiles" "C:\Users\Anton\C++ project\Graphics\cmake-build-debug\CMakeFiles\progress.marks"
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start "C:\Users\Anton\C++ project\Graphics\cmake-build-release\CMakeFiles" 0
+	$(CMAKE_COMMAND) -E cmake_progress_start "C:\Users\Anton\C++ project\Graphics\cmake-build-debug\CMakeFiles" 0
 .PHONY : all
 
 # The main clean target
@@ -439,60 +439,6 @@ src/Loaders/cwalk.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\Graphics.dir\build.make CMakeFiles/Graphics.dir/src/Loaders/cwalk.c.s
 .PHONY : src/Loaders/cwalk.c.s
 
-src/Loaders/objLoader.obj: src/Loaders/objLoader.cpp.obj
-
-.PHONY : src/Loaders/objLoader.obj
-
-# target to build an object file
-src/Loaders/objLoader.cpp.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\Graphics.dir\build.make CMakeFiles/Graphics.dir/src/Loaders/objLoader.cpp.obj
-.PHONY : src/Loaders/objLoader.cpp.obj
-
-src/Loaders/objLoader.i: src/Loaders/objLoader.cpp.i
-
-.PHONY : src/Loaders/objLoader.i
-
-# target to preprocess a source file
-src/Loaders/objLoader.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\Graphics.dir\build.make CMakeFiles/Graphics.dir/src/Loaders/objLoader.cpp.i
-.PHONY : src/Loaders/objLoader.cpp.i
-
-src/Loaders/objLoader.s: src/Loaders/objLoader.cpp.s
-
-.PHONY : src/Loaders/objLoader.s
-
-# target to generate assembly for a file
-src/Loaders/objLoader.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\Graphics.dir\build.make CMakeFiles/Graphics.dir/src/Loaders/objLoader.cpp.s
-.PHONY : src/Loaders/objLoader.cpp.s
-
-src/Loaders/pngLoader.obj: src/Loaders/pngLoader.cpp.obj
-
-.PHONY : src/Loaders/pngLoader.obj
-
-# target to build an object file
-src/Loaders/pngLoader.cpp.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\Graphics.dir\build.make CMakeFiles/Graphics.dir/src/Loaders/pngLoader.cpp.obj
-.PHONY : src/Loaders/pngLoader.cpp.obj
-
-src/Loaders/pngLoader.i: src/Loaders/pngLoader.cpp.i
-
-.PHONY : src/Loaders/pngLoader.i
-
-# target to preprocess a source file
-src/Loaders/pngLoader.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\Graphics.dir\build.make CMakeFiles/Graphics.dir/src/Loaders/pngLoader.cpp.i
-.PHONY : src/Loaders/pngLoader.cpp.i
-
-src/Loaders/pngLoader.s: src/Loaders/pngLoader.cpp.s
-
-.PHONY : src/Loaders/pngLoader.s
-
-# target to generate assembly for a file
-src/Loaders/pngLoader.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\Graphics.dir\build.make CMakeFiles/Graphics.dir/src/Loaders/pngLoader.cpp.s
-.PHONY : src/Loaders/pngLoader.cpp.s
-
 src/Logging/easylogging++.obj: src/Logging/easylogging++.cc.obj
 
 .PHONY : src/Logging/easylogging++.obj
@@ -751,12 +697,6 @@ help:
 	@echo ... src/Loaders/cwalk.obj
 	@echo ... src/Loaders/cwalk.i
 	@echo ... src/Loaders/cwalk.s
-	@echo ... src/Loaders/objLoader.obj
-	@echo ... src/Loaders/objLoader.i
-	@echo ... src/Loaders/objLoader.s
-	@echo ... src/Loaders/pngLoader.obj
-	@echo ... src/Loaders/pngLoader.i
-	@echo ... src/Loaders/pngLoader.s
 	@echo ... src/Logging/easylogging++.obj
 	@echo ... src/Logging/easylogging++.i
 	@echo ... src/Logging/easylogging++.s

@@ -3,7 +3,7 @@
 //
 
 #include "PointLight.h"
-#include "../logging/easylogging++.h"
+#include "../Logging/easylogging++.h"
 
 /**
  * Point light constructor

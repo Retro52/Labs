@@ -23,6 +23,7 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
+#include "Logging/easylogging++.h"
 INITIALIZE_EASYLOGGINGPP;
 
 /**
@@ -31,6 +32,8 @@ INITIALIZE_EASYLOGGINGPP;
  * @param argv command-line arguments
  * @return exit code
  */
+#include <iostream>
+
 int main(int argc, char ** argv)
 {
     auto start = std::chrono::high_resolution_clock::now();
@@ -45,19 +48,27 @@ int main(int argc, char ** argv)
     {
         auto stop = std::chrono::high_resolution_clock::now();
         LOG(FATAL) << "Program failed in " << std::chrono::duration_cast<std::chrono::duration<float, std::milli>>(stop - start).count() / 1000.0f << " seconds";
+        return EXIT_FAILURE;
     }
-
-    /* Tick event */
-    while (!Window::isShouldClose())
+    try
     {
-        /* Global tick events */
-        Global::Tick();
+        /* Tick event */
+        while (!Window::isShouldClose())
+        {
+            /* Global tick events */
+            Global::Tick();
 
-        Global::Draw(ResourcesManager::GetPlayerCamera());
+            Global::Draw(ResourcesManager::GetPlayerCamera());
 
-        /* Swapping buffers and pulling user inputs */
-        Global::EndFrame();
+            /* Swapping buffers and pulling user inputs */
+            Global::EndFrame();
+        }
+    }
+    catch(const std::exception& exp)
+    {
+        LOG(ERROR) << "Exception caught, terminating program. What: " << exp.what();
     }
     Window::terminate();
     LOG(INFO) << "Window terminated, program finished";
+    return EXIT_SUCCESS;
 }

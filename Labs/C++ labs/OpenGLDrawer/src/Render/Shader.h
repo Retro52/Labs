@@ -62,9 +62,9 @@ public:
 
     void setDirLight(const std::unique_ptr<DirectionalLight>& dirLight) const;
 
-    void setPointLight(int idx, const std::unique_ptr<PointLight> &pointLight);
+    void setPointLight(int idx, const std::unique_ptr<PointLight> &pointLight) const;
 
-    void setPointLights(const std::vector<std::unique_ptr<PointLight>> &pointLights);
+    void setPointLights(const std::vector<std::unique_ptr<PointLight>> &pointLights) const;
 
 private:
     // utility function for checking shader compilation/linking errors.

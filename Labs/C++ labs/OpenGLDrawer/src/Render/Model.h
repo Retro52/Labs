@@ -13,6 +13,7 @@
 #include "Mesh.h"
 #include "Shader.h"
 #include "../Core/Actor.h"
+#include "../Core/InGameException.h"
 
 #include <string>
 #include <fstream>
@@ -24,13 +25,14 @@
 class Model : public Actor
 {
 public:
-    explicit Model(const std::string &path, bool gamma = false);
+    explicit Model(const std::string& path);
+    ~Model() = default;
 
     /**
      * Draws all model meshes
      * @param shader shader to use for drawing
      */
-    void Draw(Shader &shader);
+    void Draw(const Shader &shader) override;
 
     /**
      * Loads textures from file

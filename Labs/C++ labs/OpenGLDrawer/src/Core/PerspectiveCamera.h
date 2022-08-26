@@ -19,6 +19,7 @@ public:
 
     void Update() override;
     void UpdateControls() override;
+    void Draw(const Shader& shader) override {};
 
     glm::mat4 getProjection();
     glm::mat4 getView();

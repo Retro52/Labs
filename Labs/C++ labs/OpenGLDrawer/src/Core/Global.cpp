@@ -31,6 +31,8 @@ std::string drawModeToString(int drawMode)
             return "Directional light only";
         case 6:
             return "Point light only";
+        case 7:
+            return "Wireframe";
         default:
             return std::to_string(drawMode);
     }
@@ -140,6 +142,18 @@ void Global::Tick()
     {
         drawMode = 6;
     }
+    if (EventsHandler::justPressed(GLFW_KEY_7))
+    {
+        drawMode = 7;
+    }
+    if (EventsHandler::pressed(GLFW_KEY_KP_ADD))
+    {
+        ResourcesManager::GetPlayerCamera()->fov -= .01f;
+    }
+    if (EventsHandler::pressed(GLFW_KEY_KP_SUBTRACT))
+    {
+        ResourcesManager::GetPlayerCamera()->fov += .01f;
+    }
 
     /* Update camera controls */
     ResourcesManager::GetPlayerCamera()->UpdateControls();
@@ -168,33 +182,31 @@ void Global::Draw(const std::unique_ptr<PerspectiveCamera> &camera)
     Shader * lightShader = ResourcesManager::GetShader("lightShader");
     Shader * mainShader = ResourcesManager::GetShader("mainShader");
     Shader * uiShader = ResourcesManager::GetShader("uiShader");
-
-    for(auto &m : ResourcesManager::GetModels())
+    if (drawMode == 7)
+    {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    }
+    for(auto &m : ResourcesManager::GetActors())
     {
         // apply data to main shader
-
         mainShader->Use();
         mainShader->setInt("drawMode", drawMode);
         mainShader->setMat4("view", camera->getView());
         mainShader->setMat4("projection", camera->getProjection());
         mainShader->setVec3("ProjPos", camera->GetPosition());
-//        if (drawMode != 6)
-//        {
         mainShader->setDirLight(ResourcesManager::GetDirectionalLight());
-//        }
-//        if (drawMode != 5)
-//        {
         mainShader->setPointLights(ResourcesManager::GetPointLights());
-//        }
 
+        m->Tick();
+        m->UpdateControls();
         m->Draw(* mainShader);
 
     }
-
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     UIHandler::RenderText(* uiShader, "FPS: " + std::to_string(curFPS), 0.0f, (float) Window::getHeight() - 24.0f, 1.0, glm::vec3(1.0, 1.0, 1.0));
-    UIHandler::RenderText(* uiShader, "Position: " + std::to_string(camera->GetPosition().x) + "; " + std::to_string(camera->GetPosition().y) + "; " + std::to_string(camera->GetPosition().z), 0.0f, (float) Window::getHeight() - 48.0f, 1.0, glm::vec3(1.0, 1.0, 1.0));
-    UIHandler::RenderText(* uiShader, "Direction: " + std::to_string(camera->GetDirection().x) + "; " + std::to_string(camera->GetDirection().y) + "; " + std::to_string(camera->GetDirection().z), 0.0f, (float) Window::getHeight() - 72.0f, 1.0, glm::vec3(1.0, 1.0, 1.0));
-    UIHandler::RenderText(* uiShader, "View mode: " + drawModeToString(drawMode), 0.0f, (float) Window::getHeight() - 96.0f, 1.0, glm::vec3(1.0, 1.0, 0.0));
+    UIHandler::RenderText(* uiShader, "View mode: " + drawModeToString(drawMode), 0.0f, (float) Window::getHeight() - 48.0f, 1.0, glm::vec3(1.0, 1.0, 0.0));
+    UIHandler::RenderText(* uiShader, "WASD to move, KeyPad +- to zoom in/out, 1-7 to switch View Modes", 0.0f, (float) Window::getHeight() - 72.0f, 1.0, glm::vec3(1.0, 1.0, 1.0));
+    UIHandler::RenderText(* uiShader, "FOV: " + std::to_string((ResourcesManager::GetPlayerCamera()->fov / 3.1415) * 180), 0.0f, (float) Window::getHeight() - 96.0f, 1.0, glm::vec3(1.0, 0.5, 0.5));
 }
 
 void Global::EndFrame()

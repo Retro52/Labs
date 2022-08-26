@@ -19,17 +19,17 @@ class ResourcesManager
 {
 private:
     static std::unique_ptr<DirectionalLight> dLights;
+    static std::vector<std::unique_ptr<Actor>> actors;
     static std::unique_ptr<PerspectiveCamera> pCamera;
     static std::vector<std::unique_ptr<Model>> rModels;
     static std::vector<std::unique_ptr<PointLight>> pLights;
-    static std::map<std::string, std::unique_ptr<Model>> models;
     static std::map<std::string, std::unique_ptr<Shader>> shaders;
+
     static std::mutex m;
 public:
-    static std::vector<Model *> GetModels();
+    static std::vector<std::unique_ptr<Actor>>& GetActors();
     static std::unique_ptr<PerspectiveCamera> & GetPlayerCamera();
     static std::unique_ptr<DirectionalLight> & GetDirectionalLight();
-    static Model * GetModel(const std::string &name);
     static Shader * GetShader(const std::string &name);
     static std::vector<std::unique_ptr<PointLight>>& GetPointLights();
 

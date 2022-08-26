@@ -1,15 +1,18 @@
 //
 // Created by Anton on 19.08.2022.
 //
+#include <iomanip>
+#include <exception>
 
 #include "Model.h"
 #include "../Logging/easylogging++.h"
 #include "../Loaders/cwalk.h"
 
+
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
-void Model::Draw(Shader &shader)
+void Model::Draw(const Shader &shader)
 {
     Update();
     shader.setMat4("model", model);
@@ -19,8 +22,9 @@ void Model::Draw(Shader &shader)
     }
 }
 
-Model::Model(const std::string &path, bool gamma) : gammaCorrection(gamma)
+Model::Model(const std::string& path)
 {
+    gammaCorrection = false;
     model    = glm::mat4(1.0f);
     position = glm::vec3(0.0f);
     rotation = glm::vec3(0.0f);
@@ -37,7 +41,8 @@ void Model::LoadModel(const std::string &path)
     if(!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) // if is Not Zero
     {
         LOG(ERROR) << "ERROR::ASSIMP:: " << importer.GetErrorString();
-        return;
+        delete scene;
+        throw InGameException("Failed to load model");
     }
 
     // retrieve the directory path of the filepath
@@ -182,19 +187,27 @@ std::vector<Texture> Model::LoadMaterialTextures(aiMaterial *mat, aiTextureType 
 
 unsigned int Model::TextureFromFile(const char *path, const std::string &directory, bool gamma)
 {
-    std::string filename = std::string(path);
+    std::string filename = std::quoted(path)._M_string;
     stbi_set_flip_vertically_on_load(true);
+//    stbi_set_flip_vertically_on_load(false);
 
-    filename = directory + '/' + filename;
-
+    if (filename[0] != '/' && directory[directory.length() - 1] != '/')
+    {
+        filename = directory + '/' + filename;
+    }
+    else
+    {
+        filename = directory + filename;
+    }
     unsigned int textureID;
 
     glGenTextures(1, &textureID);
     int width, height, nrComponents;
 
     char actualpath [PATH_MAX + 1];
-    cwk_path_get_absolute(R"(C:\)", filename.c_str(), actualpath, sizeof(actualpath));
-    unsigned char * data = stbi_load(actualpath, &width, &height, &nrComponents, 0);
+//    cwk_path_get_absolute(R"(C:\)", filename.c_str(), actualpath, sizeof(actualpath));
+//    unsigned char * data = stbi_load(actualpath, &width, &height, &nrComponents, 0);
+    unsigned char * data = stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);
 
     if (data)
     {
@@ -219,7 +232,7 @@ unsigned int Model::TextureFromFile(const char *path, const std::string &directo
     }
     else
     {
-        LOG(ERROR) << "Texture failed to load at path: " << actualpath << std::endl;
+        LOG(ERROR) << "Texture failed to load at path: " << filename.c_str() << std::endl;
         LOG(ERROR) << stbi_failure_reason();
         stbi_image_free(data);
     }

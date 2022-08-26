@@ -3,6 +3,7 @@
 //
 
 #include "Shader.h"
+#include "../Core/InGameException.h"
 
 Shader::Shader(const char *vertexPath, const char *fragmentPath, const char *geometryPath)
 {
@@ -163,7 +164,7 @@ void Shader::setDirLight(const std::unique_ptr<DirectionalLight> &dirLight) cons
     setVec3("dirLight.diffuse", dirLight->diffuse);
 }
 
-void Shader::setPointLight(int idx, const std::unique_ptr<PointLight> &pointLight)
+void Shader::setPointLight(int idx, const std::unique_ptr<PointLight> &pointLight) const
 {
     std::ostringstream pointLightName;
     pointLightName << "pointLights[" << idx << "].";
@@ -178,7 +179,7 @@ void Shader::setPointLight(int idx, const std::unique_ptr<PointLight> &pointLigh
     setFloat(strName + "linear", pointLight->linear);
 }
 
-void Shader::setPointLights(const std::vector<std::unique_ptr<PointLight>> &pointLights)
+void Shader::setPointLights(const std::vector<std::unique_ptr<PointLight>> &pointLights) const
 {
     int max_affected_light = 16;
     int size = pointLights.size() > max_affected_light ? max_affected_light : (int) pointLights.size();
@@ -200,6 +201,7 @@ void Shader::checkCompileErrors(GLuint shader, const std::string &type)
         {
             glGetShaderInfoLog(shader, 1024, nullptr, infoLog);
             std::cout << "ERROR::SHADER_COMPILATION_ERROR of type: " << type << "\n" << infoLog << "\n -- --------------------------------------------------- -- " << std::endl;
+            throw InGameException("Failed to compile shader");
         }
     }
     else
@@ -209,6 +211,7 @@ void Shader::checkCompileErrors(GLuint shader, const std::string &type)
         {
             glGetProgramInfoLog(shader, 1024, nullptr, infoLog);
             std::cout << "ERROR::PROGRAM_LINKING_ERROR of type: " << type << "\n" << infoLog << "\n -- --------------------------------------------------- -- " << std::endl;
+            throw InGameException("Failed to link shaders");
         }
     }
 }

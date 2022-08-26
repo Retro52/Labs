@@ -70,7 +70,7 @@ EQUALS = =
 CMAKE_SOURCE_DIR = "C:\Users\Anton\C++ project\Graphics"
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = "C:\Users\Anton\C++ project\Graphics\cmake-build-debug"
+CMAKE_BINARY_DIR = "C:\Users\Anton\C++ project\Graphics\cmake-build-release"
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -99,9 +99,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start "C:\Users\Anton\C++ project\Graphics\cmake-build-debug\CMakeFiles" "C:\Users\Anton\C++ project\Graphics\cmake-build-debug\CMakeFiles\progress.marks"
+	$(CMAKE_COMMAND) -E cmake_progress_start "C:\Users\Anton\C++ project\Graphics\cmake-build-release\CMakeFiles" "C:\Users\Anton\C++ project\Graphics\cmake-build-release\CMakeFiles\progress.marks"
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start "C:\Users\Anton\C++ project\Graphics\cmake-build-debug\CMakeFiles" 0
+	$(CMAKE_COMMAND) -E cmake_progress_start "C:\Users\Anton\C++ project\Graphics\cmake-build-release\CMakeFiles" 0
 .PHONY : all
 
 # The main clean target
@@ -276,6 +276,33 @@ src/Core/Global.s: src/Core/Global.cpp.s
 src/Core/Global.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\Graphics.dir\build.make CMakeFiles/Graphics.dir/src/Core/Global.cpp.s
 .PHONY : src/Core/Global.cpp.s
+
+src/Core/InGameException.obj: src/Core/InGameException.cpp.obj
+
+.PHONY : src/Core/InGameException.obj
+
+# target to build an object file
+src/Core/InGameException.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Graphics.dir\build.make CMakeFiles/Graphics.dir/src/Core/InGameException.cpp.obj
+.PHONY : src/Core/InGameException.cpp.obj
+
+src/Core/InGameException.i: src/Core/InGameException.cpp.i
+
+.PHONY : src/Core/InGameException.i
+
+# target to preprocess a source file
+src/Core/InGameException.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Graphics.dir\build.make CMakeFiles/Graphics.dir/src/Core/InGameException.cpp.i
+.PHONY : src/Core/InGameException.cpp.i
+
+src/Core/InGameException.s: src/Core/InGameException.cpp.s
+
+.PHONY : src/Core/InGameException.s
+
+# target to generate assembly for a file
+src/Core/InGameException.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Graphics.dir\build.make CMakeFiles/Graphics.dir/src/Core/InGameException.cpp.s
+.PHONY : src/Core/InGameException.cpp.s
 
 src/Core/PerspectiveCamera.obj: src/Core/PerspectiveCamera.cpp.obj
 
@@ -679,6 +706,9 @@ help:
 	@echo ... src/Core/Global.obj
 	@echo ... src/Core/Global.i
 	@echo ... src/Core/Global.s
+	@echo ... src/Core/InGameException.obj
+	@echo ... src/Core/InGameException.i
+	@echo ... src/Core/InGameException.s
 	@echo ... src/Core/PerspectiveCamera.obj
 	@echo ... src/Core/PerspectiveCamera.i
 	@echo ... src/Core/PerspectiveCamera.s

@@ -4,55 +4,40 @@
 
 #include "Actor.h"
 
-/***
- * Rotate mesh on deltaRotation degrees (in radians)
- * @param deltaRotation three dimensional vector of rotation
- */
+Actor::Actor() : position(glm::vec3(0)), rotation(glm::vec3(0)), scale(glm::vec3(1))
+{
+    model = glm::mat4(1.0f);
+    front = glm::vec3(model * glm::vec4(0,0,-1,1));
+    right = glm::vec3(model * glm::vec4(1,0,0,1));
+    up    = glm::vec3(model * glm::vec4(0,1,0,1));
+    dir   = glm::vec3(model * glm::vec4(0,0,-1,1));
+}
+
 void Actor::Rotate(const glm::vec3 &deltaRotation)
 {
     rotation += deltaRotation;
 }
 
-/**
- * Change mesh scale
- * @param deltaScale three dimensional vector of scale change at every axis
- */
 void Actor::Scale(const glm::vec3& deltaScale)
 {
     scale *= deltaScale;
 }
 
-/**
- * Change mesh position
- * @param deltaMove three dimensional vector of position change at every axis
- */
 void Actor::Translate(const glm::vec3& deltaMove)
 {
     position += deltaMove;
 }
 
-/**
- * Change mesh position
- * @param newLocation three dimensional vector of new position at every axis
- */
 void Actor::MoveTo(const glm::vec3 &newLocation)
 {
     position = newLocation;
 }
 
-/**
- * Change mesh scale
- * @param newScale three dimensional vector of new scale at every axis
- */
 void Actor::ScaleTo(const glm::vec3 &newScale)
 {
     scale = newScale;
 }
 
-/**
- * Change mesh rotation
- * @param newRotation three dimensional vector of new rotation at every axis (in radians)
- */
 void Actor::RotateTo(const glm::vec3 &newRotation)
 {
     rotation = newRotation;
@@ -87,7 +72,3 @@ glm::vec3 Actor::GetDirection()
 {
     return dir;
 }
-
-void Actor::Update() {}
-
-void Actor::UpdateControls() {}

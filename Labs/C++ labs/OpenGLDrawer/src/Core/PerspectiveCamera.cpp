@@ -90,7 +90,7 @@ void PerspectiveCamera::UpdateControls()
     /* PerspectiveCamera and meshes speed settings */
     if(EventsHandler::pressed(GLFW_KEY_LEFT_SHIFT))
     {
-        speed = 200;
+        speed = 10;
     }
     else if (EventsHandler::pressed(GLFW_KEY_LEFT_CONTROL))
     {

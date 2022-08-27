@@ -8,7 +8,5 @@ newmtl None
    d 1.0
    illum 2
    
-   map_Ka DisplacementMap.png   
-   map_Kn NormalMap.png
-   map_Ks SpecularMap.png
-   
+   map_Ka brickwall.jpg
+   map_Kn brickwall_normal.jpg

@@ -16,13 +16,16 @@ uniform mat4 projection;
 
 void main()
 {
-	Normal       = mat3(transpose(inverse(model))) * aNormal;
 	FragPos      = vec3(model * vec4(aPos, 1.0));
 	TexCoords    = aTexCoords;
 
-	vec3 T = normalize(vec3(model * vec4(aTangent,   0.0)));
-	vec3 B = normalize(vec3(model * vec4(aBitangent, 0.0)));
-	vec3 N = normalize(vec3(model * vec4(aNormal,    0.0)));
+	Normal       = mat3(transpose(inverse(model))) * aNormal;
+
+	mat3 normalMatrix = transpose(inverse(mat3(model)));
+	vec3 T = normalize(normalMatrix * aTangent);
+	vec3 N = normalize(normalMatrix * aNormal);
+	T = normalize(T - dot(T, N) * N);
+	vec3 B = cross(N, T);
 	TBN = transpose(mat3(T, B, N));
 
 	gl_Position  = projection * view * model * vec4(aPos, 1.0);

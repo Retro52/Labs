@@ -5,7 +5,7 @@
 #ifndef GRAPHICS_STRUCTURES_H
 #define GRAPHICS_STRUCTURES_H
 #include <iostream>
-#include "../OpenGL/include/glm/glm.hpp"
+#include "../include/OpenGL/include/glm/glm.hpp"
 
 struct Float3
 {

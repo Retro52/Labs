@@ -56,24 +56,26 @@ void main()
 	vec3 norm;
 	vec3 viewDir;
 	/* Unlit */
-	if (drawMode == 2)
+	if (drawMode == 2 || drawMode == 4)
 	{
 		result = texture(material.texture_diffuse1, TexCoords).rgb;
 	}
+	else if(drawMode == 7)
+	{
+		result = texture(material.texture_specular1, TexCoords).rgb;
+	}
+	else if (drawMode == 8)
+	{
+		result = texture(material.texture_normal1, TexCoords).rgb;
+	}
+	else if (drawMode == 9)
+	{
+		result = texture(material.texture_height1, TexCoords).rgb;
+	}
 	else
 	{
-		if (drawMode == 4)
-		{
-			norm = texture(material.texture_normal1, TexCoords).rgb;
-			norm = norm * 2.0 - 1.0;
-			norm = normalize(TBN * norm);
-			viewDir = TBN * normalize(ProjPos - FragPos);
-		}
-		else
-		{
-			norm = normalize(Normal);
-			viewDir = normalize(ProjPos - FragPos);
-		}
+		norm = normalize(texture( material.texture_normal1, TexCoords ).rgb * 2.0 - 1.0);
+		viewDir = normalize(TBN * ProjPos - TBN * FragPos);
 		result = CalcLight(dirLight, pointLights, norm, FragPos, viewDir);
 	}
 	FragColor = vec4(result, 1.0f);
@@ -102,21 +104,13 @@ vec3 CalcLight(DirLight dirLight, PointLight pointLights[16], vec3 norm, vec3 Fr
 
 vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir)
 {
-	vec3 lightDir;
-	if (drawMode == 4)
-	{
-		lightDir = TBN * normalize(-light.direction);
-	}
-	else
-	{
-		lightDir = normalize(-light.direction);
-	}
+	vec3 lightDir = normalize(-light.direction * TBN);
+	vec3 reflectDir = reflect(-lightDir, normal);
 
 	// diffuse shading
 	float diff = max(dot(normal, lightDir), 0.0);
 
 	// specular shading
-	vec3 reflectDir = reflect(-lightDir, normal);
 
 	//	float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
 	float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32.0f);
@@ -145,14 +139,8 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir)
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 {
 	vec3 lightDir;
-	if (drawMode == 4)
-	{
-		lightDir = TBN * normalize(light.position - FragPos);
-	}
-	else
-	{
-		lightDir = normalize(light.position - FragPos);
-	}
+	lightDir = normalize(light.position * TBN - FragPos);
+
 	// diffuse shading
 	float diff = max(dot(normal, lightDir), 0.0);
 

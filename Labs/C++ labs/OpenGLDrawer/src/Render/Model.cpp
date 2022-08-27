@@ -188,8 +188,7 @@ std::vector<Texture> Model::LoadMaterialTextures(aiMaterial *mat, aiTextureType 
 unsigned int Model::TextureFromFile(const char *path, const std::string &directory, bool gamma)
 {
     std::string filename = std::quoted(path)._M_string;
-    stbi_set_flip_vertically_on_load(true);
-//    stbi_set_flip_vertically_on_load(false);
+    stbi_set_flip_vertically_on_load(false);
 
     if (filename[0] != '/' && directory[directory.length() - 1] != '/')
     {

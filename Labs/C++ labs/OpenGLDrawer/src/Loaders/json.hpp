@@ -8253,7 +8253,7 @@ f = std::strtold(str, endptr);
     The state machine is realized with one label per state (prefixed with
     "scan_number_") and `goto` statements between them. The state machine
     contains cycles, but any cycle can be left when EOF is read. Therefore,
-    the function is guaranteed to terminate.
+    the function is guaranteed to Terminate.
 
     During scanning, the read bytes are stored in token_buffer. This string is
     then converted to a signed integer, an unsigned integer, or a

@@ -2,10 +2,10 @@
 #define MODEL_H
 
 #define GLEW_STATIC
-#include "../OpenGL/include/GLEW/glew.h"
+#include "../include/OpenGL/include/GLEW/glew.h"
 
-#include "../OpenGL/include/glm/glm.hpp"
-#include "../OpenGL/include/glm/gtc/matrix_transform.hpp"
+#include "../include/OpenGL/include/glm/glm.hpp"
+#include "../include/OpenGL/include/glm/gtc/matrix_transform.hpp"
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
@@ -26,7 +26,6 @@ class Model : public Actor
 {
 public:
     explicit Model(const std::string& path);
-    ~Model() = default;
 
     /**
      * Draws all model meshes
@@ -57,10 +56,10 @@ private:
      */
     void ProcessNode(aiNode *node, const aiScene *scene);
     /**
-     *
-     * @param mesh
-     * @param scene
-     * @return new Mesh
+     * Precedes mesh into given scene
+     * @param mesh current mesh
+     * @param scene current scene
+     * @return new Mesh new loaded mesh
      */
     Mesh ProcessMesh(aiMesh *mesh, const aiScene *scene);
 
@@ -74,7 +73,7 @@ private:
     std::vector<Texture> LoadMaterialTextures(aiMaterial *mat, aiTextureType type, const std::string& typeName);
 
     /**
-     * Updates model every frame
+     * Updates model matrix every frame
      */
     void Update() override;
 

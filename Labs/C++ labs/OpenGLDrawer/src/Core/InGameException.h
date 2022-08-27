@@ -12,7 +12,17 @@ class InGameException : public std::exception
 private:
     std::string message;
 public:
+
+    /**
+     * Creates exception
+     * @param error error message
+     */
     explicit InGameException(std::string error);
+
+    /**
+     * Get error message
+     * @return c-style const char array containing error message
+     */
     const char * what() const noexcept override;
 };
 

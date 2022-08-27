@@ -3,7 +3,7 @@
 //
 
 #include "DirectionalLight.h"
-#include "../logging/easylogging++.h"
+#include "../Logging/easylogging++.h"
 
 /**
  *

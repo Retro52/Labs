@@ -4,13 +4,8 @@
 
 #include "Window.h"
 #include "Global.h"
-#include "../OpenGL/include/glm/ext.hpp"
+#include "../include/OpenGL/include/glm/ext.hpp"
 
-/**
- * Creates new perspective camera
- * @param position camera world position
- * @param fov camera field of view, in degrees
- */
 PerspectiveCamera::PerspectiveCamera(const glm::vec3& position, float fov) : fov(fov), zoom(1.0f), posX(0.0), posY(0.0)
 {
     this->position = position;
@@ -31,31 +26,19 @@ PerspectiveCamera::PerspectiveCamera(const glm::vec3& position, float fov) : fov
     }
 }
 
-/**
- * Get projection matrix of camera
- * @return 4-dimensional projection matrix
- */
-glm::mat4 PerspectiveCamera::getProjection()
+glm::mat4 PerspectiveCamera::GetProjection()
 {
     Update();
-    float aspect = ((float) Window::getWidth()) / (float) Window::getHeight();
+    float aspect = ((float) Window::GetWidth()) / (float) Window::GetHeight();
     return glm::perspective(fov * zoom, aspect, 0.05f, 1500.0f);
 }
 
-/**
- * Get view matrix of camera
- * @return 4-dimensional matrix of camera view
- */
-glm::mat4 PerspectiveCamera::getView()
+glm::mat4 PerspectiveCamera::GetView()
 {
     Update();
     return glm::lookAt(position, position + front, up);
 }
 
-
-/**
- * Updates internal stuff
- */
 void PerspectiveCamera::Update()
 {
     model = glm::mat4(1.0f);
@@ -88,11 +71,11 @@ void PerspectiveCamera::UpdateControls()
     int speed;
 
     /* PerspectiveCamera and meshes speed settings */
-    if(EventsHandler::pressed(GLFW_KEY_LEFT_SHIFT))
+    if(EventsHandler::IsPressed(GLFW_KEY_LEFT_SHIFT))
     {
         speed = 10;
     }
-    else if (EventsHandler::pressed(GLFW_KEY_LEFT_CONTROL))
+    else if (EventsHandler::IsPressed(GLFW_KEY_LEFT_CONTROL))
     {
         speed = 1;
     }
@@ -102,19 +85,19 @@ void PerspectiveCamera::UpdateControls()
     }
 
     /* PerspectiveCamera world position */
-    if (EventsHandler::pressed(GLFW_KEY_W))
+    if (EventsHandler::IsPressed(GLFW_KEY_W))
     {
         Translate(GetFront() * delta * speed);
     }
-    if (EventsHandler::pressed(GLFW_KEY_S))
+    if (EventsHandler::IsPressed(GLFW_KEY_S))
     {
         Translate(- GetFront() * delta * speed);
     }
-    if (EventsHandler::pressed(GLFW_KEY_D))
+    if (EventsHandler::IsPressed(GLFW_KEY_D))
     {
         Translate(GetRight() * delta * speed);
     }
-    if (EventsHandler::pressed(GLFW_KEY_A))
+    if (EventsHandler::IsPressed(GLFW_KEY_A))
     {
         Translate(- GetRight() * delta * speed);
     }
@@ -123,8 +106,8 @@ void PerspectiveCamera::UpdateControls()
     /* PerspectiveCamera world orientation */
     if (EventsHandler::_cursor_locked)
     {
-        posX += -EventsHandler::deltaX * delta * mouseSensitivity / (float) Window::getHeight() * 2;
-        posY += -EventsHandler::deltaY  * delta * mouseSensitivity / (float) Window::getHeight() * 2;
+        posX += -EventsHandler::deltaX * delta * mouseSensitivity / (float) Window::GetHeight() * 2;
+        posY += -EventsHandler::deltaY * delta * mouseSensitivity / (float) Window::GetHeight() * 2;
 
         if (posY < - glm::radians(89.0f))
         {
@@ -139,4 +122,14 @@ void PerspectiveCamera::UpdateControls()
 
         Update();
     }
+}
+
+void PerspectiveCamera::SetFieldOfView(float newFOV)
+{
+    fov = newFOV;
+}
+
+float PerspectiveCamera::GetFieldOfView() const
+{
+    return fov;
 }

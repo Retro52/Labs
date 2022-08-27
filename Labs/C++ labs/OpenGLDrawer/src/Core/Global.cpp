@@ -26,22 +26,21 @@ std::string drawModeToString(int drawMode)
         case 3:
             return "Lighting Only";
         case 4:
-            return "Normal map lighting test";
+            return "Wireframe";
         case 5:
             return "Directional light only";
         case 6:
             return "Point light only";
         case 7:
-            return "Wireframe";
+            return "Specular map view";
+        case 8:
+            return "Normal map view";
         default:
             return std::to_string(drawMode);
     }
 }
 
-/**
- * Initializes OpenGl, creates window and sets settings for events handler
- */
-int Global::Initialize()
+void Global::Initialize()
 {
     lastTime = 0.0;
     deltaTime = 0.0;
@@ -50,23 +49,17 @@ int Global::Initialize()
 
     LOG(INFO) << "Program initialization started";
 
-    if (!Config::Load("config.ini"))
+    try
     {
-        LOG(INFO) << "Configs were successfully loaded";
+        Config::LoadIni("config.ini");
+        EventsHandler::Initialize();
     }
-    else
+    catch (InGameException& e)
     {
-        LOG(ERROR) << "Couldn't`t load configs";
-        return -1;
+        LOG(FATAL) << "Error during program initialization. Reason: " << e.what();
+        throw InGameException("Global initialization error");
     }
-
-
-    // setting key and mouse callbacks
-    if (!EventsHandler::init())
-    {
-        LOG(INFO) << "Events handler initialized" << std::endl;
-        EventsHandler::toggleCursor();
-    }
+    EventsHandler::ToggleCursor();
 
     // registering world camera
     ResourcesManager::RegisterPlayerCamera(glm::vec3(0, 0, 5), glm::radians(90.0f));
@@ -86,21 +79,8 @@ int Global::Initialize()
             glm::vec3(1.0f, 1.0f, 1.0f),
             1.0f, 0.09f, 0.032f
             );
-    return 0;
 }
 
-/**
- * Loads all default things like settings, controls, basic meshes, shaders, textures, etc.
- * @param path path to .ini file with settings
- */
-void Global::Load(const std::string &path)
-{
-    LOG(WARNING) << "Not implemented yet\n";
-}
-
-/**
- * Global tick function
- */
 void Global::Tick()
 {
     frame++;
@@ -118,41 +98,49 @@ void Global::Tick()
     }
 
     /* Debug features */
-    if(EventsHandler::justPressed(GLFW_KEY_1))
+    if(EventsHandler::IsJustPressed(GLFW_KEY_1))
     {
         drawMode = 1;
     }
-    if (EventsHandler::justPressed(GLFW_KEY_2))
+    if (EventsHandler::IsJustPressed(GLFW_KEY_2))
     {
         drawMode = 2;
     }
-    if (EventsHandler::justPressed(GLFW_KEY_3))
+    if (EventsHandler::IsJustPressed(GLFW_KEY_3))
     {
         drawMode = 3;
     }
-    if (EventsHandler::justPressed(GLFW_KEY_4))
+    if (EventsHandler::IsJustPressed(GLFW_KEY_4))
     {
         drawMode = 4;
     }
-    if (EventsHandler::justPressed(GLFW_KEY_5))
+    if (EventsHandler::IsJustPressed(GLFW_KEY_5))
     {
         drawMode = 5;
     }
-    if (EventsHandler::justPressed(GLFW_KEY_6))
+    if (EventsHandler::IsJustPressed(GLFW_KEY_6))
     {
         drawMode = 6;
     }
-    if (EventsHandler::justPressed(GLFW_KEY_7))
+    if (EventsHandler::IsJustPressed(GLFW_KEY_7))
     {
         drawMode = 7;
     }
-    if (EventsHandler::pressed(GLFW_KEY_KP_ADD))
+    if (EventsHandler::IsJustPressed(GLFW_KEY_8))
     {
-        ResourcesManager::GetPlayerCamera()->fov -= .01f;
+        drawMode = 8;
     }
-    if (EventsHandler::pressed(GLFW_KEY_KP_SUBTRACT))
+    if (EventsHandler::IsJustPressed(GLFW_KEY_9))
     {
-        ResourcesManager::GetPlayerCamera()->fov += .01f;
+        drawMode = 9;
+    }
+    if (EventsHandler::IsPressed(GLFW_KEY_KP_ADD))
+    {
+        ResourcesManager::GetPlayerCamera()->SetFieldOfView(ResourcesManager::GetPlayerCamera()->GetFieldOfView() - .01f);
+    }
+    if (EventsHandler::IsPressed(GLFW_KEY_KP_SUBTRACT))
+    {
+        ResourcesManager::GetPlayerCamera()->SetFieldOfView(ResourcesManager::GetPlayerCamera()->GetFieldOfView() + .01f);
     }
 
     /* Update camera controls */
@@ -161,38 +149,33 @@ void Global::Tick()
     Window::Tick();
 }
 
-/**
- * Returns last frame delta time
- * @return world delta time
- */
 double Global::GetWorldDeltaTime()
 {
     return deltaTime;
 }
 
-
-/* TODO: create camera class, so we can Render either orthographic or perspective camera */
 void Global::Draw(const std::unique_ptr<PerspectiveCamera> &camera)
 {
-    glm::mat4 projView = camera->getProjection() * camera->getView();
+    glm::mat4 projView = camera->GetProjection() * camera->GetView();
 
     glClearColor(0.203f, 0.76f, 0.938f,1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    Shader * lightShader = ResourcesManager::GetShader("lightShader");
     Shader * mainShader = ResourcesManager::GetShader("mainShader");
     Shader * uiShader = ResourcesManager::GetShader("uiShader");
-    if (drawMode == 7)
+
+    if (drawMode == 4)
     {
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     }
+
     for(auto &m : ResourcesManager::GetActors())
     {
         // apply data to main shader
         mainShader->Use();
         mainShader->setInt("drawMode", drawMode);
-        mainShader->setMat4("view", camera->getView());
-        mainShader->setMat4("projection", camera->getProjection());
+        mainShader->setMat4("view", camera->GetView());
+        mainShader->setMat4("projection", camera->GetProjection());
         mainShader->setVec3("ProjPos", camera->GetPosition());
         mainShader->setDirLight(ResourcesManager::GetDirectionalLight());
         mainShader->setPointLights(ResourcesManager::GetPointLights());
@@ -202,16 +185,18 @@ void Global::Draw(const std::unique_ptr<PerspectiveCamera> &camera)
         m->Draw(* mainShader);
 
     }
+
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    UIHandler::RenderText(* uiShader, "FPS: " + std::to_string(curFPS), 0.0f, (float) Window::getHeight() - 24.0f, 1.0, glm::vec3(1.0, 1.0, 1.0));
-    UIHandler::RenderText(* uiShader, "View mode: " + drawModeToString(drawMode), 0.0f, (float) Window::getHeight() - 48.0f, 1.0, glm::vec3(1.0, 1.0, 0.0));
-    UIHandler::RenderText(* uiShader, "WASD to move, KeyPad +- to zoom in/out, 1-7 to switch View Modes", 0.0f, (float) Window::getHeight() - 72.0f, 1.0, glm::vec3(1.0, 1.0, 1.0));
-    UIHandler::RenderText(* uiShader, "FOV: " + std::to_string((ResourcesManager::GetPlayerCamera()->fov / 3.1415) * 180), 0.0f, (float) Window::getHeight() - 96.0f, 1.0, glm::vec3(1.0, 0.5, 0.5));
+
+    UIHandler::RenderText(* uiShader, "FPS: " + std::to_string(curFPS), 0.0f, (float) Window::GetHeight() - 24.0f, 1.0, glm::vec3(1.0, 1.0, 1.0));
+    UIHandler::RenderText(* uiShader, "View mode: " + drawModeToString(drawMode), 0.0f, (float) Window::GetHeight() - 48.0f, 1.0, glm::vec3(1.0, 1.0, 0.0));
+    UIHandler::RenderText(* uiShader, "WASD to move, KeyPad +- to zoom in/out, 1-8 to switch view Modes", 0.0f, (float) Window::GetHeight() - 72.0f, 1.0, glm::vec3(1.0, 1.0, 1.0));
+    UIHandler::RenderText(* uiShader, "FOV: " + std::to_string((ResourcesManager::GetPlayerCamera()->GetFieldOfView() / 3.1415) * 180), 0.0f, (float) Window::GetHeight() - 96.0f, 1.0, glm::vec3(1.0, 0.5, 0.5));
 }
 
 void Global::EndFrame()
 {
     /* Swapping OpenGL buffers and pulling this frame events */
-    Window::swapBuffers();
-    EventsHandler::pullEvents();
+    Window::SwapBuffers();
+    EventsHandler::PullEvents();
 }

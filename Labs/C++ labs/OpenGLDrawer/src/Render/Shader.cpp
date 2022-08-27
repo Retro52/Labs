@@ -14,6 +14,7 @@ Shader::Shader(const char *vertexPath, const char *fragmentPath, const char *geo
     std::ifstream vShaderFile;
     std::ifstream fShaderFile;
     std::ifstream gShaderFile;
+
     // ensure ifstream objects can throw exceptions:
     vShaderFile.exceptions (std::ifstream::failbit | std::ifstream::badbit);
     fShaderFile.exceptions (std::ifstream::failbit | std::ifstream::badbit);
@@ -34,6 +35,7 @@ Shader::Shader(const char *vertexPath, const char *fragmentPath, const char *geo
         vertexCode = vShaderStream.str();
         fragmentCode = fShaderStream.str();
         // if geometry shader path is present, also load a geometry shader
+
         if(geometryPath != nullptr)
         {
             gShaderFile.open(geometryPath);
@@ -52,9 +54,12 @@ Shader::Shader(const char *vertexPath, const char *fragmentPath, const char *geo
     // 2. compile shaders
     unsigned int vertex, fragment;
     // vertex shader
+
     vertex = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertex, 1, &vShaderCode, NULL);
+
+    glShaderSource(vertex, 1, &vShaderCode, nullptr);
     glCompileShader(vertex);
+
     checkCompileErrors(vertex, "VERTEX");
     // fragment Shader
     fragment = glCreateShader(GL_FRAGMENT_SHADER);

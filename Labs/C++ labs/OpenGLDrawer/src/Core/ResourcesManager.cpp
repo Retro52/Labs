@@ -35,19 +35,25 @@ void ResourcesManager::RegisterPlayerCamera(const glm::vec3 &position, float fov
     LOG(INFO) << "Player camera successfully created";
 }
 
-void ResourcesManager::RegisterShader(const std::string &name, const std::string &vFile, const std::string &fFile)
+void ResourcesManager::RegisterShader(const std::string &name, const std::string &vFile, const std::string &fFile, const std::string &gFile)
 {
     const std::lock_guard<std::mutex> lock(m);
     try
     {
-        shaders[name] = std::make_unique<Shader>(vFile.c_str(), fFile.c_str());
+        if (!gFile.empty())
+        {
+            shaders[name] = std::make_unique<Shader>(vFile.c_str(), fFile.c_str(), gFile.c_str());
+        }
+        else
+        {
+            shaders[name] = std::make_unique<Shader>(vFile.c_str(), fFile.c_str());
+        }
         LOG(INFO) << "Shader " + name + " successfully registered";
     }
     catch(InGameException& e)
     {
-        LOG(ERROR) << "Failed to register shader" << name << ". Reason: " << e.what();
+        LOG(WARNING) << "Failed to register shader" << name << ". Reason: " << e.what();
     }
-    
 }
 
 
@@ -61,7 +67,7 @@ void ResourcesManager::RegisterModel(const std::string &name, const std::string 
     }
     catch (InGameException& e)
     {
-        LOG(ERROR) << "Failed to register actor. Reason: " << e.what();
+        LOG(WARNING) << "Failed to register actor. Reason: " << e.what();
     }
 }
 
@@ -90,13 +96,13 @@ Shader * ResourcesManager::GetShader(const std::string& name)
         throw InGameException("Trying to receive unregistered shader");
     }
 #else
+    /* Count returns number of elements with specified key, so we can use it like bool (non 0 - present, 0 - absent) */
     if(!shaders.count(name))
     {
         LOG(ERROR) << "Shader " + name + " is not registered at ResourcesManager";
         throw InGameException("Trying to receive unregistered shader");
     }
 #endif
-    
     return shaders[name].get();
 }
 

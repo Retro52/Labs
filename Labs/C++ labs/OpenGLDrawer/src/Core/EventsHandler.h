@@ -1,4 +1,4 @@
-//
+  //
 // Created by Anton on 12.12.2021.
 //
 
@@ -25,18 +25,53 @@ public:
     static bool _cursor_started;
 
     /* Restriction to create an instance of this class */
-    EventsHandler() = default;
+    EventsHandler() = delete;
+    EventsHandler(EventsHandler&&) = delete;
+    EventsHandler(const EventsHandler&) = delete;
 
-    static int init();
-    static void pullEvents();
+    /**
+     * Initializes event handler and sets callbacks for actions
+     * @return exit code
+     */
+    static int Initialize();
 
-    static bool pressed(int keycode);
-    static bool justPressed(int keycode);
+    /**
+     * UpdateModelMatrix all events, called once every frame
+     */
+    static void PullEvents();
 
-    static bool clicked(int button);
-    static bool justClicked(int button);
+    /**
+     * Check if key is pressed
+     * @param keycode key id
+     * @return true if pressed, false otherwise
+     */
+    static bool IsPressed(int keycode);
 
-    static void toggleCursor();
+    /**
+     * Chek if key was just pressed
+     * @param keycode key id
+     * @return true if was just pressed, false otherwise
+     */
+    static bool IsJustPressed(int keycode);
+
+    /**
+     * Check if mouse button is clicked
+     * @param button button id
+     * @return true if is clicked, false otherwise
+     */
+    static bool IsClicked(int button);
+
+    /**
+     * Check if mouse button was just clicked
+     * @param button button id
+     * @return true if was just clicked, false otherwise
+     */
+    static bool IsJustClicked(int button);
+
+    /**
+     * Switch hide & show cursor modes
+     */
+    static void ToggleCursor();
 
     static std::unique_ptr<bool[]> _keys;
     static std::unique_ptr<uint[]> _frames;

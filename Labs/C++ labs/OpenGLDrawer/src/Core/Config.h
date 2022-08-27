@@ -11,7 +11,22 @@
 class Config
 {
 public:
-    static int Load(const std::string& configPath);
+    /* Restriction to create an instance of this class */
+    Config() = delete;
+    Config(Config&&) = delete;
+    Config(const Config&) = delete;
+
+    /**
+     * Load default .ini config file
+     * @param configPath path to the .ini file
+     */
+    static void LoadIni(const std::string& configPath);
+
+    /**
+     * Load default .json file
+     * @param jsonConfigPath path to the json file, extracted from .ini file
+     */
+    static void LoadJson(const std::string& jsonConfigPath);
 };
 
 

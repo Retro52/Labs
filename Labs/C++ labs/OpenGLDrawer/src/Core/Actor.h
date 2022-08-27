@@ -6,9 +6,9 @@
 #define GRAPHICS_ACTOR_H
 
 
-#include "../OpenGL/include/glm/glm.hpp"
-#include "../OpenGL/include/glm/gtc/matrix_transform.hpp"
-#include "../OpenGL/include/glm/gtx/transform.hpp"
+#include "../include/OpenGL/include/glm/glm.hpp"
+#include "../include/OpenGL/include/glm/gtc/matrix_transform.hpp"
+#include "../include/OpenGL/include/glm/gtx/transform.hpp"
 #include "../Render/Shader.h"
 
 class Actor
@@ -102,7 +102,7 @@ public:
      * Draws actor
      * @param shader shader to be applied for drawing
      */
-    virtual void Draw(const Shader& shader) = 0;
+    virtual void Draw(const Shader& shader) {};
 
     /**
      * Updates actor based on user inputs

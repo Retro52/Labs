@@ -5,6 +5,8 @@
 #ifndef GRAPHICS_UIBASE_H
 #define GRAPHICS_UIBASE_H
 
+
+
 #include "../Core/Structures.h"
 #include <memory>
 
@@ -18,6 +20,9 @@ struct Bounds
     }
 };
 
+/***
+ * @note Not implemented yet
+ */
 class UIBase
 {
 private:
@@ -28,10 +33,9 @@ private:
 
     bool isMouseOver, isMouseClicked;
 
-    UIBase();
     UIBase(const Point &position);
 
-    ~UIBase();
+    virtual ~UIBase() = default;
 public:
     virtual void Draw() const;
     void OnMouseEntered() const;

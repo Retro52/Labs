@@ -5,7 +5,7 @@
 #ifndef GRAPHICS_POINTLIGHT_H
 #define GRAPHICS_POINTLIGHT_H
 
-#include "../OpenGL/include/glm/glm.hpp"
+#include "../include/OpenGL/include/glm/glm.hpp"
 
 class PointLight
 {
@@ -22,9 +22,23 @@ public:
     glm::vec3 diffuse;
     glm::vec3 specular;
 
+    /**
+     * Creates point light
+     * @param pos position
+     * @param amb ambient strength
+     * @param diff diffuse strength
+     * @param spec specular strength
+     * @param con constant
+     * @param lin linear
+     * @param quad quadratic
+     */
     PointLight(const glm::vec3 &pos, const glm::vec3 &amb, const glm::vec3 &diff, const glm::vec3 &spec, float con, float lin, float quad);
     ~PointLight() = default;
 
+private:
+    /**
+     * Debugging function
+     */
     void Display() const;
 };
 

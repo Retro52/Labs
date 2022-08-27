@@ -169,6 +169,33 @@ src/Core/Actor.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\Graphics.dir\build.make CMakeFiles/Graphics.dir/src/Core/Actor.cpp.s
 .PHONY : src/Core/Actor.cpp.s
 
+src/Core/Application.obj: src/Core/Application.cpp.obj
+
+.PHONY : src/Core/Application.obj
+
+# target to build an object file
+src/Core/Application.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Graphics.dir\build.make CMakeFiles/Graphics.dir/src/Core/Application.cpp.obj
+.PHONY : src/Core/Application.cpp.obj
+
+src/Core/Application.i: src/Core/Application.cpp.i
+
+.PHONY : src/Core/Application.i
+
+# target to preprocess a source file
+src/Core/Application.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Graphics.dir\build.make CMakeFiles/Graphics.dir/src/Core/Application.cpp.i
+.PHONY : src/Core/Application.cpp.i
+
+src/Core/Application.s: src/Core/Application.cpp.s
+
+.PHONY : src/Core/Application.s
+
+# target to generate assembly for a file
+src/Core/Application.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Graphics.dir\build.make CMakeFiles/Graphics.dir/src/Core/Application.cpp.s
+.PHONY : src/Core/Application.cpp.s
+
 src/Core/Config.obj: src/Core/Config.cpp.obj
 
 .PHONY : src/Core/Config.obj
@@ -195,33 +222,6 @@ src/Core/Config.s: src/Core/Config.cpp.s
 src/Core/Config.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\Graphics.dir\build.make CMakeFiles/Graphics.dir/src/Core/Config.cpp.s
 .PHONY : src/Core/Config.cpp.s
-
-src/Core/Controls.obj: src/Core/Controls.cpp.obj
-
-.PHONY : src/Core/Controls.obj
-
-# target to build an object file
-src/Core/Controls.cpp.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\Graphics.dir\build.make CMakeFiles/Graphics.dir/src/Core/Controls.cpp.obj
-.PHONY : src/Core/Controls.cpp.obj
-
-src/Core/Controls.i: src/Core/Controls.cpp.i
-
-.PHONY : src/Core/Controls.i
-
-# target to preprocess a source file
-src/Core/Controls.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\Graphics.dir\build.make CMakeFiles/Graphics.dir/src/Core/Controls.cpp.i
-.PHONY : src/Core/Controls.cpp.i
-
-src/Core/Controls.s: src/Core/Controls.cpp.s
-
-.PHONY : src/Core/Controls.s
-
-# target to generate assembly for a file
-src/Core/Controls.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\Graphics.dir\build.make CMakeFiles/Graphics.dir/src/Core/Controls.cpp.s
-.PHONY : src/Core/Controls.cpp.s
 
 src/Core/EventsHandler.obj: src/Core/EventsHandler.cpp.obj
 
@@ -493,33 +493,6 @@ src/Logging/easylogging++.cc.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\Graphics.dir\build.make CMakeFiles/Graphics.dir/src/Logging/easylogging++.cc.s
 .PHONY : src/Logging/easylogging++.cc.s
 
-src/Render/Material.obj: src/Render/Material.cpp.obj
-
-.PHONY : src/Render/Material.obj
-
-# target to build an object file
-src/Render/Material.cpp.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\Graphics.dir\build.make CMakeFiles/Graphics.dir/src/Render/Material.cpp.obj
-.PHONY : src/Render/Material.cpp.obj
-
-src/Render/Material.i: src/Render/Material.cpp.i
-
-.PHONY : src/Render/Material.i
-
-# target to preprocess a source file
-src/Render/Material.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\Graphics.dir\build.make CMakeFiles/Graphics.dir/src/Render/Material.cpp.i
-.PHONY : src/Render/Material.cpp.i
-
-src/Render/Material.s: src/Render/Material.cpp.s
-
-.PHONY : src/Render/Material.s
-
-# target to generate assembly for a file
-src/Render/Material.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\Graphics.dir\build.make CMakeFiles/Graphics.dir/src/Render/Material.cpp.s
-.PHONY : src/Render/Material.cpp.s
-
 src/Render/Mesh.obj: src/Render/Mesh.cpp.obj
 
 .PHONY : src/Render/Mesh.obj
@@ -694,12 +667,12 @@ help:
 	@echo ... src/Core/Actor.obj
 	@echo ... src/Core/Actor.i
 	@echo ... src/Core/Actor.s
+	@echo ... src/Core/Application.obj
+	@echo ... src/Core/Application.i
+	@echo ... src/Core/Application.s
 	@echo ... src/Core/Config.obj
 	@echo ... src/Core/Config.i
 	@echo ... src/Core/Config.s
-	@echo ... src/Core/Controls.obj
-	@echo ... src/Core/Controls.i
-	@echo ... src/Core/Controls.s
 	@echo ... src/Core/EventsHandler.obj
 	@echo ... src/Core/EventsHandler.i
 	@echo ... src/Core/EventsHandler.s
@@ -730,9 +703,6 @@ help:
 	@echo ... src/Logging/easylogging++.obj
 	@echo ... src/Logging/easylogging++.i
 	@echo ... src/Logging/easylogging++.s
-	@echo ... src/Render/Material.obj
-	@echo ... src/Render/Material.i
-	@echo ... src/Render/Material.s
 	@echo ... src/Render/Mesh.obj
 	@echo ... src/Render/Mesh.i
 	@echo ... src/Render/Mesh.s

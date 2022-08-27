@@ -4,14 +4,14 @@
 
 #include "UIHandler.h"
 #include "../Core/Window.h"
+#include "../Core/InGameException.h"
 #include "../Logging/easylogging++.h"
-#include "../OpenGL/include/glm/gtc/matrix_transform.hpp"
-#include "../OpenGL/include/glm/ext.hpp"
+#include "../include/OpenGL/include/glm/gtc/matrix_transform.hpp"
 
 std::map<char, Character> UIHandler::Characters;
 unsigned int UIHandler::VAO, UIHandler::VBO;
 
-int UIHandler::Initialize(const std::string& fontPath, int fontSize)
+void UIHandler::Initialize(const std::string& fontPath, int fontSize)
 {
     FT_Library ft;
 
@@ -19,7 +19,7 @@ int UIHandler::Initialize(const std::string& fontPath, int fontSize)
     if (FT_Init_FreeType(&ft))
     {
         LOG(ERROR) << "ERROR::FREETYPE: Could not Initialize FreeType Library";
-        return -1;
+        throw InGameException("FreeType library initialization error");
     }
 
     // load font as face
@@ -27,7 +27,7 @@ int UIHandler::Initialize(const std::string& fontPath, int fontSize)
     if (FT_New_Face(ft, fontPath.c_str(), 0, &face))
     {
         LOG(ERROR) << "ERROR::FREETYPE: Failed to load font";
-        return -1;
+        throw InGameException("Failed to load font");
     }
     else
     {
@@ -92,15 +92,13 @@ int UIHandler::Initialize(const std::string& fontPath, int fontSize)
     glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), nullptr);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
-
-    return 0;
 }
 
 void UIHandler::RenderText(Shader shader, const std::string &text, float x, float y, float scale, const glm::vec3 &color)
 {
     glDisable(GL_DEPTH_TEST);
 
-    glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(Window::getWidth()), 0.0f, static_cast<float>(Window::getHeight()));
+    glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(Window::GetWidth()), 0.0f, static_cast<float>(Window::GetHeight()));
 
     // activate corresponding render state
     shader.Use();

@@ -3,8 +3,8 @@
 
 #define GLEW_STATIC
 
-#include "../OpenGL/include/GLEW/glew.h"
-#include "../OpenGL/include/glm/glm.hpp"
+#include "../include/OpenGL/include/GLEW/glew.h"
+#include "../include/OpenGL/include/glm/glm.hpp"
 #include "../Lighting/DirectionalLight.h"
 #include "../Lighting/PointLight.h"
 
@@ -19,12 +19,17 @@ class Shader
 {
 public:
     unsigned int id;
-    // constructor generates the shader on the fly
-    // ------------------------------------------------------------------------
+    /**
+     * Shader class constructor, which loads, compiles and links shader to the OpenGL program
+     * @param vertexPath path to the vertex shader
+     * @param fragmentPath path to the fragment shader
+     * @param geometryPath path to the geometry shader
+     */
     Shader(const char* vertexPath, const char* fragmentPath, const char* geometryPath = nullptr);
 
-    // activate the shader
-    // ------------------------------------------------------------------------
+    /**
+     * Binds this shader
+     */
     void Use() const;
 
     // utility uniform functions
@@ -67,8 +72,11 @@ public:
     void setPointLights(const std::vector<std::unique_ptr<PointLight>> &pointLights) const;
 
 private:
-    // utility function for checking shader compilation/linking errors.
-    // ------------------------------------------------------------------------
+    /**
+     * Checks if there were any compilation errors
+     * @param shader shader to check
+     * @param type type of the shader ("VERTEX", "FRAGMENT", "GEOMETRY")
+     */
     static void checkCompileErrors(GLuint shader, const std::string& type);
 };
 #endif

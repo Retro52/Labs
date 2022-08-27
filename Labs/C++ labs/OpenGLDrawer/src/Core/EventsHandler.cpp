@@ -93,18 +93,14 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 void window_size_callback(GLFWwindow* window, int width, int height)
 {
     glViewport(0,0, width, height);
-    Window::setHeight(height);
-    Window::setWidth(width);
+    Window::SetHeight(height);
+    Window::SetWidth(width);
     Window::Update();
 }
 
-/**
- * Initializes event handler and sets callbacks for actions
- * @return exit code
- */
-int EventsHandler::init()
+int EventsHandler::Initialize()
 {
-    GLFWwindow * window = Window::getCurrentWindow();
+    GLFWwindow * window = Window::GetCurrentWindow();
     EventsHandler::_keys = std::make_unique<bool[]>(1032);
     EventsHandler::_frames = std::make_unique<uint[]>(1032);
     std::memset(_keys.get(), false, 1032*sizeof(bool));
@@ -117,12 +113,7 @@ int EventsHandler::init()
     return 0;
 }
 
-/**
- * Check if key is pressed
- * @param keycode key id
- * @return true if pressed, false otherwise
- */
-bool EventsHandler::pressed(int keycode)
+bool EventsHandler::IsPressed(int keycode)
 {
     if (keycode < 0 || keycode >= _MOUSE_BUTTONS_OFFSET)
     {
@@ -131,12 +122,7 @@ bool EventsHandler::pressed(int keycode)
     return _keys[keycode];
 }
 
-/**
- * Chek if key was just pressed
- * @param keycode key id
- * @return true if was just pressed, false otherwise
- */
-bool EventsHandler::justPressed(int keycode)
+bool EventsHandler::IsJustPressed(int keycode)
 {
     if (keycode < 0 || keycode >= _MOUSE_BUTTONS_OFFSET)
     {
@@ -145,41 +131,25 @@ bool EventsHandler::justPressed(int keycode)
     return _keys[keycode] && _frames[keycode] == _current;
 }
 
-/**
- * Check if mouse button is clicked
- * @param button button id
- * @return true if is clicked, false otherwise
- */
-bool EventsHandler::clicked(int button)
+bool EventsHandler::IsClicked(int button)
 {
     int index = _MOUSE_BUTTONS_OFFSET + button;
     return _keys[index];
 }
 
-/**
- * Check if mouse button was just clicked
- * @param button button id
- * @return true if was just clicked, false otherwise
- */
-bool EventsHandler::justClicked(int button)
+bool EventsHandler::IsJustClicked(int button)
 {
     int index = _MOUSE_BUTTONS_OFFSET + button;
     return _keys[index] && _frames[index] == _current;
 }
 
-/**
- * Switch hide & show cursor modes
- */
-void EventsHandler::toggleCursor()
+void EventsHandler::ToggleCursor()
 {
     _cursor_locked = !_cursor_locked;
-    Window::setCursorMode(_cursor_locked ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL);
+    Window::SetCursorMode(_cursor_locked ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL);
 }
 
-/**
- * UpdateModelMatrix all events, called once every frame
- */
-void EventsHandler::pullEvents()
+void EventsHandler::PullEvents()
 {
     _current++;
     deltaX = 0.0f;

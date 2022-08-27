@@ -12,24 +12,48 @@
 #include "PerspectiveCamera.h"
 #include "../Render/Shader.h"
 #include "../Logging/easylogging++.h"
-#include "../OpenGL/include/glm/glm.hpp"
+#include "../include/OpenGL/include/glm/glm.hpp"
 
 
 class Global
 {
+public:
+    /* Restriction to create an instance of this class */
+    Global() = delete;
+    Global(Global&&) = delete;
+    Global(const Global&) = delete;
+
+    /**
+     * Load the program
+     */
+    static void Initialize();
+
+    /**
+     * Is being executed every frame
+     */
+    static void Tick();
+
+    /**
+     * Draws the scene
+     * @param camera player camera
+     */
+    static void Draw(const std::unique_ptr<PerspectiveCamera> &camera);
+
+    /**
+     * Ends frame by swapping buffers and more
+     */
+    static void EndFrame();
+
+    /**
+     * Get last frame delta time
+     * @return delta time, in seconds
+     */
+    static double GetWorldDeltaTime();
 private:
     static long frame;
     static double lastTime, deltaTime, elapsedTime;
     static bool shouldDrawMesh, shouldDrawLights, shouldDrawAxis, shouldDrawOutline;
     static int curFPS, drawMode;
-public:
-    static int Initialize();
-    static void Tick();
-    static void Load(const std::string &path);
-    static void Draw(const std::unique_ptr<PerspectiveCamera> &camera);
-    static void EndFrame();
-    static double GetWorldDeltaTime();
-//    std::shared_ptr<Shader> GetShader();
 };
 
 #endif //GRAPHICS_GLOBAL_H
